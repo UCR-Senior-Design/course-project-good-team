@@ -1,0 +1,1 @@
+This is a sample file to make sure Git is installed properly.
