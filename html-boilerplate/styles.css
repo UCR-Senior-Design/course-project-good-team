@@ -1,4 +1,52 @@
 body {
     color: green;
-    background-color: grey;
+    font-family: sans-serif;
+}
+
+.flex-spotify {
+    display: flex;
+    border: 2px solid red;
+    align-content: end;
+    flex: 1;
+}
+
+.flex-page-top {
+    display: flex;
+    border: 2px solid red;
+    justify-content: space-between;
+    font-family: sans-serif;
+}
+
+
+.flex-page-top.a {
+    border: 2px solid blue;
+}
+
+.button{
+    background-color: #04AA6D; /* Green */
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+.spotify-button {
+    background-color: #04AA6D; /* Green */
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.about-button{
+    background-color: #04AA6D; /* Green */
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
 }
