@@ -6,7 +6,7 @@ body {
 
 @font-face {
     font-family: Spotify;
-    src: url(./fonts/GothamMedium.ttf)
+    src: url(../fonts/GothamMedium.ttf)
 }
 .flex-spotify {
     display: flex;
@@ -34,9 +34,7 @@ body {
     display: inline-block;
     font-size: 16px;
 }
-
-.back-button,
-.spotify-button {
+.sample-button {
     background-color: #1faa50; /* Green */
     color: white;
     padding: 15px 32px;
@@ -46,7 +44,7 @@ body {
     font-size: 16px;
 }
 
-.about-button{
+.home-button{
     background-color: #1faa50; /* Green */
     color: white;
     padding: 15px 32px;
