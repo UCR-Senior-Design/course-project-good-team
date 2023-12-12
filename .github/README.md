@@ -1,1 +1,1 @@
-This is a general testbench to help practice making a website for our project.
+This is a test branch for the database aspects
