@@ -30,6 +30,10 @@ def stylesheet(filename):
     stylesheets_dir = os.path.abspath('../html-boilerplate/stylesheets')
     return send_from_directory(stylesheets_dir, filename)
 
+@app.route('/fonts/<filename>')
+def fonts(filename):
+    fonts_dir = os.path.abspath('../html-boilerplate/fonts')
+    return send_from_directory(fonts_dir, filename)
 
 
 @app.route('/callback')
