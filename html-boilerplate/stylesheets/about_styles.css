@@ -52,16 +52,17 @@ h1 {
 }
 
 .flex-body {
-    margin: 4px;
+    margin: 6px;
     display: flex;
     justify-content: center;
+    align-items: flex-start;
     border: 3px solid black;
     border-radius: 8px;
     background: #222222;
 }
 
 .about-body {
-    margin: 4px;
+    margin: 6px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
