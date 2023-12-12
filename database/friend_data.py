@@ -16,6 +16,26 @@ except pymongo.errors.ConfigurationError:
 mydb = client.Friendify
 users = mydb["Users"]
 
+def check_username_exists():
+    return users.find_one({'username': username_to_search}) is not None
+
+def addNewUser():
+    # Check if the username already exists
+    if check_username_exists():
+        print(f"'{username_to_search}' is already registered.")
+        return False
+
+    #Create a new user document
+    new_user = {
+        'username': username_to_search,
+        'friends': []
+    }
+
+    #Insert the new user document into the collection
+    users.insert_one(new_user)
+    print(f"User '{username_to_search}' added successfully.")
+    return True
+
 def returnUser():
     #Search for a user, id strings can be variable length
     username_to_search = input("Enter username string to lookup: ")
@@ -37,7 +57,18 @@ def addFriend():
 
     users.update_one(update_query, update_operation)
 
-username_to_search = input("Enter your username string: ")
+initialize = input("Is your account registered? (y/n): ")
+if initialize == 'y':
+    username_to_search = input("Enter your username string: ")
+
+    #Asks for current user's id
+    #TODO: (?) User could get stuck in a loop here if they don't have a registered account but typed y
+    while check_username_exists(username_to_search):
+        print("Username does not exist in database: ")
+        username_to_search = input("Enter your username string: ")
+elif initialize == 'n':
+    username_to_search = input("Enter your username string to register: ")
+    addNewUser()
 
 while True:
     
