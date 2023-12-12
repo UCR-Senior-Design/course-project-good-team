@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset = "UTF-8">
+        <Title> Friendify Landing Page</Title>
+        <link rel="stylesheet" href="/stylesheets/styles.css" />
+    </head>
+
+    <body>
+        <div class = "flex-page-top">
+            <div class = "flex-spotify">
+                <img src="/images/Spotify_icon.png" alt="Spotify logo" height="76" width="76">
+            </div>
+                <h1>Welcome to Friendify.</h1>
+                    <div class="spotify-button">
+                        <a href="/login" class="button">To the (sample) Login Page</a>
+                    </div>
+                    <div class = "about-button">
+                        <a href="/about" class="button">To the About Page</a>
+                    </div>
+            </div>
+    </body>
+    <body>
+        <div class = "flex-body">
+            <p>~ Visualize Your Listening Habits ~</p>
+        </div>
+        <script>
+            window.onload = function() {
+                if (new URLSearchParams(window.location.search).get('login') === 'success') {
+                    alert('You have logged in successfully!');
+                    // Redirect to remove the query parameter from URL
+                    window.history.replaceState({}, document.title, "/");
+                }
+            };
+            </script>
+    </body>
+</html>
