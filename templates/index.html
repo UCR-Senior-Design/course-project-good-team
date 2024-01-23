@@ -3,13 +3,13 @@
     <head>
         <meta charset = "UTF-8">
         <Title> Friendify Landing Page</Title>
-        <link rel="stylesheet" href="/stylesheets/styles.css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     </head>
 
     <body>
         <div class = "flex-page-top">
             <div class = "flex-spotify">
-                <img src="/images/Spotify_icon.png" alt="Spotify logo" height="76" width="76">
+                <img src="{{ url_for('static', filename='images/Spotify_icon.png') }}" alt="Spotify logo" height=76 width=76>
             </div>
                 <h1>Welcome to Friendify.</h1>
                     <div class="spotify-button">
@@ -47,7 +47,7 @@
     </body>
     <body>
         <div class= "Spotify_icon2">
-            <img src="/images/Spotify_icon2.png" alt="Spotify logo">
+            <img src="{{ url_for('static', filename='images/Spotify_icon2.png') }}" alt="Spotify logo">
         </div>
     </body>
 </html>

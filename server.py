@@ -1,7 +1,7 @@
 import os
 import base64
 import requests
-from flask import Flask, request, redirect, send_from_directory, session, url_for
+from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template
 from dotenv import load_dotenv
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
@@ -19,34 +19,15 @@ app.secret_key = 'goodgroup'
 @app.route('/')
 def index():
     username = session.get('username', 'Guest')  # Default to 'Guest' if not logged in
-    html_boilerplate_dir = os.path.abspath('../html-boilerplate/pages')
-    return send_from_directory(html_boilerplate_dir, 'index.html')
+    return render_template('index.html', username=username)
 
 @app.route('/login')
 def login():
-    html_boilerplate_pages_dir = os.path.abspath('../html-boilerplate/pages')
-    return send_from_directory(html_boilerplate_pages_dir, 'login.html')
+    return render_template('login.html')
 
 @app.route('/about')
 def about():
-    html_boilerplate_pages_dir = os.path.abspath('../html-boilerplate/pages')
-    return send_from_directory(html_boilerplate_pages_dir, 'about.html')
-
-
-@app.route('/images/<filename>')
-def images(filename):
-    images_dir = os.path.abspath('../html-boilerplate/images')
-    return send_from_directory(images_dir, filename)
-
-@app.route('/stylesheets/<filename>')
-def stylesheet(filename):
-    stylesheets_dir = os.path.abspath('../html-boilerplate/stylesheets')
-    return send_from_directory(stylesheets_dir, filename)
-
-@app.route('/fonts/<filename>')
-def fonts(filename):
-    fonts_dir = os.path.abspath('../html-boilerplate/fonts')
-    return send_from_directory(fonts_dir, filename)
+    return render_template('about.html')
 
 
 @app.route('/callback')
