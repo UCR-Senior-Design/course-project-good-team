@@ -4,14 +4,13 @@ import requests
 from flask import Flask, request, redirect, send_from_directory, session, url_for
 from dotenv import load_dotenv
 
-
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
 load_dotenv()
 
-
-# Read environment variables
+# Read environment variables from .env
 CLIENT_ID = os.environ.get('SPOTIFY_CLIENT_ID')
 CLIENT_SECRET = os.environ.get('SPOTIFY_CLIENT_SECRET')
+REDIRECT_URI = os.environ.get('SPOTIFY_REDIRECT_URI')
 
 
 app = Flask(__name__)
@@ -54,12 +53,12 @@ def fonts(filename):
 def callback():
     code = request.args.get('code')
 
-    # Encode Client ID and Client Secret
+    # Base64 Encode Client ID and Client Secret
     client_credentials = f"{CLIENT_ID}:{CLIENT_SECRET}"
     client_credentials_b64 = base64.b64encode(client_credentials.encode()).decode()
 
 
-    # Headers
+    # Headers for POST request
     headers = {
         'Authorization': f"Basic {client_credentials_b64}",
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -69,7 +68,7 @@ def callback():
     body = {
         'grant_type': 'authorization_code',
         'code': code,
-        'redirect_uri': 'http://127.0.0.1:8080/callback'
+        'redirect_uri': REDIRECT_URI
     }
 
     response = requests.post('https://accounts.spotify.com/api/token', data=body, headers=headers)
@@ -85,10 +84,10 @@ def callback():
         
         if user_profile_response.status_code == 200:
             user_data = user_profile_response.json()
-            username = user_data.get('display_name')  # Or 'id' or 'email', depending on your need
+            username = user_data.get('display_name')
             print("Recieved data from ", username)
 
-            # You can use Flask's session or another method to store the username
+            # For right now just using flask session to store username, if theres a better way to do this i'll change it later
             session['username'] = username
 
         return redirect(url_for('index', username=username))
@@ -96,8 +95,7 @@ def callback():
     else:
         print("Failed to retrieve access token. Status code:", response.status_code)
         print("Response:", response.json())
-        # Handle error accordingly
-        return redirect('/error')  # Redirect to an error page or handle it differently
+        return redirect('/error')  # Redirect to an error page that we haven't implemented yet
 
 if __name__ == '__main__':
     app.run(port=8080)
