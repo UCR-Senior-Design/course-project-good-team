@@ -2,14 +2,16 @@
 <html lang = "en">
     <head>
         <meta charset = "UTF-8">
-        <Title> Friendify Landing Page</Title>
+        <Title> Friendify</Title>
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     </head>
 
     <body>
+        <script src="{{ url_for('static', filename='js/test.js') }}"></script>
         <div class = "flex-page-top">
             <div class = "flex-spotify">
-                <img src="{{ url_for('static', filename='images/Spotify_icon.png') }}" alt="Spotify logo" height=76 width=76>
+                <img src="{{ url_for('static', filename='images/favicon.ico') }}" alt="Spotify logo" height=76 width=76>
             </div>
                 <h1>Welcome to Friendify.</h1>
                     <div class="spotify-button">
@@ -22,8 +24,7 @@
     </body>
     <body>
         <div class = "flex-body">
-            <p>Hello, <span id="username">Guest</span>!</p>
-            <p>~ Visualize Your Listening Habits ~</p>
+            <p>Hello, <span id="username">Guest</span>! ~ Visualize Your Listening Habits ~</p>
         </div>
         <script>
             window.onload = function() {
@@ -43,6 +44,8 @@
                 window.history.replaceState({}, document.title, "/");
             };
         </script>
+
+        <script src ="{{ url_for('static', filename='js/test2.js')}}"></script>
 
     </body>
     <body>
