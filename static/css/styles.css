@@ -6,7 +6,7 @@ body {
 
 @font-face {
     font-family: Spotify;
-    src: url('/fonts/GothamMedium.ttf') format('truetype');
+    src: url(../fonts/GothamMedium.ttf)
 }
 
 .flex-spotify {

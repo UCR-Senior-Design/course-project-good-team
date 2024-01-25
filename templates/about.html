@@ -4,14 +4,14 @@
         <meta charset="UTF-8">
         <title>About Page</title>
         <!-- adding ../styles correctly accessed setup -->
-        <link rel = "stylesheet" href = "/stylesheets/about_styles.css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/about_styles.css') }}">
     </head>
 
     <body>
         <div class = "flex-page-top">
             <div class = "flex-spotify">
                 <!-- adding ../images correctly accessed Spotify image -->
-                <img src = "../images/Spotify_icon.png" alt = "Spotify logo" height = "76" width = "76">
+                <img src="{{ url_for('static', filename='images/Spotify_icon.png') }}" alt="Spotify logo" height=76 width=76>
             </div>
                 <h1>About Page</h1>
                     <div class = "back-button">
@@ -50,6 +50,7 @@
                 statistics to personalize their experience. 
             </p>
         </div>
+        <script src="{{ url_for('static', filename='js/test.js') }}"></script>
     </body>
 
 
