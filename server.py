@@ -29,6 +29,10 @@ def login():
 def about():
     return render_template('about.html')
 
+@app.route('/db')
+def database():
+    return render_template('database.html')
+
 
 @app.route('/callback')
 def callback():
