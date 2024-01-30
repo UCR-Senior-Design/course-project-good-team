@@ -6,58 +6,10 @@ body {
 
 @font-face {
     font-family: Spotify;
-    src: url(../fonts/GothamMedium.ttf)
+    src: url(../fonts/GothamMedium.ttf);
 }
 
-.flex-spotify {
-    display: flex;
-}
-
-.flex-page-top {
-    display: flex;
-    border: 3px solid black;
-    border-radius: 8px;
-    justify-content: space-between;
-    font-family: Spotify;
-    background: #222222;
-    padding: 5px;
-}
-
-
-
-
-.button{
-    background-color: #1faa50; /* Green */
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-}
-
-.back-button,
-.spotify-button {
-    background-color: #1faa50; /* Green */
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-}
-
-.about-button{
-    background-color: #1faa50; /* Green */
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-}
-
-.flex-body {
+.greeting {
     margin: 4px;
     display: flex;
     justify-content: center;
@@ -66,8 +18,180 @@ body {
     background: #222222;
 }
 
-.Spotify_icon2 {
-    display: flex;
-    justify-content: center;
-    
+/* NAV BAR CSS */
+
+*,
+::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
+
+.container {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome{
+  margin-left: 25vw;
+  display: inline;
+  min-width: 800px;
+}
+
+.weltext{
+  font-size: 35px;
+  color: #ffffffaf;
+}
+
+.friend{
+  color: #1faa50
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  height: 90px;
+  width: 100vw;
+  background: #1a1a1a;
+  box-shadow: rgba(31, 170, 80, 0.8) 0px 15px 20px -5px;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  border-bottom:rgba(30, 112, 64, 0.493) 4px solid;
+}
+
+.logo{
+  display: flex;
+  height: 75px;
+  width: 75px;
+}
+
+
+.nav--list {
+  width: 100%;
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.item {
+  position: relative;
+  width: 140px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  margin: 0 30px;
+  border: 2px solid #f2c75c;
+  overflow: hidden;
+}
+
+.item:nth-child(4){
+  border: 2px solid green;
+  color: green;
+}
+
+.item a.log{
+  color: rgb(16, 189, 16);
+}
+
+.item a {
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.item:hover a {
+  color: #003b49;
+}
+
+.item:before {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  transform: skew(30deg);
+  background: #f2c75c;
+  transition: width 400ms ease;
+}
+
+.item:hover:before {
+  width: 120%;
+}
+
+.item:nth-child(2):before {
+  transform: skew(-20deg);
+}
+
+.item:nth-child(3):before {
+  transform: skew(0deg);
+}
+
+.item:nth-child(4):before {
+  width: 180px;
+  height: 0%;
+  bottom: 0px;
+  transition: height 400ms ease;
+  background: #1faa50;
+}
+
+.item:nth-child(4):hover:before {
+  height: 100%;
+}
+
+/* EVERYTHING .welcome_back IS REACT TEST WORK */
+
+.welcome-back button:hover {
+    color: #fff;
+    background: #000;
+  }
+  .welcome-back > p {
+    font-size: 1.2em;
+    text-align: center;
+    margin: 0 0 25px;
+    color: #980000;
+  }
+  .welcome-back p.downloading {
+    font-size: 2em;
+    color: #333;
+  }
+
+  .welcome-back {
+    margin: 35px auto;
+    background: #ccc;
+    border-radius: 12px;
+    padding: 25px;
+  }
+  .welcome-back h2 {
+    margin: 0 0 35px;
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: normal;
+  }
+  .welcome-back button {
+    font-size: 2em;
+    background: #20232a;
+    color: rgb(97, 218, 251);
+    border: none;
+    padding: 15px;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    cursor: pointer;
+    display: block;
+    border-radius: 12px;
+    transition: .3s;
+  }
