@@ -3,6 +3,7 @@ import base64
 import requests
 import pymongo
 import spotipy
+import certifi
 from spotipy.oauth2 import SpotifyOAuth
 from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template
 from dotenv import load_dotenv
@@ -42,9 +43,11 @@ def friends():
     if 'access_token' not in session:
         return redirect('/login')  #Redirect to login page
     
+    ca = certifi.where()
+
     #Establish connection to the database
     try:
-        client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority')
+        client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority', tlsCAFile=ca)
     
     #URI error is thrown 
     except pymongo.errors.ConfigurationError:
@@ -127,19 +130,16 @@ def friends():
 def addfriend():
     if 'access_token' not in session:
         return redirect('/login')  #Redirect to login page
-    
-    print("We innit")
 
     data = request.json
     friend_name = data.get('friendName')
 
-    # Process the friendName as needed
-    # For example, you can print it or store it in a database
+    ca = certifi.where()
 
     print(f"Received friend's name: {friend_name}")
     
     try:
-        client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority')
+        client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority', tlsCAFile=ca)
     
     #URI error is thrown 
     except pymongo.errors.ConfigurationError:
@@ -151,7 +151,7 @@ def addfriend():
     users = mydb["Users"]
 
     #Is your friend real
-    if(users.find_one({'username': friend_name}) is not None)
+    if(users.find_one({'username': friend_name}) is not None):
         #Setup access within database
         username = session.get('username')
         
