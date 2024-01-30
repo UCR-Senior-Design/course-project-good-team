@@ -114,7 +114,22 @@ nav {
   transition: color 200ms ease;
 }
 
+.item button {
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+  background: none;
+  border: none;
+}
+
 .item:hover a {
+  color: #003b49;
+}
+
+.item:hover button {
   color: #003b49;
 }
 
@@ -195,3 +210,4 @@ nav {
     border-radius: 12px;
     transition: .3s;
   }
+
