@@ -18,6 +18,16 @@ body {
     background: #222222;
 }
 
+.spacer {
+  height: 90px;
+}
+
+.random-fact-container {
+  text-align: center;
+  margin-top: 20px;
+  color: #fff;
+}
+
 /* NAV BAR CSS */
 
 *,

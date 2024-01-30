@@ -6,8 +6,11 @@ import spotipy
 import certifi
 from spotipy.oauth2 import SpotifyOAuth
 from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template
+from datetime import timedelta
 from dotenv import load_dotenv
 from pymongo import MongoClient
+from random import choice
+
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
 load_dotenv()
@@ -20,11 +23,36 @@ REDIRECT_URI = os.environ.get('SPOTIFY_REDIRECT_URI')
 
 app = Flask(__name__)
 app.secret_key = 'goodgroup'
+app.permanent_session_lifetime = timedelta(minutes=30)  # Basically saves your login for 30 minutes
 
 @app.route('/')
 def index():
     username = session.get('username', 'Guest')  # Default to 'Guest' if not logged in
-    return render_template('index.html', username=username)
+    is_logged_in = session.get('is_logged_in', False)  # Default to False if not set
+    print("Username in session:", username) 
+
+    random_statistic = None
+    if is_logged_in:
+        access_token = session.get('access_token')
+        headers = {'Authorization': f'Bearer {access_token}'}
+
+        # Fetch top tracks or artists
+        top_tracks_response = requests.get('https://api.spotify.com/v1/me/top/tracks', headers=headers)
+        top_artists_response = requests.get('https://api.spotify.com/v1/me/top/artists', headers=headers)
+        
+        if top_tracks_response.status_code == 200 and top_artists_response.status_code == 200:
+            top_tracks = top_tracks_response.json().get('items', [])
+            top_artists = top_artists_response.json().get('items', [])
+
+            # Select a random statistic
+            if top_tracks and top_artists:
+                random_statistic = choice([
+                    f"Your most played artist of all time is {top_artists[0]['name']}",
+                    f"Your most played track of all time is {top_tracks[0]['name']}"
+                    # Add more options, this all i got for now
+                ])
+
+    return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic)
 
 @app.route('/login')
 def login():
@@ -203,7 +231,7 @@ def callback():
             # For right now just using flask session to store username, if theres a better way to do this i'll change it later
             session['username'] = username
             session['access_token'] = access_token
-
+            session['is_logged_in'] = True
         return redirect(url_for('index', username=username))
 
     else:
