@@ -6,11 +6,31 @@
         <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 
+        <!-- THE FOLLOWING SCRIPTS ARE NEEDED FOR COMPILING REACT -->
         <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
         <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
         <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     </head>
     <body>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/favicon.ico') }}">
+                </div>
+              <ul class="nav--list">
+                <li class="item"><a href="/">Home</a></li>
+                <li class="item"><a href="/about">About</a></li>
+                <li class="item"><a href="/db">Application</a></li>
+                <li class="item"><a href="/login">Login</a></li>
+              </ul>
+            </nav>
+          </div>
+        
+
+
+
+
         <div class = "flex-page-top">
             <div class = "flex-spotify">
                 <img src="{{ url_for('static', filename='images/favicon.ico') }}" alt="Spotify logo" height=76 width=76>
@@ -28,14 +48,14 @@
                     
             </div>
 
-            <div class="welcome-back"></div>
+<!--     REACT TEST WORK    <div class="welcome-back"></div>
 
             <script type="text/babel" src="{{ url_for('static', filename='js/test.js') }}"></script>
             <script type="text/babel" src="{{ url_for('static', filename='js/CoolButton.js') }}"></script>
 
             <script type="text/babel">
                 ReactDOM.render(<WelcomeBack />, document.querySelector(".welcome-back"));
-            </script>
+            </script> -->
 
     </body>
     <body>
