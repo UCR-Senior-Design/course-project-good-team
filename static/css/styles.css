@@ -6,70 +6,16 @@ body {
 
 @font-face {
     font-family: Spotify;
-    src: url(../fonts/GothamMedium.ttf)
+    src: url(../fonts/GothamMedium.ttf);
 }
 
-.flex-spotify {
-    display: flex;
-}
-
-.flex-page-top {
-    display: flex;
-    border: 3px solid black;
-    border-radius: 8px;
-    justify-content: space-between;
-    font-family: Spotify;
-    background: #222222;
-    padding: 5px;
-}
-
-
-
-
-.button{
-    background-color: #1faa50; /* Green */
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-}
-
-.back-button,
-.spotify-button {
-    background-color: #1faa50; /* Green */
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-}
-
-.about-button{
-    background-color: #1faa50; /* Green */
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-}
-
-.flex-body {
+.greeting {
     margin: 4px;
     display: flex;
     justify-content: center;
     border: 3px solid black;
     border-radius: 8px;
     background: #222222;
-}
-
-.Spotify_icon2 {
-    display: flex;
-    justify-content: center;
-    
 }
 
 /* NAV BAR CSS */
@@ -89,6 +35,20 @@ body {
   align-items: center;
 }
 
+.welcome{
+  margin-left: 25vw;
+  display: inline;
+  min-width: 800px;
+}
+
+.weltext{
+  font-size: 35px;
+  color: #ffffffaf;
+}
+
+.friend{
+  color: #1faa50
+}
 
 nav {
   display: flex;
@@ -97,9 +57,13 @@ nav {
   padding: 10px 20px;
   height: 90px;
   width: 100vw;
-  border-radius: 7px;
-  background: #003b49;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 15px 20px -5px;
+  background: #1a1a1a;
+  box-shadow: rgba(31, 170, 80, 0.8) 0px 15px 20px -5px;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  border-bottom:rgba(30, 112, 64, 0.493) 4px solid;
 }
 
 .logo{
@@ -130,6 +94,15 @@ nav {
   margin: 0 30px;
   border: 2px solid #f2c75c;
   overflow: hidden;
+}
+
+.item:nth-child(4){
+  border: 2px solid green;
+  color: green;
+}
+
+.item a.log{
+  color: rgb(16, 189, 16);
 }
 
 .item a {
@@ -172,6 +145,7 @@ nav {
   height: 0%;
   bottom: 0px;
   transition: height 400ms ease;
+  background: #1faa50;
 }
 
 .item:nth-child(4):hover:before {

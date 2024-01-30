@@ -18,36 +18,18 @@
                 <div class="logo">
                     <img src="{{ url_for('static', filename='images/favicon.ico') }}">
                 </div>
+                <div class="welcome">
+                    <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">Guest</span></span>
+                </div>
               <ul class="nav--list">
                 <li class="item"><a href="/">Home</a></li>
                 <li class="item"><a href="/about">About</a></li>
                 <li class="item"><a href="/db">Application</a></li>
-                <li class="item"><a href="/login">Login</a></li>
+                <li class="item"><a href="/login" class="log">Login</a></li>
               </ul>
             </nav>
           </div>
         
-
-
-
-
-        <div class = "flex-page-top">
-            <div class = "flex-spotify">
-                <img src="{{ url_for('static', filename='images/favicon.ico') }}" alt="Spotify logo" height=76 width=76>
-            </div>
-                <h1>Welcome to Friendify.</h1>
-                    <div class="spotify-button">
-                        <a href="/login" class="button">To the Login Page</a>
-                    </div>
-                    <div class = "about-button">
-                        <a href="/about" class="button">To the About Page</a>
-                    </div>
-                    <div class="db-button">
-                        <a href="/db" class="button">Testing Database stuff :D</a>
-                    </div>
-                    
-            </div>
-
 <!--     REACT TEST WORK    <div class="welcome-back"></div>
 
             <script type="text/babel" src="{{ url_for('static', filename='js/test.js') }}"></script>
@@ -56,35 +38,23 @@
             <script type="text/babel">
                 ReactDOM.render(<WelcomeBack />, document.querySelector(".welcome-back"));
             </script> -->
-
-    </body>
-    <body>
-        <div class = "flex-body">
-            <p>Hello, <span id="username">Guest</span>! ~ Visualize Your Listening Habits ~</p>
-        </div>
-        <script>
-            window.onload = function() {
-                if (new URLSearchParams(window.location.search).get('login') === 'success') {
-                    alert('You have logged in successfully!');
-                    // Redirect to remove the query parameter from URL
+            <script>
+                window.onload = function() {
+                    if (new URLSearchParams(window.location.search).get('login') === 'success') {
+                        alert('You have logged in successfully!');
+                        // Redirect to remove the query parameter from URL
+                        window.history.replaceState({}, document.title, "/");
+                    }
+                };
+            </script>
+    
+            <script>
+                window.onload = function() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const username = urlParams.get('username') || 'Guest';
+                    document.getElementById('username').textContent = username;
                     window.history.replaceState({}, document.title, "/");
-                }
-            };
-        </script>
-
-        <script>
-            window.onload = function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const username = urlParams.get('username') || 'Guest';
-                document.getElementById('username').textContent = username;
-                window.history.replaceState({}, document.title, "/");
-            };
-        </script>
-
-    </body>
-    <body>
-        <div class= "Spotify_icon2">
-            <img src="{{ url_for('static', filename='images/Spotify_icon2.png') }}" alt="Spotify logo">
-        </div>
+                };
+            </script>
     </body>
 </html>
