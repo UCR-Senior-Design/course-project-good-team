@@ -67,7 +67,7 @@ def index():
                 if top_tracks:
                     track = top_tracks[0]
                     stats_choices.append(
-                        {"text": f"Your most played track in the last {'4 weeks' if time_range == 'short_term' else '6 months' if time_range == 'medium_term' else 'of all time'} is {track['name']}",
+                        {"text": f"Your most played track {'in the last 4 weeks' if time_range == 'short_term' else 'in the last 6 months' if time_range == 'medium_term' else 'of all time'} is {track['name']}",
                          "image": track['album']['images'][0]['url']}
                     )
 
@@ -76,7 +76,7 @@ def index():
                 if top_artists:
                     artist = top_artists[0]
                     stats_choices.append(
-                        {"text": f"Your most played artist in the last {'4 weeks' if time_range == 'short_term' else '6 months' if time_range == 'medium_term' else 'of all time'} is {artist['name']}",
+                        {"text": f"Your most played artist {'in the last 4 weeks' if time_range == 'short_term' else 'in the last 6 months' if time_range == 'medium_term' else 'of all time'} is {artist['name']}",
                          "image": artist['images'][0]['url']}
                     )
 
