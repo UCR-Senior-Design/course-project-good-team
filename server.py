@@ -111,7 +111,7 @@ def addfriend():
     users = mydb["Users"]
 
     #Is your friend real
-    if(users.find_one({'username': friend_name}) is not None)
+    if(users.find_one({'username': friend_name}) is not None):
         #Setup access within database
         username = session.get('username')
 
