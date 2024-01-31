@@ -37,12 +37,15 @@
                 <div class="welcome">
                     {% if random_statistic %}
                         <p>Did you know? {{ random_statistic }}</p>
+                        {% if image_url %}
+                            <div class="statistic-image">
+                                <img src="{{ image_url }}" alt="Image" style="max-width: 300px; max-height: 300px;">
+                            </div>
+                        {% endif %}
                     {% endif %}
                 </div>
             {% else %}
-                <div class="welcome">
-                    <h2>Log in for super cool stats</h2>
-                </div>
+                <!-- ... [rest of your 'else' code] ... -->
             {% endif %}
         </div>
 <!--     REACT TEST WORK    <div class="welcome-back"></div>

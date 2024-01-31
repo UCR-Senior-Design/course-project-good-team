@@ -39,32 +39,53 @@ users = mydb["Users"]
 
 @app.route('/')
 def index():
-    username = session.get('username', 'Guest')  # Default to 'Guest' if not logged in
-    is_logged_in = session.get('is_logged_in', False)  # Default to False if not set
-    print("Username in session:", username) 
-
+    username = session.get('username', 'Guest')
+    is_logged_in = session.get('is_logged_in', False)
     random_statistic = None
+    image_url = None  # URL for the image
+
     if is_logged_in:
         access_token = session.get('access_token')
         headers = {'Authorization': f'Bearer {access_token}'}
 
-        # Fetch top tracks or artists
-        top_tracks_response = requests.get('https://api.spotify.com/v1/me/top/tracks', headers=headers)
-        top_artists_response = requests.get('https://api.spotify.com/v1/me/top/artists', headers=headers)
-        
-        if top_tracks_response.status_code == 200 and top_artists_response.status_code == 200:
-            top_tracks = top_tracks_response.json().get('items', [])
-            top_artists = top_artists_response.json().get('items', [])
+        # Fetch top tracks and artists for different time ranges
+        time_ranges = ['short_term', 'medium_term', 'long_term']
+        stats_choices = []
 
-            # Select a random statistic
-            if top_tracks and top_artists:
-                random_statistic = choice([
-                    f"Your most played artist of all time is {top_artists[0]['name']}",
-                    f"Your most played track of all time is {top_tracks[0]['name']}"
-                    # Add more options, this all i got for now
-                ])
+        for time_range in time_ranges:
+            top_tracks_response = requests.get(
+                f'https://api.spotify.com/v1/me/top/tracks?time_range={time_range}',
+                headers=headers
+            )
+            top_artists_response = requests.get(
+                f'https://api.spotify.com/v1/me/top/artists?time_range={time_range}',
+                headers=headers
+            )
 
-    return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic)
+            if top_tracks_response.status_code == 200:
+                top_tracks = top_tracks_response.json().get('items', [])
+                if top_tracks:
+                    track = top_tracks[0]
+                    stats_choices.append(
+                        {"text": f"Your most played track in the last {'4 weeks' if time_range == 'short_term' else '6 months' if time_range == 'medium_term' else 'of all time'} is {track['name']}",
+                         "image": track['album']['images'][0]['url']}
+                    )
+
+            if top_artists_response.status_code == 200:
+                top_artists = top_artists_response.json().get('items', [])
+                if top_artists:
+                    artist = top_artists[0]
+                    stats_choices.append(
+                        {"text": f"Your most played artist in the last {'4 weeks' if time_range == 'short_term' else '6 months' if time_range == 'medium_term' else 'of all time'} is {artist['name']}",
+                         "image": artist['images'][0]['url']}
+                    )
+
+        if stats_choices:
+            selected_stat = choice(stats_choices)
+            random_statistic = selected_stat["text"]
+            image_url = selected_stat["image"]
+
+    return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic, image_url=image_url)
 
 @app.route('/login')
 def login():
