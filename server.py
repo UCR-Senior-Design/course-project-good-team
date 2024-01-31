@@ -5,7 +5,7 @@ import pymongo
 import spotipy
 import certifi
 from spotipy.oauth2 import SpotifyOAuth
-from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template
+from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template, flash
 from datetime import timedelta
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -80,46 +80,43 @@ def database():
 
 @app.route('/friends')
 def friends():
-    if 'access_token' not in session:
-        return redirect('/login')  #Redirect to login page
-    #This got moved to callback
-    return redirect('/db')
+    if 'access_token' in session:
+        username = session.get('username')
+        user_data = users.find_one({'username': username})
+        if user_data:
+            friends_list = user_data.get('friends', [])
+            return render_template('friends.html', friends=friends_list)
+        else:
+            flash("User data not found.")
+            return redirect(url_for('index'))
+    else:
+        flash("Please log in to view your friends.")
+        return redirect(url_for('login'))
 
 
 @app.route('/addfriend', methods=['POST'])
 def addfriend():
     if 'access_token' not in session:
-        return redirect('/login')  #Redirect to login page
-
-    print("We innit")
+        # Gotta log in to add friends lol
+        return {'message': 'Please log in to add friends.'}, 401
 
     data = request.json
     friend_name = data.get('friendName')
+    username = session.get('username')
 
-    print(f"Received friend's name: {friend_name}")
+    # Checking if friend is in our database
+    if not users.find_one({'username': friend_name}):
+        return {'message': 'User is not in Friendify database.'}, 404
 
-    try:
-        client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority')
+    # Check if friend is already added
+    user = users.find_one({'username': username})
+    if friend_name in user.get('friends', []):
+        return {'message': 'User is already your friend.'}, 409
 
-    #URI error is thrown 
-    except pymongo.errors.ConfigurationError:
-        print("An Invalid URI host error was received.")
-        #Idk if this line should be in here specifically
-        sys.exit(1)
+    # Successfully adding friend to list
+    users.update_one({'username': username}, {'$addToSet': {'friends': friend_name}})
+    return {'message': 'Friend successfully added.'}, 200
 
-    mydb = client.Friendify
-    users = mydb["Users"]
-
-    #Is your friend real
-    if(users.find_one({'username': friend_name}) is not None):
-        #Setup access within database
-        username = session.get('username')
-
-        update_query = {'username': username}
-        update_operation = {'$addToSet': {'friends': friend_name}}
-
-        users.update_one(update_query, update_operation)
-    return redirect('/db')
 
 @app.route('/callback')
 def callback():
