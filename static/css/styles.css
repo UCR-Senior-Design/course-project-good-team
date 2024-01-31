@@ -106,7 +106,7 @@ nav {
   overflow: hidden;
 }
 
-.item:nth-child(4){
+.item:nth-child(5){
   border: 2px solid green;
   color: green;
 }
@@ -172,6 +172,10 @@ nav {
 }
 
 .item:nth-child(4):before {
+  transform: skew(55deg);
+}
+
+.item:nth-child(5):before {
   width: 180px;
   height: 0%;
   bottom: 0px;
@@ -179,7 +183,7 @@ nav {
   background: #1faa50;
 }
 
-.item:nth-child(4):hover:before {
+.item:nth-child(5):hover:before {
   height: 100%;
 }
 
