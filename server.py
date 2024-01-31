@@ -82,87 +82,7 @@ def database():
 def friends():
     if 'access_token' not in session:
         return redirect('/login')  #Redirect to login page
-    
-    ca = certifi.where()
-
-    #Establish connection to the database
-    try:
-        client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority', tlsCAFile=ca)
-    
-    #URI error is thrown 
-    except pymongo.errors.ConfigurationError:
-        print("An Invalid URI host error was received.")
-        #Idk if this line should be in here specifically
-        sys.exit(1)
-
-    #Setup access within database
-    mydb = client.Friendify
-    users = mydb["Users"]
-
-    #Base64 Encode Client ID and Client Secret
-    client_credentials = f"{CLIENT_ID}:{CLIENT_SECRET}"
-    client_credentials_b64 = base64.b64encode(client_credentials.encode()).decode()
-
-
-    #Headers for POST request
-    headers = {
-        'Authorization': f"Basic {client_credentials_b64}",
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
-
-    access_token = session.get('access_token', 'ERROR')
-
-    if(access_token != 'ERROR'):
-        headers = {'Authorization': f'Bearer {access_token}'}
-        user_profile_response = requests.get('https://api.spotify.com/v1/me', headers=headers)
-
-        if user_profile_response.status_code == 200:
-            user_data = user_profile_response.json()
-            userid = user_data.get('id')
-            username = user_data.get('display_name')
-
-            if users.find_one({'id': userid}) is not None:
-                print(f"'{userid}' is already registered.")
-            else:
-                #TODO: This does not update the user profile with new playlists, it currently only takes a snapshot of the user profile data
-                #at the time of initially adding them to the database, I need to make it so that each time it connects it re checks the playlist
-                #data and adds if new playlists exist, cause right now the query here is useless, since it isn't checking against any existing data
-                
-                #Fetch user's playlists
-                playlists_response = requests.get('https://api.spotify.com/v1/me/playlists', headers=headers)
-                if playlists_response.status_code == 200:
-                    playlists_data = playlists_response.json()
-
-                    playlistsnameid = []
-                    #Process playlists data here
-                    for playlist in playlists_data['items']:
-                        plist = (playlist['name'], playlist['id'])
-                        #Query to check if the tuple exists in the data field for a specific document
-                        query = {
-                            "id": userid,
-                            "playlists": {
-                                "$elemMatch": {
-                                    "$eq": plist
-                                }
-                            }
-                        }
-                        existing_document = users.find_one(query)
-                        playlistsnameid.append(plist)
-                
-                #Create a new user document
-
-                new_user = {
-                    'id': userid,
-                    'username': username,
-                    'friends': [],
-                    'playlists': playlistsnameid
-                }
-
-                #Insert the new user document into the collection
-                users.insert_one(new_user)
-                print(f"User '{username}' added successfully.")
-    else:
-        print("error")
+    #This got moved to callback
     return redirect('/db')
 
 
@@ -170,7 +90,35 @@ def friends():
 def addfriend():
     if 'access_token' not in session:
         return redirect('/login')  #Redirect to login page
-    #this functionality has been moved to callback
+
+    print("We innit")
+
+    data = request.json
+    friend_name = data.get('friendName')
+
+    print(f"Received friend's name: {friend_name}")
+
+    try:
+        client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority')
+
+    #URI error is thrown 
+    except pymongo.errors.ConfigurationError:
+        print("An Invalid URI host error was received.")
+        #Idk if this line should be in here specifically
+        sys.exit(1)
+
+    mydb = client.Friendify
+    users = mydb["Users"]
+
+    #Is your friend real
+    if(users.find_one({'username': friend_name}) is not None)
+        #Setup access within database
+        username = session.get('username')
+
+        update_query = {'username': username}
+        update_operation = {'$addToSet': {'friends': friend_name}}
+
+        users.update_one(update_query, update_operation)
     return redirect('/db')
 
 @app.route('/callback')
