@@ -25,6 +25,18 @@ app = Flask(__name__)
 app.secret_key = 'goodgroup'
 app.permanent_session_lifetime = timedelta(minutes=30)  # Basically saves your login for 30 minutes
 
+try:
+    client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority')
+    
+#URI error is thrown 
+except pymongo.errors.ConfigurationError:
+    print("An Invalid URI host error was received.")
+    #Idk if this line should be in here specifically
+    sys.exit(1)
+
+mydb = client.Friendify
+users = mydb["Users"]
+
 @app.route('/')
 def index():
     username = session.get('username', 'Guest')  # Default to 'Guest' if not logged in
@@ -158,36 +170,7 @@ def friends():
 def addfriend():
     if 'access_token' not in session:
         return redirect('/login')  #Redirect to login page
-
-    data = request.json
-    friend_name = data.get('friendName')
-
-    ca = certifi.where()
-
-    print(f"Received friend's name: {friend_name}")
-    
-    try:
-        client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority', tlsCAFile=ca)
-    
-    #URI error is thrown 
-    except pymongo.errors.ConfigurationError:
-        print("An Invalid URI host error was received.")
-        #Idk if this line should be in here specifically
-        sys.exit(1)
-    
-    mydb = client.Friendify
-    users = mydb["Users"]
-
-    #Is your friend real
-    if(users.find_one({'username': friend_name}) is not None):
-        #Setup access within database
-        username = session.get('username')
-        
-        update_query = {'username': username}
-        update_operation = {'$addToSet': {'friends': friend_name}}
-
-        users.update_one(update_query, update_operation)
-    
+    #this functionality has been moved to callback
     return redirect('/db')
 
 @app.route('/callback')
@@ -226,12 +209,57 @@ def callback():
         if user_profile_response.status_code == 200:
             user_data = user_profile_response.json()
             username = user_data.get('display_name')
+            userid = user_data.get('id')
             print("Recieved data from ", username)
 
             # For right now just using flask session to store username, if theres a better way to do this i'll change it later
             session['username'] = username
             session['access_token'] = access_token
             session['is_logged_in'] = True
+            
+            #Storing the logged in user to the database if they are not already in it
+            if users.find_one({'id': userid}) is not None:
+                print(f"'{userid}' is already registered.")
+            else:
+                #TODO: This does not update the user profile with new playlists, it currently only takes a snapshot of the user profile data
+                #at the time of initially adding them to the database, I need to make it so that each time it connects it re checks the playlist
+                #data and adds if new playlists exist, cause right now the query here is useless, since it isn't checking against any existing data
+                
+                #Fetch user's playlists
+                playlists_response = requests.get('https://api.spotify.com/v1/me/playlists', headers=headers)
+                if playlists_response.status_code == 200:
+                    playlists_data = playlists_response.json()
+
+                    playlistsnameid = []
+                    #Process playlists data here
+                    for playlist in playlists_data['items']:
+                        plist = (playlist['name'], playlist['id'])
+                        #Query to check if the tuple exists in the data field for a specific document
+                        query = {
+                            "id": userid,
+                            "playlists": {
+                                "$elemMatch": {
+                                    "$eq": plist
+                                }
+                            }
+                        }
+                        existing_document = users.find_one(query)
+                        playlistsnameid.append(plist)
+                
+                    #Create a new user document
+
+                    new_user = {
+                        'id': userid,
+                        'username': username,
+                        'friends': [],
+                        'playlists': playlistsnameid
+                    }
+
+                    #Insert the new user document into the collection
+                    users.insert_one(new_user)
+                    print(f"User '{username}' added successfully.")
+                else:
+                    print("error")
         return redirect(url_for('index', username=username))
 
     else:
