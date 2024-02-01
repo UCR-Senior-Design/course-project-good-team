@@ -2,52 +2,63 @@
 <html lang = "en">
     <head>
         <meta charset = "UTF-8">
-        <Title> Friendify</Title>
+        <Title>Friendify</Title>
         <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+        <!-- THE FOLLOWING SCRIPTS ARE NEEDED FOR COMPILING REACT -->
+        <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     </head>
+    <body>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/favicon.ico') }}">
+                </div>
+                <div class="welcome">
+                    <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">Guest</span></span>
+                </div>
+              <ul class="nav--list">
+                <li class="item"><button><a href="/">Home</a></button></li>
+                <li class="item"><button><a href="/about">About</a></button></li>
+                <li class="item"><button><a href="/db">Application</a></button></li>
+                <li class="item"><button><a href="/">Friends</a></button></li>
+                <li class="item"><button><a href="/login" class="log">Login</a></button></li>
+              </ul>
+            </nav>
+          </div>
 
-    <body>
-        <div class = "flex-page-top">
-            <div class = "flex-spotify">
-                <img src="{{ url_for('static', filename='images/favicon.ico') }}" alt="Spotify logo" height=76 width=76>
-            </div>
-                <h1>Welcome to Friendify.</h1>
-                    <div class="spotify-button">
-                        <a href="/login" class="button">To the (sample) Login Page</a>
-                    </div>
-                    <div class = "about-button">
-                        <a href="/about" class="button">To the About Page</a>
-                    </div>
-            </div>
-    </body>
-    <body>
-        <div class = "flex-body">
-            <p>Hello, <span id="username">Guest</span>! ~ Visualize Your Listening Habits ~</p>
+          <div class="spacer"></div>
+          <div class="random-fact-container">
+            {% if is_logged_in %}
+                <div class="welcome">
+                    {% if random_statistic %}
+                        <p>Did you know? {{ random_statistic }}</p>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="welcome">
+                    <h2>Log in for super cool stats</h2>
+                </div>
+            {% endif %}
         </div>
-        <script>
-            window.onload = function() {
-                if (new URLSearchParams(window.location.search).get('login') === 'success') {
-                    alert('You have logged in successfully!');
-                    // Redirect to remove the query parameter from URL
-                    window.history.replaceState({}, document.title, "/");
-                }
-            };
-        </script>
+<!--     REACT TEST WORK    <div class="welcome-back"></div>
 
-        <script>
-            window.onload = function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const username = urlParams.get('username') || 'Guest';
-                document.getElementById('username').textContent = username;
-                window.history.replaceState({}, document.title, "/");
-            };
-        </script>
+            <script type="text/babel" src="{{ url_for('static', filename='js/test.js') }}"></script>
+            <script type="text/babel" src="{{ url_for('static', filename='js/CoolButton.js') }}"></script>
 
-    </body>
-    <body>
-        <div class= "Spotify_icon2">
-            <img src="{{ url_for('static', filename='images/Spotify_icon2.png') }}" alt="Spotify logo">
-        </div>
+            <script type="text/babel">
+                ReactDOM.render(<WelcomeBack />, document.querySelector(".welcome-back"));
+            </script> -->
+    
+            <script>
+                window.onload = function() {
+                    const username = "{{ username }}"; // Use the value from Flask session
+                    document.getElementById('username').textContent = username;
+                };
+            </script>
     </body>
 </html>

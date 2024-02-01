@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset = "UTF-8">
+        <Title>Friendify</Title>
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+
+    <body>
+        <div class = "flex-page-top">
+            <div class = "flex-spotify">
+                <img src="{{ url_for('static', filename='images/favicon.ico') }}" alt="Spotify logo" height=76 width=76>
+            </div>
+                <h1>Welcome to Friendify.</h1>
+                    <div class="spotify-button">
+                        <a href="/login" class="button">To the (sample) Login Page</a>
+                    </div>
+                    <div class = "about-button">
+                        <a href="/about" class="button">To the About Page</a>
+                    <div class="friends-button">
+                        <a href="/friends" class="button">Add Account To Friend Database</a>
+                    </div>
+                    <div class="add-button">
+                        <!-- Call the 'askForFriend' function when the button is clicked -->
+                        <a href="javascript:void(0);" class="button" onclick="askForFriend()">Add Friends</a>
+                    </div>
+            </div>
+    </body>
+    <body>
+        <div class = "flex-body">
+            <p>Hello, <span id="username">Guest</span>! ~ Visualize Your Listening Habits ~</p>
+        </div>
+        <script>
+            window.onload = function() {
+                if (new URLSearchParams(window.location.search).get('login') === 'success') {
+                    alert('You have logged in successfully!');
+                    // Redirect to remove the query parameter from URL
+                    window.history.replaceState({}, document.title, "/");
+                }
+            };
+        </script>
+
+        <script>
+            window.onload = function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const username = urlParams.get('username') || 'Guest';
+                document.getElementById('username').textContent = username;
+                window.history.replaceState({}, document.title, "/");
+            };
+        </script>
+
+        <script>
+            function askForFriend() {
+                // Use prompt to ask for friend's name
+                var friendName = prompt("Enter friend's name:");
+    
+                // If user provides a name, send it to the server for processing
+                if (friendName !== null) {
+                    fetch('/addfriend', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ friendName: friendName }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle the response from the server if needed
+                        console.log(data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
+            }
+        </script>
+    </body>
+    <body>
+        <div class= "Spotify_icon2">
+            <img src="{{ url_for('static', filename='images/Spotify_icon2.png') }}" alt="Spotify logo">
+        </div>
+    </body>
+</html>
