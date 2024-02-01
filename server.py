@@ -5,7 +5,7 @@ import pymongo
 import spotipy
 import certifi
 from spotipy.oauth2 import SpotifyOAuth
-from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template
+from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template, flash
 from datetime import timedelta
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -39,32 +39,53 @@ users = mydb["Users"]
 
 @app.route('/')
 def index():
-    username = session.get('username', 'Guest')  # Default to 'Guest' if not logged in
-    is_logged_in = session.get('is_logged_in', False)  # Default to False if not set
-    print("Username in session:", username) 
-
+    username = session.get('username', 'Guest')
+    is_logged_in = session.get('is_logged_in', False)
     random_statistic = None
+    image_url = None  # URL for the image
+
     if is_logged_in:
         access_token = session.get('access_token')
         headers = {'Authorization': f'Bearer {access_token}'}
 
-        # Fetch top tracks or artists
-        top_tracks_response = requests.get('https://api.spotify.com/v1/me/top/tracks', headers=headers)
-        top_artists_response = requests.get('https://api.spotify.com/v1/me/top/artists', headers=headers)
-        
-        if top_tracks_response.status_code == 200 and top_artists_response.status_code == 200:
-            top_tracks = top_tracks_response.json().get('items', [])
-            top_artists = top_artists_response.json().get('items', [])
+        # Fetch top tracks and artists for different time ranges
+        time_ranges = ['short_term', 'medium_term', 'long_term']
+        stats_choices = []
 
-            # Select a random statistic
-            if top_tracks and top_artists:
-                random_statistic = choice([
-                    f"Your most played artist of all time is {top_artists[0]['name']}",
-                    f"Your most played track of all time is {top_tracks[0]['name']}"
-                    # Add more options, this all i got for now
-                ])
+        for time_range in time_ranges:
+            top_tracks_response = requests.get(
+                f'https://api.spotify.com/v1/me/top/tracks?time_range={time_range}',
+                headers=headers
+            )
+            top_artists_response = requests.get(
+                f'https://api.spotify.com/v1/me/top/artists?time_range={time_range}',
+                headers=headers
+            )
 
-    return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic)
+            if top_tracks_response.status_code == 200:
+                top_tracks = top_tracks_response.json().get('items', [])
+                if top_tracks:
+                    track = top_tracks[0]
+                    stats_choices.append(
+                        {"text": f"Your most played track {'in the last 4 weeks' if time_range == 'short_term' else 'in the last 6 months' if time_range == 'medium_term' else 'of all time'} is {track['name']}",
+                         "image": track['album']['images'][0]['url']}
+                    )
+
+            if top_artists_response.status_code == 200:
+                top_artists = top_artists_response.json().get('items', [])
+                if top_artists:
+                    artist = top_artists[0]
+                    stats_choices.append(
+                        {"text": f"Your most played artist {'in the last 4 weeks' if time_range == 'short_term' else 'in the last 6 months' if time_range == 'medium_term' else 'of all time'} is {artist['name']}",
+                         "image": artist['images'][0]['url']}
+                    )
+
+        if stats_choices:
+            selected_stat = choice(stats_choices)
+            random_statistic = selected_stat["text"]
+            image_url = selected_stat["image"]
+
+    return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic, image_url=image_url)
 
 @app.route('/login')
 def login():
@@ -80,46 +101,43 @@ def database():
 
 @app.route('/friends')
 def friends():
-    if 'access_token' not in session:
-        return redirect('/login')  #Redirect to login page
-    #This got moved to callback
-    return redirect('/db')
+    if 'access_token' in session:
+        username = session.get('username')
+        user_data = users.find_one({'username': username})
+        if user_data:
+            friends_list = user_data.get('friends', [])
+            return render_template('friends.html', friends=friends_list)
+        else:
+            flash("User data not found.")
+            return redirect(url_for('index'))
+    else:
+        flash("Please log in to view your friends.")
+        return redirect(url_for('login'))
 
 
 @app.route('/addfriend', methods=['POST'])
 def addfriend():
     if 'access_token' not in session:
-        return redirect('/login')  #Redirect to login page
-
-    print("We innit")
+        # Gotta log in to add friends lol
+        return {'message': 'Please log in to add friends.'}, 401
 
     data = request.json
     friend_name = data.get('friendName')
+    username = session.get('username')
 
-    print(f"Received friend's name: {friend_name}")
+    # Checking if friend is in our database
+    if not users.find_one({'username': friend_name}):
+        return {'message': 'User is not in Friendify database.'}, 404
 
-    try:
-        client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority')
+    # Check if friend is already added
+    user = users.find_one({'username': username})
+    if friend_name in user.get('friends', []):
+        return {'message': 'User is already your friend.'}, 409
 
-    #URI error is thrown 
-    except pymongo.errors.ConfigurationError:
-        print("An Invalid URI host error was received.")
-        #Idk if this line should be in here specifically
-        sys.exit(1)
+    # Successfully adding friend to list
+    users.update_one({'username': username}, {'$addToSet': {'friends': friend_name}})
+    return {'message': 'Friend successfully added.'}, 200
 
-    mydb = client.Friendify
-    users = mydb["Users"]
-
-    #Is your friend real
-    if(users.find_one({'username': friend_name}) is not None):
-        #Setup access within database
-        username = session.get('username')
-
-        update_query = {'username': username}
-        update_operation = {'$addToSet': {'friends': friend_name}}
-
-        users.update_one(update_query, update_operation)
-    return redirect('/db')
 
 @app.route('/callback')
 def callback():
