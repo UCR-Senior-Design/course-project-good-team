@@ -26,7 +26,7 @@ app.secret_key = 'goodgroup'
 app.permanent_session_lifetime = timedelta(minutes=30)  # Basically saves your login for 30 minutes
 
 try:
-    client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority')
+    client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority', tlsAllowInvalidCertificates=True) # This is not a permanent solution, and is just for development. We should not allow invalid certificates during deployment.
     
 #URI error is thrown 
 except pymongo.errors.ConfigurationError:
@@ -48,42 +48,34 @@ def index():
         access_token = session.get('access_token')
         headers = {'Authorization': f'Bearer {access_token}'}
 
-        # Fetch top tracks and artists for different time ranges
-        time_ranges = ['short_term', 'medium_term', 'long_term']
-        stats_choices = []
+        # Choose randomly between artist and track, and among time ranges
+        stat_type = choice(['track', 'artist'])
+        time_range = choice(['short_term', 'medium_term', 'long_term'])
+        time_range_text = {
+            'short_term': 'in the last 4 weeks',
+            'medium_term': 'in the last 6 months',
+            'long_term': 'of all time'
+        }[time_range]
 
-        for time_range in time_ranges:
+        if stat_type == 'track':
             top_tracks_response = requests.get(
-                f'https://api.spotify.com/v1/me/top/tracks?time_range={time_range}',
+                f'https://api.spotify.com/v1/me/top/tracks?time_range={time_range}&limit=1',
                 headers=headers
             )
-            top_artists_response = requests.get(
-                f'https://api.spotify.com/v1/me/top/artists?time_range={time_range}',
-                headers=headers
-            )
-
             if top_tracks_response.status_code == 200:
-                top_tracks = top_tracks_response.json().get('items', [])
-                if top_tracks:
-                    track = top_tracks[0]
-                    stats_choices.append(
-                        {"text": f"Your most played track {'in the last 4 weeks' if time_range == 'short_term' else 'in the last 6 months' if time_range == 'medium_term' else 'of all time'} is {track['name']}",
-                         "image": track['album']['images'][0]['url']}
-                    )
+                top_track = top_tracks_response.json().get('items', [])[0]
+                random_statistic = f"Your most played track {time_range_text} is {top_track['name']}"
+                image_url = top_track['album']['images'][0]['url']
 
+        elif stat_type == 'artist':
+            top_artists_response = requests.get(
+                f'https://api.spotify.com/v1/me/top/artists?time_range={time_range}&limit=1',
+                headers=headers
+            )
             if top_artists_response.status_code == 200:
-                top_artists = top_artists_response.json().get('items', [])
-                if top_artists:
-                    artist = top_artists[0]
-                    stats_choices.append(
-                        {"text": f"Your most played artist {'in the last 4 weeks' if time_range == 'short_term' else 'in the last 6 months' if time_range == 'medium_term' else 'of all time'} is {artist['name']}",
-                         "image": artist['images'][0]['url']}
-                    )
-
-        if stats_choices:
-            selected_stat = choice(stats_choices)
-            random_statistic = selected_stat["text"]
-            image_url = selected_stat["image"]
+                top_artist = top_artists_response.json().get('items', [])[0]
+                random_statistic = f"Your most played artist {time_range_text} is {top_artist['name']}"
+                image_url = top_artist['images'][0]['url']
 
     return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic, image_url=image_url)
 
