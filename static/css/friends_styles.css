@@ -9,20 +9,8 @@ body {
     src: url(../fonts/GothamMedium.ttf);
 }
 
-.spacer {
-  height: 90px;
-}
 
-.random-fact-container {
-  text-align: center;
-  margin-top: 20px;
-  color: #fff;
-}
-
-
-
-/* NAV BAR CSS */
-
+/* NAV BAR START */
 *,
 ::before,
 *::after {
@@ -174,50 +162,4 @@ nav.navbar{
 .item:nth-child(5):hover:before {
   height: 100%;
 }
-
-
-/* EVERYTHING .welcome_back IS REACT TEST WORK */
-
-/* .welcome-back button:hover {
-    color: #fff;
-    background: #000;
-  }
-  .welcome-back > p {
-    font-size: 1.2em;
-    text-align: center;
-    margin: 0 0 25px;
-    color: #980000;
-  }
-  .welcome-back p.downloading {
-    font-size: 2em;
-    color: #333;
-  }
-
-  .welcome-back {
-    margin: 35px auto;
-    background: #ccc;
-    border-radius: 12px;
-    padding: 25px;
-  }
-  .welcome-back h2 {
-    margin: 0 0 35px;
-    text-align: center;
-    font-size: 2.5em;
-    font-weight: normal;
-  }
-  .welcome-back button {
-    font-size: 2em;
-    background: #20232a;
-    color: rgb(97, 218, 251);
-    border: none;
-    padding: 15px;
-    width: 100%;
-    max-width: 300px;
-    margin: 0 auto;
-    cursor: pointer;
-    display: block;
-    border-radius: 12px;
-    transition: .3s;
-  }
- */
-
+/* NAV BAR END */
