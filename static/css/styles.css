@@ -39,20 +39,19 @@ body {
 }
 
 .container {
-  width: 100vw;
-  display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .welcome{
-  margin-left: 25vw;
-  display: inline;
-  min-width: 800px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 80px;
 }
 
 .weltext{
-  font-size: 35px;
+  font-size: 24px;
   color: #ffffffaf;
 }
 
@@ -60,20 +59,17 @@ body {
   color: #1faa50
 }
 
+
 nav {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 20px;
-  height: 90px;
-  width: 100vw;
+  align-content: center;
   background: #1a1a1a;
   box-shadow: rgba(31, 170, 80, 0.8) 0px 15px 20px -5px;
-  position: sticky;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  border-bottom:rgba(30, 112, 64, 0.493) 4px solid;
+  border-bottom:rgba(30, 112, 64, 0.493) 3px solid;
+}
+nav.navbar{
+  display: flex;
+  justify-content: space-between
 }
 
 .logo{
@@ -84,7 +80,6 @@ nav {
 
 
 .nav--list {
-  width: 100%;
   list-style: none;
   display: flex;
   justify-content: flex-end;
@@ -93,15 +88,15 @@ nav {
 
 .item {
   position: relative;
-  width: 140px;
-  height: 40px;
+  width: 100px;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   user-select: none;
   cursor: pointer;
-  margin: 0 30px;
+  margin: 0 10px;
   border: 2px solid #f2c75c;
   overflow: hidden;
 }
@@ -120,7 +115,7 @@ nav {
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 16px;
+  font-size: 12px;
   width: 140px;
   height: 40px;
   text-transform: uppercase;
@@ -186,6 +181,7 @@ nav {
 .item:nth-child(5):hover:before {
   height: 100%;
 }
+
 
 /* EVERYTHING .welcome_back IS REACT TEST WORK */
 
