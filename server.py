@@ -43,6 +43,10 @@ def index():
     is_logged_in = session.get('is_logged_in', False)
     random_statistic = None
     image_url = None  # URL for the image
+    icon1_link = url_for('static', filename='images/favicon.ico')
+    icon2_link = url_for('static', filename='images/favicon2.ico')
+
+    icon_link = choice([icon1_link, icon2_link])
 
     if is_logged_in:
         access_token = session.get('access_token')
@@ -77,7 +81,9 @@ def index():
                 random_statistic = f"Your most played artist {time_range_text} is {top_artist['name']}"
                 image_url = top_artist['images'][0]['url']
 
-    return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic, image_url=image_url)
+    
+
+    return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic, image_url=image_url, icon_link=icon_link)
 
 @app.route('/login')
 def login():
@@ -85,7 +91,11 @@ def login():
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    icon1_link = url_for('static', filename='images/favicon.ico')
+    icon2_link = url_for('static', filename='images/favicon2.ico')
+
+    icon_link = choice([icon1_link, icon2_link])
+    return render_template('about.html', icon_link=icon_link)
 
 @app.route('/db')
 def database():
@@ -93,12 +103,18 @@ def database():
 
 @app.route('/friends')
 def friends():
+
+    icon1_link = url_for('static', filename='images/favicon.ico')
+    icon2_link = url_for('static', filename='images/favicon2.ico')
+
+    icon_link = choice([icon1_link, icon2_link])
+
     if 'access_token' in session:
         username = session.get('username')
         user_data = users.find_one({'username': username})
         if user_data:
             friends_list = user_data.get('friends', [])
-            return render_template('friends.html', friends=friends_list)
+            return render_template('friends.html', friends=friends_list, icon_link=icon_link)
         else:
             flash("User data not found.")
             return redirect(url_for('index'))

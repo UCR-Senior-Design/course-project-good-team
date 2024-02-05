@@ -4,45 +4,47 @@
         <meta charset="UTF-8">
         <title>About Page</title>
         <!-- adding ../styles correctly accessed setup -->
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/about_styles.css') }}">
     </head>
 
     <body>
-        <div class = "flex-page-top">
-            <div class = "flex-spotify">
-                <!-- adding ../images correctly accessed Spotify image -->
-                <img src="{{ url_for('static', filename='images/Spotify_icon.png') }}" alt="Spotify logo" height=76 width=76>
-            </div>
-                <h1>About Page</h1>
-                    <div class = "back-button">
-                        <a href="/" class="button">Back to Homepage</a>
-                    </div>
+
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <img src="{{ icon_link }}">
+                </div>
+                <div class="welcome">
+                    <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">Guest</span></span>
+                </div>
+              <ul class="nav--list">
+                <li class="item"><button><a href="/">Home</a></button></li>
+                <li class="item"><button><a href="/about">About</a></button></li>
+                <li class="item"><button><a href="/db">Stats</a></button></li>
+                <li class="item"><button><a href="/friends">Friends</a></button></li>
+                <li class="item"><button><a href="/login" class="log">Login</a></button></li>
+              </ul>
+            </nav>
         </div>
-    </body>
-    
-    <body>
+
+
         <div class = "flex-body">
             <p>
                 Friendify is a feature that will add to your Spotify experience. This feature aims to 
                 expand social interactions between users by adding attributes that will give you interaction between friends.
             </p>
         </div>
-    </body>
 
-    <!-- <body> -->
         <div class = "about-body">
-            <!-- <p> -->
                 <ul>
                     <li>View your top tracks and top artists</li>
                     <li>Access your listening statistics</li>
                     <li>Request random recommendations</li>
                     <li>Get personal recommendations based on friends' playlists</li>
                 </ul>
-            <!-- </p> -->
         </div>
-    <!-- </body> -->
 
-    <body>
         <div class = "flex-body">
             <p>
                 Spotify users will use our webpage to log into their respective accounts.
@@ -51,7 +53,6 @@
             </p>
         </div>
         <script src="{{ url_for('static', filename='js/test.js') }}"></script>
+
     </body>
-
-
 </html>

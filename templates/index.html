@@ -16,7 +16,7 @@
         <div class="container">
             <nav class="navbar">
                 <div class="logo">
-                    <img src="{{ url_for('static', filename='images/favicon.ico') }}">
+                    <img src="{{ icon_link }}">
                 </div>
                 <div class="welcome">
                     <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">Guest</span></span>
@@ -24,7 +24,7 @@
               <ul class="nav--list">
                 <li class="item"><button><a href="/">Home</a></button></li>
                 <li class="item"><button><a href="/about">About</a></button></li>
-                <li class="item"><button><a href="/db">Application</a></button></li>
+                <li class="item"><button><a href="/db">Stats</a></button></li>
                 <li class="item"><button><a href="/friends">Friends</a></button></li>
                 <li class="item"><button><a href="/login" class="log">Login</a></button></li>
               </ul>
@@ -34,21 +34,20 @@
           <div class="spacer"></div>
           <div class="random-fact-container">
             {% if is_logged_in %}
-                <div class="welcome">
-                    {% if random_statistic %}
-                        <p>Did you know? {{ random_statistic }}</p>
-                        {% if image_url %}
-                            <div class="statistic-image">
-                                <img src="{{ image_url }}" alt="Image" style="max-width: 300px; max-height: 300px;">
-                            </div>
-                        {% endif %}
+                {% if random_statistic %}
+                <p>Did you know? {{ random_statistic }}</p>
+                    {% if image_url %}
+                    <img src="{{ image_url }}" alt="Image" style="max-width: 300px; max-height: 300px;">
                     {% endif %}
-                </div>
+                {% endif %}
             {% else %}
                 <!-- ... [rest of your 'else' code] ... -->
             {% endif %}
         </div>
-<!--     REACT TEST WORK    <div class="welcome-back"></div>
+
+
+        <!--     REACT TEST WORK    
+            <div class="welcome-back"></div>
 
             <script type="text/babel" src="{{ url_for('static', filename='js/test.js') }}"></script>
             <script type="text/babel" src="{{ url_for('static', filename='js/CoolButton.js') }}"></script>

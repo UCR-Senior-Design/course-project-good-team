@@ -1,1 +1,3 @@
 scripts/.cache
+package-lock.json
+package.json
