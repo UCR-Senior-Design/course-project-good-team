@@ -6,14 +6,11 @@
         <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/friends_styles.css') }}">
     </head>
-<body>
-
-
     <body>
         <div class="container">
             <nav class="navbar">
                 <div class="logo">
-                    <img src="{{ url_for('static', filename='images/favicon.ico') }}">
+                    <img src="{{ icon_link }}">
                 </div>
                 <div class="welcome">
                     <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">Guest</span></span>
@@ -29,42 +26,42 @@
           </div>
 
 
-    <h1>Your Friends</h1>
-    {% if friends %}
-        <ul>
-            {% for friend in friends %}
-                <li>{{ friend }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>You have no friends added.</p>
-    {% endif %}
+        <h1>Your Friends</h1>
+        {% if friends %}
+            <ul>
+                {% for friend in friends %}
+                    <li>{{ friend }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <p>You have no friends added.</p>
+            {% endif %}
 
-    <!-- Add Friend Button -->
-    <button onclick="askForFriend()">Add Friend</button>
+        <!-- Add Friend Button -->
+        <button onclick="askForFriend()">Add Friend</button>
 
-    <script>
-        function askForFriend() {
-            var friendName = prompt("Enter friend's name:");
-    
-            if (friendName !== null) {
-                fetch('/addfriend', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ friendName: friendName }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert(data.message);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+        <script>
+         function askForFriend() {
+             var friendName = prompt("Enter friend's name:");
+            
+             if (friendName !== null) {
+                    fetch('/addfriend', {
+                        method: 'POST',
+                        headers: {
+                         'Content-Type': 'application/json',
+                        },
+                     body: JSON.stringify({ friendName: friendName }),
+                    })
+                    .then(response => response.json())
+                   .then(data => {
+                      alert(data.message);
+                  })
+                  .catch(error => {
+                        console.error('Error:', error);
+                 });
+             }
             }
-        }
-    </script>
+        </script>
     
-</body>
+    </body>
 </html>

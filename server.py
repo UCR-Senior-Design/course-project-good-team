@@ -91,7 +91,11 @@ def login():
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    icon1_link = url_for('static', filename='images/favicon.ico')
+    icon2_link = url_for('static', filename='images/favicon2.ico')
+
+    icon_link = choice([icon1_link, icon2_link])
+    return render_template('about.html', icon_link=icon_link)
 
 @app.route('/db')
 def database():
@@ -99,12 +103,18 @@ def database():
 
 @app.route('/friends')
 def friends():
+
+    icon1_link = url_for('static', filename='images/favicon.ico')
+    icon2_link = url_for('static', filename='images/favicon2.ico')
+
+    icon_link = choice([icon1_link, icon2_link])
+
     if 'access_token' in session:
         username = session.get('username')
         user_data = users.find_one({'username': username})
         if user_data:
             friends_list = user_data.get('friends', [])
-            return render_template('friends.html', friends=friends_list)
+            return render_template('friends.html', friends=friends_list, icon_link=icon_link)
         else:
             flash("User data not found.")
             return redirect(url_for('index'))
