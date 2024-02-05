@@ -43,6 +43,10 @@ def index():
     is_logged_in = session.get('is_logged_in', False)
     random_statistic = None
     image_url = None  # URL for the image
+    icon1_link = url_for('static', filename='images/favicon.ico')
+    icon2_link = url_for('static', filename='images/favicon2.ico')
+
+    icon_link = choice([icon1_link, icon2_link])
 
     if is_logged_in:
         access_token = session.get('access_token')
@@ -77,7 +81,9 @@ def index():
                 random_statistic = f"Your most played artist {time_range_text} is {top_artist['name']}"
                 image_url = top_artist['images'][0]['url']
 
-    return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic, image_url=image_url)
+    
+
+    return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic, image_url=image_url, icon_link=icon_link)
 
 @app.route('/login')
 def login():
