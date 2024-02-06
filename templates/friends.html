@@ -147,9 +147,17 @@
                     }) 
                     .catch(error => {
                         console.error('Error:', error);
-                    });
-            };
+                 });
+             }
+            }
         </script> -->
-    
+
+
+        <script>
+            window.onload = function() {
+                const username = "{{ username }}"; // Use the value from Flask session
+                document.getElementById('username').textContent = username;
+            };
+        </script>
     </body>
 </html>

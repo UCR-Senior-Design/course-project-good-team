@@ -27,19 +27,6 @@
               </ul>
             </nav>
           </div>
-        
-
-
-        <div class = "flex-page-top">
-            <div class = "flex-spotify">
-                <img src="{{ url_for('static', filename='images/favicon.ico') }}" alt="Spotify logo" height=76 width=76>
-            </div>
-                <h1>Welcome to Friendify.</h1>
-                    <div class="spotify-button">
-                        <a href="/login" class="button">To the (sample) Login Page</a>
-                    </div>
-                    <div class = "about-button">
-                        <a href="/about" class="button">To the About Page</a>
                     <div class="friends-button">
                         <a href="/friends" class="button">Add Account To Friend Database</a>
                     </div>
@@ -48,12 +35,33 @@
                         <a href="javascript:void(0);" class="button" onclick="askForFriend()">Add Friends</a>
                     </div>
             </div>
-    </body>
-    <body>
-        <div class = "flex-body">
-            <p>Hello, <span id="username">Guest</span>! ~ Visualize Your Listening Habits ~</p>
-        </div>
-    
+
+        <script>
+            window.onload = function() {
+                if (new URLSearchParams(window.location.search).get('login') === 'success') {
+                    alert('You have logged in successfully!');
+                    // Redirect to remove the query parameter from URL
+                    window.history.replaceState({}, document.title, "/");
+                }
+            };
+        </script>
+
+        <script>
+            window.onload = function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const username = urlParams.get('username') || 'Guest';
+                document.getElementById('username').textContent = username;
+                window.history.replaceState({}, document.title, "/");
+            };
+        </script>
+
+        <script>
+            window.onload = function() {
+                const username = "{{ username }}"; // Use the value from Flask session
+                document.getElementById('username').textContent = username;
+            };
+        </script>
+
         <script>
             function askForFriend() {
                 // Use prompt to ask for friend's name

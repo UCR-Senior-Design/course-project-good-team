@@ -8,18 +8,57 @@ body {
     font-family: Spotify;
     src: url(../fonts/GothamMedium.ttf);
 }
+@font-face {
+  font-family: Winter;
+  src: url(../fonts/epkyouka.ttf);
+}
 
 .spacer {
   height: 90px;
 }
 
+.spacer2{
+  height: 700px;
+}
+
 .random-fact-container {
+  display: flex;
   text-align: center;
-  margin-top: 20px;
   color: #fff;
 }
 
+.random-fact{
+  font-size: 24px;
+  padding-left: 30px;
+}
 
+.special{
+  color: #1faa50;
+  font-size: 24px;
+}
+
+.image-container{
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 300px;
+}
+
+.random-fact-image{
+  margin-left: 100px;
+  margin-top: 40px;
+  border: rgba(76, 140, 174, 0.603) 2px solid;
+  box-shadow: rgb(50 159 163) 0px 10px 30px 10px;
+  width: 320px;
+  height: 320px;
+}
+
+.page-marker{
+  color: #ffffffaf;
+  font-family: Winter;
+  font-size: 40px;
+  margin-left: 30px;
+  font-style: italic;
+}
 
 /* NAV BAR CSS */
 
