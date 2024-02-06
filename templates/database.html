@@ -28,13 +28,6 @@
             </nav>
           </div>
         
-
-
-        <div class = "flex-page-top">
-            <div class = "flex-spotify">
-                <img src="{{ url_for('static', filename='images/favicon.ico') }}" alt="Spotify logo" height=76 width=76>
-            </div>
-                <h1>Welcome to Friendify.</h1>
                     <div class="spotify-button">
                         <a href="/login" class="button">To the (sample) Login Page</a>
                     </div>
@@ -69,6 +62,13 @@
                 const username = urlParams.get('username') || 'Guest';
                 document.getElementById('username').textContent = username;
                 window.history.replaceState({}, document.title, "/");
+            };
+        </script>
+
+        <script>
+            window.onload = function() {
+                const username = "{{ username }}"; // Use the value from Flask session
+                document.getElementById('username').textContent = username;
             };
         </script>
 
