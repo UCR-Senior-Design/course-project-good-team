@@ -4,12 +4,17 @@ import requests
 import pymongo
 import spotipy
 import certifi
+import json
 from spotipy.oauth2 import SpotifyOAuth
-from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template, flash
+from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template, flash, jsonify
 from datetime import timedelta
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from random import choice
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
@@ -108,7 +113,7 @@ def friends():
     icon2_link = url_for('static', filename='images/favicon2.ico')
 
     icon_link = choice([icon1_link, icon2_link])
-
+ 
     if 'access_token' in session:
         username = session.get('username')
         user_data = users.find_one({'username': username})
@@ -121,6 +126,49 @@ def friends():
     else:
         flash("Please log in to view your friends.")
         return redirect(url_for('login'))
+
+#adding a getFriends route to get Spotify friends
+@app.route('/getfriends')
+def get_friends():
+    print("Accessed /getfriends route")
+    try:
+        if 'access_token' in session:
+            username = session.get('username')
+            access_token = session.get('access_token')
+
+            headers = {'Authorization': f'Bearer {access_token}'}
+
+            # Fetch user's list of Spotify friends
+            friends_response = requests.get(
+                'https://api.spotify.com/v1/me/following?type=user',
+                headers=headers
+            )
+
+            if friends_response.status_code == 200:
+                friends_data = friends_response.json()
+
+                # Debugging statement
+                print("Friends data:", friends_data)
+
+                if friends_data is not None:
+                    friends_list = [friend['display_name'] for friend in friends_data.get('artists', {}).get('items', [])]
+                    return json.dumps({'friends': friends_list}), 200, {'Content-Type': 'application/json'}
+                    #return {'friends': friends_list}
+                else:
+                    raise ValueError('friends_data is None')
+
+            else:
+                return {'error': 'Error fetching friend list'}, 500
+
+        else:
+            return {'error': 'User not logged in'}, 401
+
+    except Exception as e:
+        print(f"Error in /getfriends: {e}")  # Debugging statement
+        import traceback
+        traceback.print_exc()  # Print the full traceback
+        return {'error': str(e)}, 500
+    
 
 
 @app.route('/addfriend', methods=['POST'])

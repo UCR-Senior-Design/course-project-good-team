@@ -26,7 +26,7 @@
           </div>
 
 
-        <h1>Your Friends</h1>
+        <h1>Your Friendify Friends</h1>
         {% if friends %}
             <ul>
                 {% for friend in friends %}
@@ -61,6 +61,38 @@
                  });
              }
             }
+        </script>
+
+        <div class="friends-container">
+            <h2>Your Spotify Friends</h2>
+            <ul id = 'friendsList'>
+                <!--friends list dynamically populated here-->
+            </ul>
+            <!-- <ul>
+                {% for friend in friends %}
+                    <li>{{ friend }}</li>
+                {% endfor %}
+            </ul>-->
+        </div>
+
+        <script>
+            window.onload = function() {
+                fetch('/getfriends')
+                    .then(response => response.json())
+                    .then(data => {
+                        const friendsList = data.friends || [];
+                        const friendsListContainer = document.getElementById('friendsList');
+
+                        friendsList.forEach(friend => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = friend;
+                            friendsListContainer.appendChild(listItem);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            };
         </script>
     
     </body>
