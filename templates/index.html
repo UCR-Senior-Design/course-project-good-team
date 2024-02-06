@@ -35,14 +35,21 @@
           <div class="random-fact-container">
             {% if is_logged_in %}
                 {% if random_statistic %}
-                <p>Did you know? {{ random_statistic }}</p>
+                <p class = "random-fact">Did you know? {{ random_statistic }} <div class ="special">{{ special_name }}</div></p>
+            </div>
                     {% if image_url %}
-                    <img src="{{ image_url }}" alt="Image" style="max-width: 300px; max-height: 300px;">
+                    <img src="{{ image_url }}" alt="Image" style="max-width: 300px; max-height: 300px;" class = "random-fact-image">
                     {% endif %}
                 {% endif %}
             {% else %}
+            <P>text goes here</P>
             {% endif %}
-        </div>
+
+            <div class="spacer2"></div>
+
+            <div class = "page-marker">
+                <p>HOME</p>
+            </div>
 
  
         <!--     REACT TEST WORK    

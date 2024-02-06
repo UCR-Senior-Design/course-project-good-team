@@ -105,7 +105,8 @@ def index():
             )
             if top_tracks_response.status_code == 200:
                 top_track = top_tracks_response.json().get('items', [])[0]
-                random_statistic = f"Your most played track {time_range_text} is {top_track['name']}"
+                random_statistic = f"Your most played track {time_range_text} is "
+                special_name = top_track['name'][0]
                 image_url = top_track['album']['images'][0]['url']
 
         elif stat_type == 'artist':
@@ -115,12 +116,13 @@ def index():
             )
             if top_artists_response.status_code == 200:
                 top_artist = top_artists_response.json().get('items', [])[0]
-                random_statistic = f"Your most played artist {time_range_text} is {top_artist['name']}"
+                random_statistic = f"Your most played artist {time_range_text} is "
+                special_name = top_artist['name'][0]
                 image_url = top_artist['images'][0]['url']
 
     
 
-    return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic, image_url=image_url, icon_link=icon_link)
+    return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic, image_url=image_url, icon_link=icon_link, special_name=special_name)
 
 @app.route('/login')
 def login():
