@@ -16,12 +16,12 @@
                     <img src="{{ icon_link }}">
                 </div>
                 <div class="welcome">
-                    <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">Guest</span></span>
+                    <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">{{ username }}</span></span>
                 </div>
               <ul class="nav--list">
                 <li class="item"><button><a href="/">Home</a></button></li>
                 <li class="item"><button><a href="/about">About</a></button></li>
-                <li class="item"><button><a href="/db">Stats</a></button></li>
+                <li class="item"><button><a href="/stats">Stats</a></button></li>
                 <li class="item"><button><a href="/friends">Friends</a></button></li>
                 <li class="item"><button><a href="/login" class="log">Login</a></button></li>
               </ul>
@@ -87,5 +87,24 @@
                 }
             }
         </script>
+    </body>
+    <body>
+        <div>
+            <h2>Your Genre Breakdown</h2>
+            <form action="/stats" method="get">
+                <label for="time_range">Select time range:</label>
+                <select name="time_range" id="time_range">
+                    <option value="short_term">Last 4 weeks</option>
+                    <option value="medium_term">Last 6 months</option>
+                    <option value="long_term">All time</option>
+                </select>
+                <button type="submit">Show chart</button>
+            </form>
+            {% if image_data %}
+                <img src="data:image/png;base64,{{ image_data }}" alt="Your Genre Breakdown">
+            {% else %}
+                <p>No data available. Please ensure you have enough listening history.</p>
+            {% endif %}
+        </div>
     </body>
 </html>
