@@ -82,6 +82,7 @@ def index():
     image_url = None  # URL for the image
     icon1_link = url_for('static', filename='images/favicon.ico')
     icon2_link = url_for('static', filename='images/favicon2.ico')
+    special_name = None
 
     icon_link = choice([icon1_link, icon2_link])
 
@@ -106,7 +107,7 @@ def index():
             if top_tracks_response.status_code == 200:
                 top_track = top_tracks_response.json().get('items', [])[0]
                 random_statistic = f"Your most played track {time_range_text} is "
-                special_name = top_track['name'][0]
+                special_name = top_track['name']
                 image_url = top_track['album']['images'][0]['url']
 
         elif stat_type == 'artist':
@@ -117,7 +118,7 @@ def index():
             if top_artists_response.status_code == 200:
                 top_artist = top_artists_response.json().get('items', [])[0]
                 random_statistic = f"Your most played artist {time_range_text} is "
-                special_name = top_artist['name'][0]
+                special_name = top_artist['name']
                 image_url = top_artist['images'][0]['url']
 
     

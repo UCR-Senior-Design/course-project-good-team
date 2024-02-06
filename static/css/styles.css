@@ -37,12 +37,19 @@ body {
   font-size: 24px;
 }
 
-.random-fact-image{
+.image-container{
   display: flex;
-  margin-left: 300px;
+  justify-content: flex-end;
+  margin-right: 300px;
+}
+
+.random-fact-image{
+  margin-left: 100px;
   margin-top: 40px;
   border: rgba(76, 140, 174, 0.603) 2px solid;
   box-shadow: rgb(50 159 163) 0px 10px 30px 10px;
+  width: 320px;
+  height: 320px;
 }
 
 .page-marker{
