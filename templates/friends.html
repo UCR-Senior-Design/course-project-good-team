@@ -25,54 +25,110 @@
             </nav>
           </div>
 
+          <div class="topspacer"></div>
+          <body>
+            <div class="centered-text">
+                <h1>Your Friendify Friends</h1>
+                {% if friends %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <div class="spacer"></div>
+                                    <th>Friend Username</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for friend in friends %}
+                                <tr>
+                                    <td>{{ friend }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>You have no friends added.</p>
+                {% endif %}
+            </div>
+        </body>
+        </html>
 
-        <h1>Your Friendify Friends</h1>
-        {% if friends %}
-            <ul>
-                {% for friend in friends %}
-                    <li>{{ friend }}</li>
-                {% endfor %}
-            </ul>
-            {% else %}
-                <p>You have no friends added.</p>
-            {% endif %}
+<!--           <div class="centered-text">
+          <h1>Your Friendify Friends</h1>
+          {% if friends %}
+              <table>
+                  <thead>
+                    <div class="spacer"></div>
+                      <tr>
+                        <th class="centered-text">Friend Username</th>     
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for friend in friends %}
+                          <tr>
+                            <td class="centered-text">{{ friend }}</td>
+                          </tr>  
+                      {% endfor %}
+                  </tbody>
+              </table>
+          {% else %}
+              <p>You have no friends added.</p>
+          {% endif %}
+        </div> -->
 
+        <div class="spacer"></div>
+        <div class="centered-text">
         <!-- Add Friend Button -->
-        <button onclick="askForFriend()">Add Friend</button>
-
+        <!-- <button onclick="askForFriend()">Add Friend</button> -->
+            <button class="item" onclick="askForFriend()">
+                <span>Add Friend</span>
+            </button>
+        </div>    
         <script>
-         function askForFriend() {
-             var friendName = prompt("Enter friend's name:");
+        function askForFriend() {
+            var friendName = prompt("Enter friend's name:");
             
-             if (friendName !== null) {
+            if (friendName !== null) {
                     fetch('/addfriend', {
                         method: 'POST',
                         headers: {
-                         'Content-Type': 'application/json',
+                        'Content-Type': 'application/json',
                         },
-                     body: JSON.stringify({ friendName: friendName }),
+                    body: JSON.stringify({ friendName: friendName }),
                     })
                     .then(response => response.json())
-                   .then(data => {
-                      alert(data.message);
-                  })
-                  .catch(error => {
+                .then(data => {
+                    alert(data.message);
+                    location.reload();
+                })
+                .catch(error => {
                         console.error('Error:', error);
-                 });
-             }
+                });
+            }
             }
         </script>
 
-        <div class="friends-container">
+        <div class="topspacer"></div>
+        <div class="centered-text">
+            <p>Login on other platforms and exchange handles!</p>
+        </div>
+        <footer>
+            <ul>
+                <li class="footer"><a href="https://facebook.com">Facebook</a></li>
+                <li class="footer"><a href="https://twitter.com">Twitter</a></li>
+                <li class="footer"><a href="https://www.instagram.com">Instagram</a></li>
+            </ul>
+        </footer>
+
+<!--         <div class="friends-container">
             <h2>Your Spotify Friends</h2>
             <ul id = 'friendsList'>
-                <!--friends list dynamically populated here-->
+                friends list dynamically populated here
             </ul>
-            <!-- <ul>
+             <ul>
                 {% for friend in friends %}
                     <li>{{ friend }}</li>
                 {% endfor %}
-            </ul>-->
+            </ul>
         </div>
 
         <script>
@@ -93,7 +149,7 @@
                         console.error('Error:', error);
                     });
             };
-        </script>
+        </script> -->
     
     </body>
 </html>

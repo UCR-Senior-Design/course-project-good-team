@@ -127,7 +127,7 @@ def friends():
         flash("Please log in to view your friends.")
         return redirect(url_for('login'))
 
-#adding a getFriends route to get Spotify friends
+""" #adding a getFriends route to get Spotify friends
 @app.route('/getfriends')
 def get_friends():
     print("Accessed /getfriends route")
@@ -158,6 +158,7 @@ def get_friends():
                     raise ValueError('friends_data is None')
 
             else:
+                print("Error fetching friend list. Response text:", friends_response.text)
                 return {'error': 'Error fetching friend list'}, 500
  
         else:
@@ -167,7 +168,7 @@ def get_friends():
         print(f"Error in /getfriends: {e}")  # Debugging statement
         import traceback
         traceback.print_exc()  # Print the full traceback
-        return {'error': str(e)}, 500
+        return {'error': str(e)}, 500 """
     
 
 
