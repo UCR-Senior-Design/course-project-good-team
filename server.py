@@ -1,20 +1,22 @@
 import os
+import io
 import base64
 import requests
 import pymongo
 import spotipy
-import certifi
-import json
 from spotipy.oauth2 import SpotifyOAuth
-from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template, flash, jsonify
+from collections import defaultdict
+import certifi
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from spotipy.oauth2 import SpotifyOAuth
+from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template, flash
 from datetime import timedelta
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from random import choice
-from flask_cors import CORS
-
-app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+from io import BytesIO
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
@@ -41,6 +43,36 @@ except pymongo.errors.ConfigurationError:
 
 mydb = client.Friendify
 users = mydb["Users"]
+
+def fetch_user_top_artists_genres(access_token, time_range='medium_term'):
+    sp = spotipy.Spotify(auth=access_token)
+    top_artists = sp.current_user_top_artists(limit=50, time_range=time_range)
+    genre_count = defaultdict(int)
+
+    for index, artist in enumerate(top_artists['items'], start=1):
+        weight = 51 - index  # weights more listened to artists heavier in pie chart calculation
+        for genre in artist['genres']:
+            genre_count[genre] += weight
+
+    return genre_count
+
+def generate_genre_pie_chart(genres):
+    top_genres = dict(sorted(genres.items(), key=lambda item: item[1], reverse=True)[:10])
+    
+    fig, ax = plt.subplots()
+    ax.pie(top_genres.values(), labels=top_genres.keys(), autopct='%1.1f%%', startangle=90)
+    ax.axis('equal')  # Makes sure that pie chart will be a circle
+
+    # save to buffer
+    buf = BytesIO()
+    plt.savefig(buf, format='png', bbox_inches='tight')
+    plt.close(fig)
+    buf.seek(0)
+    
+    # base64 encoding
+    image_base64 = base64.b64encode(buf.read()).decode('utf-8')
+    buf.close()
+    return image_base64
 
 @app.route('/')
 def index():
@@ -96,15 +128,27 @@ def login():
 
 @app.route('/about')
 def about():
+    username = session.get('username', 'Guest')
     icon1_link = url_for('static', filename='images/favicon.ico')
     icon2_link = url_for('static', filename='images/favicon2.ico')
 
     icon_link = choice([icon1_link, icon2_link])
-    return render_template('about.html', icon_link=icon_link)
+    return render_template('about.html', icon_link=icon_link, username=username)
 
-@app.route('/db')
-def database():
-    return render_template('database.html')
+@app.route('/stats')
+def stats():
+    if 'access_token' not in session:
+        flash("Please log in to view your stats.")
+        return redirect(url_for('login'))
+
+    username = session.get('username', 'Guest')
+    access_token = session['access_token']
+    # Retrieve the selected time range from the request, default to 'medium_term'
+    selected_time_range = request.args.get('time_range', 'short_term')
+    genres = fetch_user_top_artists_genres(access_token, selected_time_range)
+    image_data = generate_genre_pie_chart(genres)
+
+    return render_template('stats.html', image_data=image_data, username=username)
 
 @app.route('/friends')
 def friends():
@@ -113,63 +157,19 @@ def friends():
     icon2_link = url_for('static', filename='images/favicon2.ico')
 
     icon_link = choice([icon1_link, icon2_link])
- 
+
     if 'access_token' in session:
         username = session.get('username')
         user_data = users.find_one({'username': username})
         if user_data:
             friends_list = user_data.get('friends', [])
-            return render_template('friends.html', friends=friends_list, icon_link=icon_link)
+            return render_template('friends.html', friends=friends_list, icon_link=icon_link, username=username)
         else:
             flash("User data not found.")
             return redirect(url_for('index'))
     else:
         flash("Please log in to view your friends.")
         return redirect(url_for('login'))
-
-""" #adding a getFriends route to get Spotify friends
-@app.route('/getfriends')
-def get_friends():
-    print("Accessed /getfriends route")
-    try:
-        if 'access_token' in session:
-            username = session.get('username')
-            access_token = session.get('access_token')
-
-            headers = {'Authorization': f'Bearer {access_token}'}
-
-            # Fetch user's list of Spotify friends
-            friends_response = requests.get(
-                'https://api.spotify.com/v1/me/following?type=user',
-                headers=headers
-            )
-
-            if friends_response.status_code == 200:
-                friends_data = friends_response.json()
-
-                # Debugging statement
-                print("Friends data:", friends_data)
-
-                if friends_data is not None:
-                    friends_list = [friend['display_name'] for friend in friends_data.get('artists', {}).get('items', [])]
-                    return json.dumps({'friends': friends_list}), 200, {'Content-Type': 'application/json'}
-                    #return {'friends': friends_list}
-                else:
-                    raise ValueError('friends_data is None')
-
-            else:
-                print("Error fetching friend list. Response text:", friends_response.text)
-                return {'error': 'Error fetching friend list'}, 500
- 
-        else:
-            return {'error': 'User not logged in'}, 401
-
-    except Exception as e:
-        print(f"Error in /getfriends: {e}")  # Debugging statement
-        import traceback
-        traceback.print_exc()  # Print the full traceback
-        return {'error': str(e)}, 500 """
-    
 
 
 @app.route('/addfriend', methods=['POST'])

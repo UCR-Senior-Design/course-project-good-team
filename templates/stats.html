@@ -16,12 +16,12 @@
                     <img src="{{ icon_link }}">
                 </div>
                 <div class="welcome">
-                    <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">Guest</span></span>
+                    <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">{{ username }}</span></span>
                 </div>
               <ul class="nav--list">
                 <li class="item"><button><a href="/">Home</a></button></li>
                 <li class="item"><button><a href="/about">About</a></button></li>
-                <li class="item"><button><a href="/db">Stats</a></button></li>
+                <li class="item"><button><a href="/stats">Stats</a></button></li>
                 <li class="item"><button><a href="/friends">Friends</a></button></li>
                 <li class="item"><button><a href="/login" class="log">Login</a></button></li>
               </ul>
@@ -53,25 +53,7 @@
         <div class = "flex-body">
             <p>Hello, <span id="username">Guest</span>! ~ Visualize Your Listening Habits ~</p>
         </div>
-        <script>
-            window.onload = function() {
-                if (new URLSearchParams(window.location.search).get('login') === 'success') {
-                    alert('You have logged in successfully!');
-                    // Redirect to remove the query parameter from URL
-                    window.history.replaceState({}, document.title, "/");
-                }
-            };
-        </script>
-
-        <script>
-            window.onload = function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const username = urlParams.get('username') || 'Guest';
-                document.getElementById('username').textContent = username;
-                window.history.replaceState({}, document.title, "/");
-            };
-        </script>
-
+    
         <script>
             function askForFriend() {
                 // Use prompt to ask for friend's name
@@ -99,8 +81,22 @@
         </script>
     </body>
     <body>
-        <div class= "Spotify_icon2">
-            <img src="{{ url_for('static', filename='images/Spotify_icon2.png') }}" alt="Spotify logo">
+        <div>
+            <h2>Your Genre Breakdown</h2>
+            <form action="/stats" method="get">
+                <label for="time_range">Select time range:</label>
+                <select name="time_range" id="time_range">
+                    <option value="short_term">Last 4 weeks</option>
+                    <option value="medium_term">Last 6 months</option>
+                    <option value="long_term">All time</option>
+                </select>
+                <button type="submit">Show chart</button>
+            </form>
+            {% if image_data %}
+                <img src="data:image/png;base64,{{ image_data }}" alt="Your Genre Breakdown">
+            {% else %}
+                <p>No data available. Please ensure you have enough listening history.</p>
+            {% endif %}
         </div>
     </body>
 </html>
