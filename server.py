@@ -159,7 +159,7 @@ def get_friends():
 
             else:
                 return {'error': 'Error fetching friend list'}, 500
-
+ 
         else:
             return {'error': 'User not logged in'}, 401
 
