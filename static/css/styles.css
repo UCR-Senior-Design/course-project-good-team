@@ -21,6 +21,10 @@ body {
   height: 700px;
 }
 
+.bucket-container{
+  display: flex;
+}
+
 .random-fact-container {
   display: flex;
   text-align: center;
@@ -55,11 +59,27 @@ body {
 }
 
 .page-marker{
+  display: flex;
   color: #ffffffaf;
   font-family: Winter;
   font-size: 40px;
   margin-left: 30px;
+  margin-bottom: 20px;
   font-style: italic;
+  position: fixed;
+  bottom: 0;
+}
+
+.look-top{
+  color: #ffffffaf;
+  font-family: Winter;
+  font-size: 30px;
+  margin-left: 920px;
+  margin-bottom: 20px;
+  font-style: italic;
+  position: fixed;
+  bottom: 0;
+
 }
 
 /* NAV BAR CSS */
