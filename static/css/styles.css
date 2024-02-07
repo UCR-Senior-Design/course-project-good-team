@@ -24,17 +24,20 @@ body {
 .random-fact-container {
   display: flex;
   text-align: center;
+  justify-content: space-between;
   color: #fff;
 }
 
 .random-fact{
-  font-size: 24px;
+  text-align: start;
+  margin-top: 50px;
+  font-size: 40px;
   padding-left: 30px;
 }
 
 .special{
   color: #1faa50;
-  font-size: 24px;
+  font-size: 40px;
 }
 
 .image-container{
@@ -45,11 +48,10 @@ body {
 
 .random-fact-image{
   margin-left: 100px;
-  margin-top: 40px;
   border: rgba(76, 140, 174, 0.603) 2px solid;
   box-shadow: rgb(50 159 163) 0px 10px 30px 10px;
-  width: 320px;
-  height: 320px;
+  width: 340px;
+  height: 340px;
 }
 
 .page-marker{

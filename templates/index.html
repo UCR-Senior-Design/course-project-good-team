@@ -35,12 +35,12 @@
           <div class="random-fact-container">
             {% if is_logged_in %}
                 {% if random_statistic %}
-                <p class = "random-fact">Did you know? {{ random_statistic }} <span class ="special"> {{ special_name }}</span></p>
-            </div>
+                <p class = "random-fact">Did you know?<br> {{ random_statistic }} <span class ="special"> {{ special_name }}</span></p>
                     {% if image_url %}
                     <div class = "image-container">
                         <img src="{{ image_url }}" alt="Image" class = "random-fact-image">
                     </div>
+                </div>
                     {% endif %}
                 {% endif %}
             {% else %}
