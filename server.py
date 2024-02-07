@@ -45,6 +45,25 @@ except pymongo.errors.ConfigurationError:
 mydb = client.Friendify
 users = mydb["Users"]
 
+def update_user_document(userid, username, profile_pic_url):
+    # Check if the user exists; if not, insert new, otherwise update
+    existing_user = users.find_one({'id': userid})
+
+    if existing_user:
+        # User exists, update their profile picture URL
+        users.update_one({'id': userid}, {'$set': {'profile_pic_url': profile_pic_url}})
+    else:
+        # User doesn't exist, insert as new
+        new_user = {
+            'id': userid,
+            'username': username,
+            'profile_pic_url': profile_pic_url,
+            'friends': [],
+            'friendRequests': [],
+            'playlists': []
+        }
+        users.insert_one(new_user)
+
 def fetch_user_top_artists_genres(access_token, time_range='medium_term'):
     sp = spotipy.Spotify(auth=access_token)
     top_artists = sp.current_user_top_artists(limit=50, time_range=time_range)
@@ -203,7 +222,17 @@ def friends():
         if user_data:
             friends_list = user_data.get('friends', [])
             friend_requests = user_data.get('friendRequests', [])  # Get the list of friend requests
-            return render_template('friends.html', friends=friends_list, friend_requests=friend_requests, icon_link=icon_link, username=username, is_logged_in=is_logged_in)
+
+            profile_pics = {}
+            for friend in friends_list:
+                friend_data = users.find_one({'username': friend})
+                if friend_data and 'profile_pic_url' in friend_data:
+                    profile_pics[friend] = friend_data['profile_pic_url']
+                else:
+                    # Default or placeholder profile pic if not found
+                    profile_pics[friend] = url_for('static', filename='images/favicon.ico') #need to get a default pfp, for now just using our logo
+
+            return render_template('friends.html', friends=friends_list, profile_pics=profile_pics, icon_link=icon_link, username=username, is_logged_in=is_logged_in, friend_requests=friend_requests)
         else:
             flash("User data not found.")
             return redirect(url_for('index'))
@@ -348,12 +377,16 @@ def callback():
             user_data = user_profile_response.json()
             username = user_data.get('display_name')
             userid = user_data.get('id')
+            profile_pic_url = user_data['images'][0]['url'] if user_data['images'] else None
             print("Recieved data from ", username)
 
             # For right now just using flask session to store username, if theres a better way to do this i'll change it later
             session['username'] = username
             session['access_token'] = access_token
             session['is_logged_in'] = True
+
+            # Update user document with profile picture URL
+            update_user_document(userid, username, profile_pic_url)
             
             #Storing the logged in user to the database if they are not already in it
             if users.find_one({'id': userid}) is not None:
@@ -389,6 +422,7 @@ def callback():
                     new_user = {
                         'id': userid,
                         'username': username,
+                        'profile_pic_url': profile_pic_url,
                         'friends': [],
                         'friendRequests': [],
                         'playlists': playlistsnameid
