@@ -42,6 +42,7 @@ body {
 .special{
   color: #1faa50;
   font-size: 40px;
+  text-shadow: 2px 2px 4px #000;
 }
 
 .image-container{
@@ -235,6 +236,8 @@ nav.navbar{
 .item:nth-child(5):hover:before {
   height: 100%;
 }
+
+
 
 
 /* EVERYTHING .welcome_back IS REACT TEST WORK */
