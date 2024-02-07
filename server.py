@@ -10,6 +10,7 @@ import certifi
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
 from spotipy.oauth2 import SpotifyOAuth
 from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template, flash
 from datetime import timedelta
@@ -44,6 +45,25 @@ except pymongo.errors.ConfigurationError:
 mydb = client.Friendify
 users = mydb["Users"]
 
+def update_user_document(userid, username, profile_pic_url):
+    # Check if the user exists; if not, insert new, otherwise update
+    existing_user = users.find_one({'id': userid})
+
+    if existing_user:
+        # User exists, update their profile picture URL
+        users.update_one({'id': userid}, {'$set': {'profile_pic_url': profile_pic_url}})
+    else:
+        # User doesn't exist, insert as new
+        new_user = {
+            'id': userid,
+            'username': username,
+            'profile_pic_url': profile_pic_url,
+            'friends': [],
+            'friendRequests': [],
+            'playlists': []
+        }
+        users.insert_one(new_user)
+
 def fetch_user_top_artists_genres(access_token, time_range='medium_term'):
     sp = spotipy.Spotify(auth=access_token)
     top_artists = sp.current_user_top_artists(limit=50, time_range=time_range)
@@ -57,21 +77,41 @@ def fetch_user_top_artists_genres(access_token, time_range='medium_term'):
     return genre_count
 
 def generate_genre_pie_chart(genres):
+    # Sort genres and select top N
     top_genres = dict(sorted(genres.items(), key=lambda item: item[1], reverse=True)[:10])
     
+    # Create figure and axis
     fig, ax = plt.subplots()
-    ax.pie(top_genres.values(), labels=top_genres.keys(), autopct='%1.1f%%', startangle=90)
-    ax.axis('equal')  # Makes sure that pie chart will be a circle
-
-    # save to buffer
+    # Set background color of chart
+    fig.patch.set_facecolor('#373737')  #just matching the background of the html page for now, probably can do something better
+    ax.set_facecolor('#373737')
+    
+    # Font for chart, can mess around with this
+    font_properties = FontProperties()
+    font_properties.set_family('sans-serif')
+    font_properties.set_weight('bold')
+    
+    # Generate pie chart with customizations
+    wedges, texts, autotexts = ax.pie(top_genres.values(), labels=top_genres.keys(), autopct='%1.1f%%', startangle=90,
+                                      textprops=dict(color="w", fontproperties=font_properties))  # Set text color to white
+    
+    # Make sure the pie chart is a circle
+    ax.axis('equal')
+    
+    # Change the font color of the percentages
+    for autotext in autotexts:
+        autotext.set_color('black')  # Change as needed
+    
+    # Save to buffer
     buf = BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight')
+    plt.savefig(buf, format='png', bbox_inches='tight', facecolor=fig.get_facecolor(), edgecolor='none')
     plt.close(fig)
     buf.seek(0)
     
-    # base64 encoding
+    # Base64 encoding
     image_base64 = base64.b64encode(buf.read()).decode('utf-8')
     buf.close()
+    
     return image_base64
 
 @app.route('/')
@@ -129,18 +169,26 @@ def index():
 def login():
     return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    session.clear()  # Clears the user's session
+    flash("You have been logged out.", "info")
+    return redirect(url_for('index'))
+
 @app.route('/about')
 def about():
+    is_logged_in = 'username' in session
     username = session.get('username', 'Guest')
 
     icon1_link = url_for('static', filename='images/favicon.ico')
     icon2_link = url_for('static', filename='images/favicon2.ico')
 
     icon_link = choice([icon1_link, icon2_link])
-    return render_template('about.html', icon_link=icon_link, username=username)
+    return render_template('about.html', icon_link=icon_link, username=username, is_logged_in=is_logged_in)
 
 @app.route('/stats')
 def stats():
+    is_logged_in = 'username' in session
     if 'access_token' not in session:
         flash("Please log in to view your stats.")
         return redirect(url_for('login'))
@@ -156,21 +204,35 @@ def stats():
     genres = fetch_user_top_artists_genres(access_token, selected_time_range)
     image_data = generate_genre_pie_chart(genres)
 
-    return render_template('stats.html', image_data=image_data, username=username, icon_link=icon_link)
+    return render_template('stats.html', image_data=image_data, username=username, icon_link=icon_link, is_logged_in=is_logged_in)
 
 @app.route('/friends')
 def friends():
+    is_logged_in = 'username' in session
 
     icon1_link = url_for('static', filename='images/favicon.ico')
     icon2_link = url_for('static', filename='images/favicon2.ico')
     icon_link = choice([icon1_link, icon2_link])
+
+    friend_requests = [] 
 
     if 'access_token' in session:
         username = session.get('username')
         user_data = users.find_one({'username': username})
         if user_data:
             friends_list = user_data.get('friends', [])
-            return render_template('friends.html', friends=friends_list, icon_link=icon_link, username=username)
+            friend_requests = user_data.get('friendRequests', [])  # Get the list of friend requests
+
+            profile_pics = {}
+            for friend in friends_list:
+                friend_data = users.find_one({'username': friend})
+                if friend_data and 'profile_pic_url' in friend_data:
+                    profile_pics[friend] = friend_data['profile_pic_url']
+                else:
+                    # Default or placeholder profile pic if not found
+                    profile_pics[friend] = url_for('static', filename='images/favicon.ico') #need to get a default pfp, for now just using our logo
+
+            return render_template('friends.html', friends=friends_list, profile_pics=profile_pics, icon_link=icon_link, username=username, is_logged_in=is_logged_in, friend_requests=friend_requests)
         else:
             flash("User data not found.")
             return redirect(url_for('index'))
@@ -182,25 +244,100 @@ def friends():
 @app.route('/addfriend', methods=['POST'])
 def addfriend():
     if 'access_token' not in session:
-        # Gotta log in to add friends lol
         return {'message': 'Please log in to add friends.'}, 401
 
     data = request.json
-    friend_name = data.get('friendName')
-    username = session.get('username')
+    recipient_username = data.get('friendName')  # Username of the user to whom the request is being sent
+    requester_username = session.get('username')  # Username of the user sending the request
 
-    # Checking if friend is in our database
-    if not users.find_one({'username': friend_name}):
-        return {'message': 'User is not in Friendify database.'}, 404
+    if recipient_username == requester_username:
+        return {'message': 'You cannot add yourself as a friend.'}, 400
 
-    # Check if friend is already added
-    user = users.find_one({'username': username})
-    if friend_name in user.get('friends', []):
-        return {'message': 'User is already your friend.'}, 409
+    recipient = users.find_one({'username': recipient_username})
+    if not recipient:
+        return {'message': 'Recipient user does not exist.'}, 404
 
-    # Successfully adding friend to list
-    users.update_one({'username': username}, {'$addToSet': {'friends': friend_name}})
-    return {'message': 'Friend successfully added.'}, 200
+    # Check if friend request is already sent, or already friends
+    if requester_username in recipient.get('friendRequests', []) or requester_username in recipient.get('friends', []):
+        return {'message': 'Friend request already sent or you are already friends.'}, 409
+
+    # Add a friend request to the recipient
+    result = users.update_one(
+        {'username': recipient_username},
+        {'$addToSet': {'friendRequests': requester_username}}
+    )
+
+    if result.modified_count == 1:
+        return {'message': 'Friend request sent successfully.'}, 200
+    else:
+        return {'message': 'Failed to send friend request.'}, 500
+
+
+@app.route('/acceptfriend', methods=['POST'])
+def acceptfriend():
+    if 'access_token' not in session:
+        return {'message': 'Please log in to manage friend requests.'}, 401
+
+    data = request.json
+    requester_username = data.get('requesterUsername')  # Username of the user who sent the friend request
+    recipient_username = session.get('username')  # Username of the user accepting the request
+
+    # Fetch both the recipient and requester user
+    recipient = users.find_one({'username': recipient_username})
+    requester = users.find_one({'username': requester_username})
+
+    if not requester or not recipient:
+        return {'message': 'User not found.'}, 404
+
+    # Check if the requester is in the recipient's friendRequests array
+    if requester_username not in recipient.get('friendRequests', []):
+        return {'message': 'Friend request not found.'}, 404
+
+    # Update operations
+    # Remove requester from friendrequests and add to friends
+    users.update_one(
+        {'username': recipient_username},
+        {'$pull': {'friendRequests': requester_username},
+         '$addToSet': {'friends': requester_username}} 
+    )
+
+    # Check if there is a mutual friend request
+    if recipient_username in requester.get('friendRequests', []):
+        # If mutual, add recipient to requester's friends list and remove the friend request
+        users.update_one(
+            {'username': requester_username},
+            {'$pull': {'friendRequests': recipient_username},
+             '$addToSet': {'friends': recipient_username}}  # Add to friends list
+        )
+    else:
+        # If not mutual, add recipient to requester's friends list
+        users.update_one(
+            {'username': requester_username},
+            {'$addToSet': {'friends': recipient_username}}
+        )
+
+    return {'message': 'Friend request accepted.'}, 200
+
+
+@app.route('/declinefriend', methods=['POST'])
+def declinefriend():
+    if 'access_token' not in session:
+        return {'message': 'Please log in to manage friend requests.'}, 401
+
+    data = request.json
+    requester_username = data.get('requesterUsername')
+    recipient_username = session.get('username')
+
+    # Just remove from requests
+    result = users.update_one(
+        {'username': recipient_username},
+        {'$pull': {'friendRequests': requester_username}}
+    )
+
+    if result.modified_count == 1:
+        return {'message': 'Friend request declined successfully.'}, 200
+    else:
+        return {'message': 'Failed to decline friend request.'}, 500
 
 
 @app.route('/callback')
@@ -240,12 +377,16 @@ def callback():
             user_data = user_profile_response.json()
             username = user_data.get('display_name')
             userid = user_data.get('id')
+            profile_pic_url = user_data['images'][0]['url'] if user_data['images'] else None
             print("Recieved data from ", username)
 
             # For right now just using flask session to store username, if theres a better way to do this i'll change it later
             session['username'] = username
             session['access_token'] = access_token
             session['is_logged_in'] = True
+
+            # Update user document with profile picture URL
+            update_user_document(userid, username, profile_pic_url)
             
             #Storing the logged in user to the database if they are not already in it
             if users.find_one({'id': userid}) is not None:
@@ -281,7 +422,9 @@ def callback():
                     new_user = {
                         'id': userid,
                         'username': username,
+                        'profile_pic_url': profile_pic_url,
                         'friends': [],
+                        'friendRequests': [],
                         'playlists': playlistsnameid
                     }
 

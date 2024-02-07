@@ -23,7 +23,11 @@
                 <li class="item"><button><a href="/about">About</a></button></li>
                 <li class="item"><button><a href="/stats">Stats</a></button></li>
                 <li class="item"><button><a href="/friends">Friends</a></button></li>
+                {% if is_logged_in %}
+                <li class="item"><a><button onclick="logout()">Logout</a></button></li>
+                {% else %}
                 <li class="item"><button><a href="/login" class="log">Login</a></button></li>
+                {% endif %}
               </ul>
             </nav>
         </div>
@@ -60,6 +64,11 @@
                 document.getElementById('username').textContent = username;
             };
         </script>
+        <script>
+            function logout() {
+                window.location.href = '/logout'; // Redirects to the logout route
+            }
+            </script>
 
     </body>
 </html>

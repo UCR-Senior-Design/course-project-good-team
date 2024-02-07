@@ -20,65 +20,44 @@
                 <li class="item"><button><a href="/about">About</a></button></li>
                 <li class="item"><button><a href="/stats">Stats</a></button></li>
                 <li class="item"><button><a href="/friends">Friends</a></button></li>
+                {% if is_logged_in %}
+                <li class="item"><a><button onclick="logout()">Logout</a></button></li>
+                {% else %}
                 <li class="item"><button><a href="/login" class="log">Login</a></button></li>
+                {% endif %}
               </ul>
             </nav>
           </div>
 
-          <div class="topspacer"></div>
-          <body>
-            <div class="centered-text">
-                <h1>Your Friendify Friends</h1>
-                {% if friends %}
-                    <table>
-                        <thead>
+          <div class="centered-text">
+            <h1>Your Friendify Friends</h1>
+            {% if friends %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Profile</th> 
+                            <th>Friend Username</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for friend in friends %}
                             <tr>
-                                <div class="spacer"></div>
-                                    <th>Friend Username</th>
+                                <td><img src="{{ profile_pics[friend] }}" alt="Profile Pic" class="friend-profile-pic"></td>
+                                <td>{{ friend }}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {% for friend in friends %}
-                                <tr>
-                                    <td>{{ friend }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    <p>You have no friends added.</p>
-                {% endif %}
-            </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>You have no friends added.</p>
+            {% endif %}
+        </div>
         </body>
         </html>
 
-<!--           <div class="centered-text">
-          <h1>Your Friendify Friends</h1>
-          {% if friends %}
-              <table>
-                  <thead>
-                    <div class="spacer"></div>
-                      <tr>
-                        <th class="centered-text">Friend Username</th>     
-                      </tr>
-                  </thead>
-                  <tbody>
-                      {% for friend in friends %}
-                          <tr>
-                            <td class="centered-text">{{ friend }}</td>
-                          </tr>  
-                      {% endfor %}
-                  </tbody>
-              </table>
-          {% else %}
-              <p>You have no friends added.</p>
-          {% endif %}
-        </div> -->
 
         <div class="spacer"></div>
         <div class="centered-text">
-        <!-- Add Friend Button -->
-        <!-- <button onclick="askForFriend()">Add Friend</button> -->
             <button class="item" onclick="askForFriend()">
                 <span>Add Friend</span>
             </button>
@@ -108,6 +87,60 @@
         </script>
 
         <div class="topspacer"></div>
+
+        <div class="pending-requests">
+            <h2>You have {{ friend_requests|length }} pending friend request(s)</h2>
+            {% for request in friend_requests %}
+            <div class="request">
+                {{ request }}
+                <button onclick="acceptFriendRequest('{{ request }}')">✓</button>
+                <button onclick="declineFriendRequest('{{ request }}')">✕</button>
+        </div>
+        {% endfor %}
+        </div>
+
+        <script>
+            function acceptFriendRequest(requesterUsername) {
+                fetch('/acceptfriend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ requesterUsername: requesterUsername })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    location.reload(); // Reload the page to update the list
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+            
+            function declineFriendRequest(requesterUsername) {
+                fetch('/declinefriend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ requesterUsername: requesterUsername })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    location.reload(); // Reload the page to update the list
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+            </script>
+
+
+        <div class="topspacer"></div>
         <div class="centered-text">
             <p>Login on other platforms and exchange handles!</p>
         </div>
@@ -119,45 +152,16 @@
             </ul>
         </footer>
 
-<!--         <div class="friends-container">
-            <h2>Your Spotify Friends</h2>
-            <ul id = 'friendsList'>
-                friends list dynamically populated here
-            </ul>
-             <ul>
-                {% for friend in friends %}
-                    <li>{{ friend }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <script>
-            window.onload = function() {
-                fetch('/getfriends')
-                    .then(response => response.json())
-                    .then(data => {
-                        const friendsList = data.friends || [];
-                        const friendsListContainer = document.getElementById('friendsList');
-
-                        friendsList.forEach(friend => {
-                            const listItem = document.createElement('li');
-                            listItem.textContent = friend;
-                            friendsListContainer.appendChild(listItem);
-                        });
-                    }) 
-                    .catch(error => {
-                        console.error('Error:', error);
-                 });
-             }
-            }
-        </script> -->
-
-
         <script>
             window.onload = function() {
                 const username = "{{ username }}"; // Use the value from Flask session
                 document.getElementById('username').textContent = username;
             };
         </script>
+        <script>
+            function logout() {
+                window.location.href = '/logout'; // Redirects to the logout route
+            }
+            </script>
     </body>
 </html>
