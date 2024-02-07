@@ -39,24 +39,30 @@
           <div class="random-fact-container">
             {% if is_logged_in %}
                 {% if random_statistic %}
-                <p class = "random-fact">Did you know? {{ random_statistic }} <span class ="special"> {{ special_name }}</span></p>
-            </div>
+                <p class = "random-fact">Did you know?<br> {{ random_statistic }} <span class ="special"> {{ special_name }}</span></p>
                     {% if image_url %}
                     <div class = "image-container">
                         <img src="{{ image_url }}" alt="Image" class = "random-fact-image">
                     </div>
+          </div>
                     {% endif %}
+
                 {% endif %}
+            <div class = "look-top"> 
+                <footer>Check out the <span class = "friend">stats</span> tab for more features!</footer>
+            </div>
             {% else %}
-            <P>text goes here</P>
+        </div>
+        <div class = "bucket-container">
+            <p class = "bucket">Login using the button to the top right!</p>
+        </div>
             {% endif %}
 
             <div class="spacer2"></div>
 
             <div class = "page-marker">
-                <p>HOME</p>
+                <footer>HOME</footer>
             </div>
-
  
         <!--     REACT TEST WORK    
             <div class="welcome-back"></div>
