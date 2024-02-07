@@ -28,7 +28,8 @@ def addNewUser():
     #Create a new user document
     new_user = {
         'username': username_to_search,
-        'friends': []
+        'friends': [],
+        'friendRequests': [] 
     }
 
     #Insert the new user document into the collection
