@@ -284,6 +284,7 @@ def callback():
     if response.status_code == 200:
         print("Token request successful.")
         access_token = response.json().get('access_token')
+        sp = spotipy.Spotify(auth=access_token)
         
         # Fetch user's profile data
         headers = {'Authorization': f'Bearer {access_token}'}
@@ -294,6 +295,18 @@ def callback():
             username = user_data.get('display_name')
             userid = user_data.get('id')
             profile_pic_url = user_data['images'][0]['url'] if user_data['images'] else None
+
+             # Dictionary to store top tracks and artists for each time range
+            top_data = {}
+            for time_range in ['short_term', 'medium_term', 'long_term']:
+                # Fetch top artists and tracks
+                top_artists = sp.current_user_top_artists(time_range=time_range, limit=50)
+                top_tracks = sp.current_user_top_tracks(time_range=time_range, limit=50)
+
+                # Format and store the data
+                top_data[f'{time_range}_artists'] = [{'id': artist['id'], 'name': artist['name'], 'image_url': artist['images'][0]['url'] if artist['images'] else ''} for artist in top_artists['items']]
+                top_data[f'{time_range}_tracks'] = [{'id': track['id'], 'name': track['name'], 'image_url': track['album']['images'][0]['url'] if track['album']['images'] else ''} for track in top_tracks['items']]
+            
             print("Recieved data from ", username)
 
             # For right now just using flask session to store username, if theres a better way to do this i'll change it later
@@ -302,7 +315,7 @@ def callback():
             session['is_logged_in'] = True
 
             # Update user document with profile picture URL
-            update_user_document(users, userid, username, profile_pic_url)
+            update_user_document(users, user_data['id'], user_data['display_name'], profile_pic_url, top_data)
             
             #Storing the logged in user to the database if they are not already in it
             if users.find_one({'id': userid}) is not None:
