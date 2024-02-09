@@ -17,7 +17,7 @@ from PIL import Image
 import requests
 from collections import Counter
 
-from spotify_utils import fetch_user_top_artists_genres, generate_genre_pie_chart, get_random_statistic
+from spotify_utils import fetch_user_top_artists_genres, generate_genre_pie_chart, get_random_statistic, get_random_friend_statistic
 from image_utils import get_dominant_color, get_contrasting_text_color
 from db_utils import update_user_document
 
@@ -64,22 +64,29 @@ def index():
 
     if is_logged_in:
         access_token = session.get('access_token')
+        user_data = users.find_one({'username': username})
+        display_friend_stat = choice([True, False])  # Decide if we want to show a friend's stat
         
-        #random_statistic funciton is in spotify_utils.py
-        random_statistic, image_url, special_name = get_random_statistic(access_token)
+        if display_friend_stat:
+            random_statistic, special_name, image_url = get_random_friend_statistic(user_data, users)
+        
+        if not random_statistic:
+            # If no friend statistic was found or not displaying friend's stat, get the user's own statistic
+            random_statistic, image_url, special_name = get_random_statistic(access_token)
 
-        #for testing with different images
-        #image_url = "https://pub-static.fotor.com/assets/bg/246400f6-8a87-48ad-9698-281d55b388f5.jpg" 
-        
-        if image_url:  
+        # Determine the background and text color based on the image
+        if image_url:
             background_color = get_dominant_color(image_url)
             text_color = get_contrasting_text_color(background_color)
         else:
-            background_color = '#defaultColor'  # Fallback color
-            text_color = '#defaultColor'  # Fallback color
+            background_color = '#defaultColor'
+            text_color = '#defaultColor'
         
 
-    return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic, image_url=image_url, icon_link=icon_link, special_name=special_name, background_color=background_color, text_color=text_color)
+    return render_template('index.html', username=username, is_logged_in=is_logged_in,
+                           random_statistic=random_statistic, image_url=image_url,
+                           icon_link=icon_link, special_name=special_name,
+                           background_color=background_color, text_color=text_color)
 
 @app.route('/login')
 def login():

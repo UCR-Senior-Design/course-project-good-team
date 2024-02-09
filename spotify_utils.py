@@ -100,3 +100,32 @@ def get_random_statistic(access_token):
             image_url = top_artist['images'][0]['url']
 
     return random_statistic, image_url, special_name
+
+def get_random_friend_statistic(user_data, users):
+    friends_list = user_data.get('friends', [])
+    if not friends_list:
+        return None, None, None
+
+    random_friend_username = choice(friends_list)  # Choose a random friend
+    friend_data = users.find_one({'username': random_friend_username})
+
+    if not friend_data:
+        return None, None, None
+
+    stat_type = choice(['tracks', 'artists'])
+    time_range = choice(['short_term', 'medium_term', 'long_term'])
+    time_range_text = {
+        'short_term': 'in the last 4 weeks',
+        'medium_term': 'in the last 6 months',
+        'long_term': 'of all time'
+    }[time_range]
+
+    if not friend_data.get(f'{time_range}_{stat_type}'):
+        return None, None, None
+
+    random_stat = choice(friend_data[f'{time_range}_{stat_type}'])
+    random_statistic = f"Your friend {random_friend_username}'s favorite {stat_type[:-1]} {time_range_text} is "
+    special_name = random_stat['name']
+    image_url = random_stat['image_url']
+
+    return random_statistic, special_name, image_url
