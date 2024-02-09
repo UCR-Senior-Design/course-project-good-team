@@ -165,10 +165,6 @@ def index():
 
     return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic, image_url=image_url, icon_link=icon_link, special_name=special_name)
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
-
 @app.route('/logout')
 def logout():
     session.clear()  # Clears the user's session
