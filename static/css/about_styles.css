@@ -71,6 +71,18 @@ h1 {
     background: #222222;
 }
 
+.page-marker{
+  display: flex;
+  color: #ffffffaf;
+  font-family: Winter;
+  font-size: 40px;
+  margin-left: 30px;
+  margin-bottom: 20px;
+  font-style: italic;
+  position: fixed;
+  bottom: 0;
+}
+
 
 /* NAV BAR CSS */
 

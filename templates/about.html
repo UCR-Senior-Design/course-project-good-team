@@ -56,7 +56,10 @@
                 statistics to personalize their experience. 
             </p>
         </div>
-        <script src="{{ url_for('static', filename='js/test.js') }}"></script>
+
+        <div class = "page-marker">
+            <footer>ABOUT</footer>
+        </div>
 
         <script>
             window.onload = function() {
@@ -64,11 +67,6 @@
                 document.getElementById('username').textContent = username;
             };
         </script>
-        <script>
-            function logout() {
-                window.location.href = '/logout'; // Redirects to the logout route
-            }
-            </script>
 
     </body>
 </html>
