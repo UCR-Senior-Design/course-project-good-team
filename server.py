@@ -7,17 +7,19 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from collections import defaultdict
 import certifi
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from matplotlib.font_manager import FontProperties
 from spotipy.oauth2 import SpotifyOAuth
 from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template, flash
 from datetime import timedelta
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from random import choice
-from io import BytesIO
+from PIL import Image
+import requests
+from collections import Counter
+
+from spotify_utils import fetch_user_top_artists_genres, generate_genre_pie_chart, get_random_statistic, get_random_friend_statistic
+from image_utils import get_dominant_color, get_contrasting_text_color
+from db_utils import update_user_document
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
@@ -45,77 +47,11 @@ except pymongo.errors.ConfigurationError:
 mydb = client.Friendify
 users = mydb["Users"]
 
-def update_user_document(userid, username, profile_pic_url, playlistsnameid):
-    # Check if the user exists; if not, insert new, otherwise update
-    existing_user = users.find_one({'id': userid})
-
-    if existing_user:
-        # User exists, update their profile picture URL
-        users.update_one({'id': userid}, {'$set': {'profile_pic_url': profile_pic_url}})
-    else:
-        # User doesn't exist, insert as new
-        new_user = {
-            'id': userid,
-            'username': username,
-            'profile_pic_url': profile_pic_url,
-            'friends': [],
-            'friendRequests': [],
-            'playlists': playlistsnameid
-        }
-        users.insert_one(new_user)
-
-def fetch_user_top_artists_genres(access_token, time_range='medium_term'):
-    sp = spotipy.Spotify(auth=access_token)
-    top_artists = sp.current_user_top_artists(limit=50, time_range=time_range)
-    genre_count = defaultdict(int)
-
-    for index, artist in enumerate(top_artists['items'], start=1):
-        weight = 51 - index  # weights more listened to artists heavier in pie chart calculation
-        for genre in artist['genres']:
-            genre_count[genre] += weight
-
-    return genre_count
-
-def generate_genre_pie_chart(genres):
-    # Sort genres and select top N
-    top_genres = dict(sorted(genres.items(), key=lambda item: item[1], reverse=True)[:10])
-    
-    # Create figure and axis
-    fig, ax = plt.subplots()
-    # Set background color of chart
-    fig.patch.set_facecolor('#373737')  #just matching the background of the html page for now, probably can do something better
-    ax.set_facecolor('#373737')
-    
-    # Font for chart, can mess around with this
-    font_properties = FontProperties()
-    font_properties.set_family('sans-serif')
-    font_properties.set_weight('bold')
-    
-    # Generate pie chart with customizations
-    wedges, texts, autotexts = ax.pie(top_genres.values(), labels=top_genres.keys(), autopct='%1.1f%%', startangle=90,
-                                      textprops=dict(color="w", fontproperties=font_properties))  # Set text color to white
-    
-    # Make sure the pie chart is a circle
-    ax.axis('equal')
-    
-    # Change the font color of the percentages
-    for autotext in autotexts:
-        autotext.set_color('black')  # Change as needed
-    
-    # Save to buffer
-    buf = BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight', facecolor=fig.get_facecolor(), edgecolor='none')
-    plt.close(fig)
-    buf.seek(0)
-    
-    # Base64 encoding
-    image_base64 = base64.b64encode(buf.read()).decode('utf-8')
-    buf.close()
-    
-    return image_base64
 
 @app.route('/')
 def index():
+    background_color = '#defaultBackgroundColor'  # Set a default background color
+    text_color = '#defaultTextColor'  # Set a default text color
     username = session.get('username', 'Guest')
     is_logged_in = session.get('is_logged_in', False)
     random_statistic = None
@@ -128,42 +64,29 @@ def index():
 
     if is_logged_in:
         access_token = session.get('access_token')
-        headers = {'Authorization': f'Bearer {access_token}'}
+        user_data = users.find_one({'username': username})
+        display_friend_stat = choice([True, False])  # Decide if we want to show a friend's stat
+        
+        if display_friend_stat:
+            random_statistic, special_name, image_url = get_random_friend_statistic(user_data, users)
+        
+        if not random_statistic:
+            # If no friend statistic was found or not displaying friend's stat, get the user's own statistic
+            random_statistic, image_url, special_name = get_random_statistic(access_token)
 
-        # Choose randomly between artist and track, and among time ranges
-        stat_type = choice(['track', 'artist'])
-        time_range = choice(['short_term', 'medium_term', 'long_term'])
-        time_range_text = {
-            'short_term': 'in the last 4 weeks',
-            'medium_term': 'in the last 6 months',
-            'long_term': 'of all time'
-        }[time_range]
+        # Determine the background and text color based on the image
+        if image_url:
+            background_color = get_dominant_color(image_url)
+            text_color = get_contrasting_text_color(background_color)
+        else:
+            background_color = '#defaultColor'
+            text_color = '#defaultColor'
+        
 
-        if stat_type == 'track':
-            top_tracks_response = requests.get(
-                f'https://api.spotify.com/v1/me/top/tracks?time_range={time_range}&limit=1',
-                headers=headers
-            )
-            if top_tracks_response.status_code == 200:
-                top_track = top_tracks_response.json().get('items', [])[0]
-                random_statistic = f"Your most played track {time_range_text} is "
-                special_name = top_track['name']
-                image_url = top_track['album']['images'][0]['url']
-
-        elif stat_type == 'artist':
-            top_artists_response = requests.get(
-                f'https://api.spotify.com/v1/me/top/artists?time_range={time_range}&limit=1',
-                headers=headers
-            )
-            if top_artists_response.status_code == 200:
-                top_artist = top_artists_response.json().get('items', [])[0]
-                random_statistic = f"Your most played artist {time_range_text} is "
-                special_name = top_artist['name']
-                image_url = top_artist['images'][0]['url']
-
-    
-
-    return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic, image_url=image_url, icon_link=icon_link, special_name=special_name)
+    return render_template('index.html', username=username, is_logged_in=is_logged_in,
+                           random_statistic=random_statistic, image_url=image_url,
+                           icon_link=icon_link, special_name=special_name,
+                           background_color=background_color, text_color=text_color)
 
 @app.route('/logout')
 def logout():
@@ -364,7 +287,9 @@ def callback():
     if response.status_code == 200:
         print("Token request successful.")
         access_token = response.json().get('access_token')
-        
+        sp = spotipy.Spotify(auth=access_token)
+
+
         # Fetch user's profile data
         headers = {'Authorization': f'Bearer {access_token}'}
         user_profile_response = requests.get('https://api.spotify.com/v1/me', headers=headers)
@@ -375,18 +300,16 @@ def callback():
             userid = user_data.get('id')
             profile_pic_url = user_data['images'][0]['url'] if user_data['images'] else None
             
-            playlists_response = requests.get('https://api.spotify.com/v1/me/playlists', headers=headers)
-            if playlists_response.status_code == 200:
-                playlists_data = playlists_response.json()
-                playlistsnameid = []
-                #Process playlists data here
-                for playlist in playlists_data['items']:
-                    plist = (playlist['name'], playlist['id'])
-                    playlistsnameid.append(plist)
-            else:
-                print("Failed to retrieve access token. Status code:", response.status_code)
-                print("Response:", response.json())
-                return redirect('/error')  # Redirect to an error page that we haven't implemented yet
+            # Dictionary to store top tracks and artists for each time range
+            top_data = {}
+            for time_range in ['short_term', 'medium_term', 'long_term']:
+                # Fetch top artists and tracks
+                top_artists = sp.current_user_top_artists(time_range=time_range, limit=50)
+                top_tracks = sp.current_user_top_tracks(time_range=time_range, limit=50)
+
+                # Format and store the data
+                top_data[f'{time_range}_artists'] = [{'id': artist['id'], 'name': artist['name'], 'image_url': artist['images'][0]['url'] if artist['images'] else ''} for artist in top_artists['items']]
+                top_data[f'{time_range}_tracks'] = [{'id': track['id'], 'name': track['name'], 'image_url': track['album']['images'][0]['url'] if track['album']['images'] else ''} for track in top_tracks['items']]
                     
             print("Recieved data from ", username)
 
@@ -396,8 +319,53 @@ def callback():
             session['is_logged_in'] = True
 
             # Update user document with profile picture URL
-            update_user_document(userid, username, profile_pic_url, playlistsnameid)
+            update_user_document(users, user_data['id'], user_data['display_name'], profile_pic_url, top_data, playlistsnameid)
 
+         #Storing the logged in user to the database if they are not already in it
+            if users.find_one({'id': userid}) is not None:
+                print(f"'{userid}' is already registered.")
+            else:
+                #TODO: This does not update the user profile with new playlists, it currently only takes a snapshot of the user profile data
+                #at the time of initially adding them to the database, I need to make it so that each time it connects it re checks the playlist
+                #data and adds if new playlists exist, cause right now the query here is useless, since it isn't checking against any existing data
+                
+                #Fetch user's playlists
+                playlists_response = requests.get('https://api.spotify.com/v1/me/playlists', headers=headers)
+                if playlists_response.status_code == 200:
+                    playlists_data = playlists_response.json()
+
+                    playlistsnameid = []
+                    #Process playlists data here
+                    for playlist in playlists_data['items']:
+                        plist = (playlist['name'], playlist['id'])
+                        #Query to check if the tuple exists in the data field for a specific document
+                        query = {
+                            "id": userid,
+                            "playlists": {
+                                "$elemMatch": {
+                                    "$eq": plist
+                                }
+                            }
+                        }
+                        existing_document = users.find_one(query)
+                        playlistsnameid.append(plist)
+                
+                    #Create a new user document
+
+                    new_user = {
+                        'id': userid,
+                        'username': username,
+                        'profile_pic_url': profile_pic_url,
+                        'friends': [],
+                        'friendRequests': [],
+                        'playlists': playlistsnameid
+                    }
+
+                    #Insert the new user document into the collection
+                    users.insert_one(new_user)
+                    print(f"User '{username}' added successfully.")
+                else:
+                    print("error")
         return redirect(url_for('index', username=username))
 
     else:
