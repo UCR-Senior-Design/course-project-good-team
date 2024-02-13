@@ -313,7 +313,7 @@ def callback():
                 # Format and store the data
                 top_data[f'{time_range}_artists'] = [{'id': artist['id'], 'name': artist['name'], 'image_url': artist['images'][0]['url'] if artist['images'] else ''} for artist in top_artists['items']]
                 top_data[f'{time_range}_tracks'] = [{'id': track['id'], 'name': track['name'], 'image_url': track['album']['images'][0]['url'] if track['album']['images'] else ''} for track in top_tracks['items']]
-            
+                  
             print("Recieved data from ", username)
 
             # For right now just using flask session to store username, if theres a better way to do this i'll change it later
@@ -369,6 +369,8 @@ def callback():
                     print(f"User '{username}' added successfully.")
                 else:
                     print("error")
+            update_user_document(userid, username, profile_pic_url, playlistsnameid)
+
         return redirect(url_for('index', username=username))
 
     else:
