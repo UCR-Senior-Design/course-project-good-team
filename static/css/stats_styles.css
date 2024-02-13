@@ -8,67 +8,33 @@ body {
     font-family: Spotify;
     src: url(../fonts/GothamMedium.ttf);
 }
-
-h1 {
-    color: #1faa50;
-    font-family: Spotify;
-    background-color: #222222;
+@font-face {
+  font-family: Winter;
+  src: url(../fonts/epkyouka.ttf);
 }
 
-.flex-spotify {
-    display: flex;
+.spacer {
+  height: 90px;
 }
 
-.flex-page-top {
-    display: flex;
-    border: 3px solid black;
-    border-radius: 8px;
-    justify-content: space-between;
-    font-family: Spotify;
-    background: #222222;
-    padding: 5px;
+.spacer2{
+  height: 700px;
 }
 
-.button{
-    background-color: #1faa50; /* Green */
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
+.bucket-container{
+  display: flex;
 }
 
-.back-button,
-.about-button,
-.spotify-button {
-    background-color: #1faa50; /* Green */
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
+.bucket{
+  color: white;
+  font-size: 40px;
+  margin-left: 20px;
 }
 
-.flex-body {
-    margin: 6px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    border: 3px solid black;
-    border-radius: 8px;
-    background: #222222;
-}
 
-.about-body {
-    margin: 6px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    border: 3px solid black;
-    border-radius: 8px;
-    background: #222222;
+.special{
+  color: #1faa50;
+  font-size: 40px;
 }
 
 .page-marker{
@@ -83,6 +49,62 @@ h1 {
   bottom: 0;
 }
 
+.look-top{
+  color: #ffffffaf;
+  font-family: Spotify;
+  font-size: 26px;
+  margin-left: 1050px;
+  margin-bottom: 20px;
+  font-style: italic;
+  position: fixed;
+  bottom: 0;
+
+}
+
+/* PIE CHART CSS */
+
+.genre-text{
+  display: flex;
+  justify-content: center;
+}
+
+/* SIDE BAR CSS */
+
+.sidebar-container{
+  height: 94.1%;
+  width: 250px;
+  position: absolute;
+  left: 0;
+  background-color:#1a1a1a;
+  z-index: -1;
+  display: flex;
+}
+
+.sidebar{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar-tools{
+  list-style: none;
+}
+
+.tool{
+  position: relative;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  margin: 0 10px;
+  border: 2px solid #f2c75c;
+  overflow: hidden;
+}
 
 /* NAV BAR CSS */
 
@@ -117,6 +139,7 @@ h1 {
 
 
 nav {
+  z-index: 1;
   display: flex;
   align-content: center;
   background: #1a1a1a;
@@ -134,6 +157,28 @@ nav.navbar{
   width: 75px;
 }
 
+
+.nav--list {
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.item {
+  position: relative;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  margin: 0 10px;
+  border: 2px solid #f2c75c;
+  overflow: hidden;
+}
 
 .logout{
   position: relative;
@@ -198,28 +243,6 @@ nav.navbar{
   width: 120%;
 }
 
-.nav--list {
-  list-style: none;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.item {
-  position: relative;
-  width: 100px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  user-select: none;
-  cursor: pointer;
-  margin: 0 10px;
-  border: 2px solid #f2c75c;
-  overflow: hidden;
-}
-
 .item:nth-child(5){
   border: 2px solid green;
   color: green;
@@ -227,6 +250,10 @@ nav.navbar{
 
 .item a.log{
   color: rgb(16, 189, 16);
+}
+
+.item a.logout{
+  color: rgb(183, 16, 16);
 }
 
 .item a {
@@ -300,3 +327,4 @@ nav.navbar{
 .item:nth-child(5):hover:before {
   height: 100%;
 }
+

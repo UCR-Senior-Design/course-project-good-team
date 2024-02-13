@@ -165,10 +165,6 @@ def index():
 
     return render_template('index.html', username=username, is_logged_in=is_logged_in, random_statistic=random_statistic, image_url=image_url, icon_link=icon_link, special_name=special_name)
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
-
 @app.route('/logout')
 def logout():
     session.clear()  # Clears the user's session
@@ -191,7 +187,7 @@ def stats():
     is_logged_in = 'username' in session
     if 'access_token' not in session:
         flash("Please log in to view your stats.")
-        return redirect(url_for('login'))
+        return redirect('https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=http://127.0.0.1:8080/callback&show_dialogue=true&scope=user-read-private user-top-read playlist-read-private playlist-read-collaborative user-follow-read')
 
     icon1_link = url_for('static', filename='images/favicon.ico')
     icon2_link = url_for('static', filename='images/favicon2.ico')
@@ -238,7 +234,7 @@ def friends():
             return redirect(url_for('index'))
     else:
         flash("Please log in to view your friends.")
-        return redirect(url_for('login'))
+        return redirect('https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=http://127.0.0.1:8080/callback&show_dialogue=true&scope=user-read-private user-top-read playlist-read-private playlist-read-collaborative user-follow-read')
 
 
 @app.route('/addfriend', methods=['POST'])
