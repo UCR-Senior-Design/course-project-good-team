@@ -4,7 +4,7 @@
         <meta charset = "UTF-8">
         <Title>Friendify</Title>
         <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/stats_styles.css') }}">
     </head>
 
     <body>
@@ -31,13 +31,16 @@
               </ul>
             </nav>
           </div>
-                    <div class="friends-button">
-                        <a href="/friends" class="button">Add Account To Friend Database</a>
-                    </div>
-                    <div class="add-button">
-                        <!-- Call the 'askForFriend' function when the button is clicked -->
-                        <a href="javascript:void(0);" class="button" onclick="askForFriend()">Add Friends</a>
-                    </div>
+            </div>
+
+            <div class = "sidebar-container">
+                <div class = "sidebar">
+                    <ul class = "sidebar-tools">
+                        <li class = "tool"><button><a>Your <span class = "friend">genre</span> breakdown</a></button></li>
+                        <li class = "tool"><button><a>Your <span class = "friend">genre</span> breakdown</a></button></li>
+                        <li class = "tool"><button><a>Your <span class = "friend">genre</span> breakdown</a></button></li>
+                    </ul>
+                </div>
             </div>
 
         <script>
@@ -91,10 +94,11 @@
                 }
             }
         </script>
-    </body>
-    <body>
-        <div>
-            <h2>Your Genre Breakdown</h2>
+
+
+
+        <div class = "genre-text">
+            <p>Your genre breakdown:</p>
             <form action="/stats" method="get">
                 <label for="time_range">Select time range:</label>
                 <select name="time_range" id="time_range">
