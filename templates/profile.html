@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user.username }}'s Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile_styles.css') }}">
+</head>
+<body>
+    <div class="profile-container">
+        <img src="{{ user.profile_pic_url }}" alt="{{ user.username }}'s profile picture" class="profile-picture">
+        <h1 class="username">{{ user.username }}</h1>
+        <p class="user-since">Friendify user since {{ date_joined }}</p>
+
+
+        <form action="{{ url_for('profile', username=user.username) }}" method="get">
+            <select name="time_range" onchange="this.form.submit()">
+                <option value="short_term" {{ 'selected' if selected_time_range == 'short_term' else '' }}>Last Month</option>
+                <option value="medium_term" {{ 'selected' if selected_time_range == 'medium_term' else '' }}>Last 6 Months</option>
+                <option value="long_term" {{ 'selected' if selected_time_range == 'long_term' else '' }}>All Time</option>
+            </select>
+        </form>
+
+        <h2>Top Artists {{ time_range_display }}</h2>
+        <div class="top-container">
+            {% for artist in top_artists %}
+                <div class="artist">
+                    <img src="{{ artist.image_url }}" alt="{{ artist.name }}" class="artist-image">
+                    <p>{{ artist.name }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <h2>Top Tracks {{ time_range_display }}</h2>
+        <div class="top-container">
+            {% for track in top_tracks %}
+                <div class="artist">
+                    <img src="{{ track.image_url }}" alt="{{ track.name }}" class="track-image">
+                    <p>{{ track.name }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
