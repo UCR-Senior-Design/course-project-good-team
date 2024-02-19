@@ -60,6 +60,7 @@ def index():
     icon1_link = url_for('static', filename='images/favicon.ico')
     icon2_link = url_for('static', filename='images/favicon2.ico')
     special_name = None
+    playlistsnameid = []
 
     icon_link = choice([icon1_link, icon2_link])
 
@@ -265,6 +266,7 @@ def callback():
     playlistsnameid = []
 
     code = request.args.get('code')
+    playlistsnameid = []
 
     # Base64 Encode Client ID and Client Secret
     client_credentials = f"{CLIENT_ID}:{CLIENT_SECRET}"
