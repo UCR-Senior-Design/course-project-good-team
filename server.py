@@ -263,10 +263,7 @@ def declinefriend():
 
 @app.route('/callback')
 def callback():
-    playlistsnameid = []
-
     code = request.args.get('code')
-    playlistsnameid = []
 
     # Base64 Encode Client ID and Client Secret
     client_credentials = f"{CLIENT_ID}:{CLIENT_SECRET}"
@@ -322,55 +319,22 @@ def callback():
             session['username'] = username
             session['access_token'] = access_token
             session['is_logged_in'] = True
+                
+                #Fetch user's playlists
+            playlists_response = requests.get('https://api.spotify.com/v1/me/playlists', headers=headers)
+            if playlists_response.status_code == 200:
+                playlists_data = playlists_response.json()
+
+                playlistsnameid = []
+                #Process playlists data here
+                for playlist in playlists_data['items']:
+                    plist = (playlist['name'], playlist['id'])
+                    playlistsnameid.append(plist)
+            else:
+                print("error")
 
             # Update user document with profile picture URL
             update_user_document(users, user_data['id'], user_data['display_name'], profile_pic_url, top_data, playlistsnameid)
-
-         #Storing the logged in user to the database if they are not already in it
-            if users.find_one({'id': userid}) is not None:
-                print(f"'{userid}' is already registered.")
-            else:
-                #TODO: This does not update the user profile with new playlists, it currently only takes a snapshot of the user profile data
-                #at the time of initially adding them to the database, I need to make it so that each time it connects it re checks the playlist
-                #data and adds if new playlists exist, cause right now the query here is useless, since it isn't checking against any existing data
-                
-                #Fetch user's playlists
-                playlists_response = requests.get('https://api.spotify.com/v1/me/playlists', headers=headers)
-                if playlists_response.status_code == 200:
-                    playlists_data = playlists_response.json()
-
-                    playlistsnameid = []
-                    #Process playlists data here
-                    for playlist in playlists_data['items']:
-                        plist = (playlist['name'], playlist['id'])
-                        #Query to check if the tuple exists in the data field for a specific document
-                        query = {
-                            "id": userid,
-                            "playlists": {
-                                "$elemMatch": {
-                                    "$eq": plist
-                                }
-                            }
-                        }
-                        existing_document = users.find_one(query)
-                        playlistsnameid.append(plist)
-                
-                    #Create a new user document
-
-                    new_user = {
-                        'id': userid,
-                        'username': username,
-                        'profile_pic_url': profile_pic_url,
-                        'friends': [],
-                        'friendRequests': [],
-                        'playlists': playlistsnameid
-                    }
-
-                    #Insert the new user document into the collection
-                    users.insert_one(new_user)
-                    print(f"User '{username}' added successfully.")
-                else:
-                    print("error")
         return redirect(url_for('index', username=username))
 
     else:

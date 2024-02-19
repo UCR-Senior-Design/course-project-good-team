@@ -19,7 +19,7 @@ def update_user_document(users, userid, username, profile_pic_url, top_data, pla
             'profile_pic_url': profile_pic_url,
             'friends': [],
             'friendRequests': [],
-            'playlists': playlistsnameid
+            'playlists': playlistsnameid,
             **top_data
         }
         users.insert_one(new_user)
