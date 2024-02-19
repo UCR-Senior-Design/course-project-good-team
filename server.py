@@ -46,6 +46,7 @@ except pymongo.errors.ConfigurationError:
 
 mydb = client.Friendify
 users = mydb["Users"]
+#PATCH FIX
 
 
 @app.route('/')
@@ -261,6 +262,8 @@ def declinefriend():
 
 @app.route('/callback')
 def callback():
+    playlistsnameid = []
+
     code = request.args.get('code')
 
     # Base64 Encode Client ID and Client Secret
