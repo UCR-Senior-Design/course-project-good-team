@@ -17,7 +17,7 @@ from PIL import Image
 import requests
 from collections import Counter
 
-from spotify_utils import fetch_user_top_artists_genres, generate_genre_pie_chart, get_random_statistic, get_random_friend_statistic
+from spotify_utils import fetch_user_top_artists_genres, generate_genre_pie_chart, get_random_statistic, get_random_friend_statistic, generate_genre_pie_chart_from_db, fetch_genres_for_artists
 from image_utils import get_dominant_color, get_contrasting_text_color
 from db_utils import update_user_document
 
@@ -160,6 +160,47 @@ def friends():
     else:
         flash("Please log in to view your friends.")
         return redirect('https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=http://127.0.0.1:8080/callback&show_dialogue=true&scope=user-read-private user-top-read playlist-read-private playlist-read-collaborative user-follow-read')
+
+
+@app.route('/profile/<username>')
+def profile(username):
+    user_data = users.find_one({'username': username})
+    if not user_data:
+        return "User not found", 404
+
+    selected_time_range = request.args.get('time_range', 'medium_term')
+    # Map the internal representation to a user-friendly format
+    time_range_display = {
+        'short_term': 'Last Month',
+        'medium_term': 'Last 6 Months',
+        'long_term': 'All Time'
+    }.get(selected_time_range, 'Last 6 Months')
+
+    artist_data_key = f'{selected_time_range}_artists'
+    artist_data = user_data.get(artist_data_key, [])
+    artist_ids = [artist['id'] for artist in artist_data[:3]]  # Get IDs of top 3 artists
+
+    track_data_key = f'{selected_time_range}_tracks'
+    track_data = user_data.get(track_data_key, [])
+    track_ids = [track['id'] for track in track_data[:3]]  # Get IDs of top 3 artists
+
+    access_token = session.get('access_token')
+    if not access_token:
+        flash("Access token is missing, please log in again.", "warning")
+        return redirect(url_for('login'))
+
+    # Fetch top 3 artists' data if you need more details like images
+    top_artists = artist_data[:3]
+    top_tracks = track_data[:3]
+
+    genres = fetch_genres_for_artists(artist_ids, access_token)
+    image_data = generate_genre_pie_chart_from_db(genres)
+    date_joined = user_data.get('date_joined', '')
+
+    return render_template('profile.html', user=user_data, image_data=image_data,
+                           top_artists=top_artists, top_tracks=top_tracks, selected_time_range=selected_time_range,
+                           time_range_display=time_range_display, date_joined=date_joined)
+
 
 
 @app.route('/addfriend', methods=['POST'])
