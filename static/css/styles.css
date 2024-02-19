@@ -48,6 +48,7 @@ body {
 .special{
   color: #1faa50;
   font-size: 40px;
+  text-shadow: 2px 2px 4px #000;
 }
 
 .image-container{
@@ -117,6 +118,7 @@ body {
 
 .friend{
   color: #1faa50
+  text-shadow: 2px 2px 4px #000;
 }
 
 

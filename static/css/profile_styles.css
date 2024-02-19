@@ -1,0 +1,36 @@
+.profile-container {
+    text-align: center; /* center content */
+}
+
+.top-container {
+    display: flex;
+    justify-content: center; /* center items */
+    gap: 20px; /* space beteween images */
+}
+
+.artist, .track {
+    flex-direction: column; /* stack image and name vertically */
+    display: flex;
+    align-items: center; 
+}
+
+.artist-image {
+    width: 100px; 
+    height: 100px; 
+    object-fit: cover; 
+    border-radius: 50%; /* circular images, idk if this looks good  */
+}
+
+.track-image {
+    width: 100px; 
+    height: 100px; 
+    object-fit: cover; 
+}
+
+.username {
+    margin-bottom: 5px; /* space between username and user since */
+}
+
+.user-since {
+    margin-top: 0; /* space between username and user since  */
+}

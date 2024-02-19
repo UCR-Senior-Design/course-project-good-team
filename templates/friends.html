@@ -29,22 +29,30 @@
             </nav>
           </div>
 
-          <div class="centered-text">
+        <div class="centered-text">
             <h1>Your Friendify Friends</h1>
             <div class="spacer"></div>
             {% if friends %}
                 <table>
                     <thead>
                         <tr>
-                            <th>Profile</th> 
+                            <th>Profile</th>
                             <th>Friend Username</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for friend in friends %}
                             <tr>
-                                <td><img src="{{ profile_pics[friend] }}" alt="Profile Pic" class="friend-profile-pic"></td>
-                                <td>{{ friend }}</td>
+                                <!-- Make profile picture clickable -->
+                                <td>
+                                    <a href="{{ url_for('profile', username=friend) }}">
+                                        <img src="{{ profile_pics[friend] }}" alt="Profile Pic" class="friend-profile-pic">
+                                    </a>
+                                </td>
+                                <!-- Make friend username clickable -->
+                                <td>
+                                    <a href="{{ url_for('profile', username=friend) }}">{{ friend }}</a>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
