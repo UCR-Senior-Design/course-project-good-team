@@ -78,6 +78,7 @@ body {
   background-color:#1a1a1a;
   z-index: -1;
   display: flex;
+  justify-content: center;
 }
 
 .sidebar{
@@ -85,27 +86,37 @@ body {
   align-items: center;
   flex-direction: column;
   justify-content: space-between;
-}
-
-.sidebar-tools{
-  list-style: none;
+  flex-direction: column;
+  height: 50%;
+  margin-top: 50px;
 }
 
 .tool{
+  color: #ffffffaf;
   position: relative;
-  width: 100px;
-  height: 35px;
+  width: 100%;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  user-select: none;
   cursor: pointer;
   margin: 0 10px;
   border: 2px solid #f2c75c;
+  outline: none;
+  background-color: transparent;
   overflow: hidden;
 }
 
+.tool button{
+  background: transparent;
+  border: none;
+}
+
+.tool a{
+  color: #ffffffaf;
+  font-size: 18px;
+}
 /* NAV BAR CSS */
 
 *,
@@ -327,4 +338,38 @@ nav.navbar{
 .item:nth-child(5):hover:before {
   height: 100%;
 }
+
+
+.test {
+  padding : 30px;
+  background : #2d2f31; 
+  color : white;
+  font-size : 1.2em;
+  font-variant : small-caps;
+  cursor : pointer;
+  display: block;
+}
+
+.test::after {
+  float: right;
+  right: 10%;
+  content: "+";
+}
+
+.slide {
+  clear:both;
+  width:100%;
+  height:0px;
+  overflow: hidden;
+  text-align: center;
+  transition: height .4s ease;
+}
+
+.slide li {padding : 30px;}
+
+#touch {position: absolute; opacity: 0; height: 0px;}    
+
+#touch:checked + .slide {height: 300px;} 
+
+
 
