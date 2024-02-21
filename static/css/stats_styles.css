@@ -76,7 +76,6 @@ body {
   position: absolute;
   left: 0;
   background-color:#1a1a1a;
-  z-index: -1;
   display: flex;
   justify-content: center;
 }
@@ -339,37 +338,76 @@ nav.navbar{
   height: 100%;
 }
 
+/* DROPDOWN ANIMATION */
 
-.test {
-  padding : 30px;
-  background : #2d2f31; 
-  color : white;
-  font-size : 1.2em;
-  font-variant : small-caps;
-  cursor : pointer;
-  display: block;
-}
-
-.test::after {
-  float: right;
-  right: 10%;
-  content: "+";
-}
-
-.slide {
-  clear:both;
-  width:100%;
-  height:0px;
+.slide1 {
+  clear: both;
+  width: 100%;
+  height: 0px;
   overflow: hidden;
   text-align: center;
   transition: height .4s ease;
 }
 
-.slide li {padding : 30px;}
+.slide1 li {
+  border: 1px red solid;
+}
 
-#touch {position: absolute; opacity: 0; height: 0px;}    
+#touch1 {
+  position: absolute; 
+  opacity: 0; 
+  height: 0px;
+}    
 
-#touch:checked + .slide {height: 300px;} 
+#touch1:checked + .slide1 {
+  height: 300px;
+} 
+
+.slide2 {
+  clear: both;
+  width: 100%;
+  height: 0px;
+  overflow: hidden;
+  text-align: center;
+  transition: height .4s ease;
+}
+
+.slide2 li {
+  border: 1px red solid;
+}
+
+#touch2 {
+  position: absolute; 
+  opacity: 0; 
+  height: 0px;
+}    
+
+#touch2:checked + .slide2 {
+  height: 300px;
+} 
+
+.slide3 {
+  clear: both;
+  width: 100%;
+  height: 0px;
+  overflow: hidden;
+  text-align: center;
+  transition: height .4s ease;
+}
+
+.slide3 li {
+  border: 1px red solid;
+}
+
+#touch3 {
+  position: absolute; 
+  opacity: 0; 
+  height: 0px;
+}    
+
+#touch3:checked + .slide3 {
+  height: 300px;
+} 
 
 
 
