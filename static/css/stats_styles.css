@@ -100,11 +100,14 @@ body {
   justify-content: center;
   text-align: center;
   cursor: pointer;
-  margin: 0 10px;
-  border: 2px solid #f2c75c;
+  border-bottom: #373737 2px solid;
   outline: none;
   background-color: transparent;
   overflow: hidden;
+}
+
+.tool:hover{
+  box-shadow: rgba(31, 170, 80, 0.8) 0px 3px 2px -.9px;
 }
 
 .tool button{
@@ -347,10 +350,14 @@ nav.navbar{
   overflow: hidden;
   text-align: center;
   transition: height .4s ease;
+  list-style: none;
 }
 
 .slide1 li {
-  border: 1px red solid;
+  border: 2px #f2c75c solid;
+  margin: 16px;
+  padding: 8px;
+  color: #ffffffaf; 
 }
 
 #touch1 {
@@ -374,6 +381,9 @@ nav.navbar{
 
 .slide2 li {
   border: 1px red solid;
+  margin: 20px;
+  padding: 8px;
+
 }
 
 #touch2 {
