@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 
 #http://127.0.0.1:8080
 
-class FriendifyTests(unittest.TestCase):
+class ButtonTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
