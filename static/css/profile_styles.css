@@ -421,49 +421,45 @@ nav.navbar{
 
 
 
+.profile-picture{
+    width: 100px;
+    height: 100px;
 
-
-
-
-
-.profile-container {
-    text-align: center; /* center content */
 }
 
-.top-container {
+.profilepic-container {
     display: flex;
-    justify-content: center; /* center items */
-    gap: 20px; /* space beteween images */
+    flex-direction: column;
+    align-items: center;
 }
 
-.artist, .track {
-    flex-direction: column; /* stack image and name vertically */
+.profile-artists{
     display: flex;
-    align-items: center; 
+    align-items: center;
+    flex-direction: column;
 }
 
-.artist-image {
-    width: 100px; 
-    height: 100px; 
-    object-fit: cover; 
-    border-radius: 50%; /* circular images, idk if this looks good  */
+.artist-image{
+    width: 150px;
+    height: 150px;
+    margin: 10px;
 }
 
-.track-image {
-    width: 100px; 
-    height: 100px; 
-    object-fit: cover; 
+.top-container{
+    display: flex;
 }
 
-.username {
-    margin-bottom: 5px; /* space between username and user since */
+.profile-tracks{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.user-since {
-    margin-top: 0; /* space between username and user since  */
+.track-image{
+    width: 150px;
+    height: 150px;
 }
 
-
-
-
-
+.track-p{
+    display: flex;
+}
