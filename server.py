@@ -164,7 +164,6 @@ def friends():
 
 @app.route('/profile/<username>')
 def profile(username):
-    username = session.get('username')
     user_data = users.find_one({'username': username})
     if not user_data:
         return "User not found", 404
@@ -203,6 +202,7 @@ def profile(username):
     genres = fetch_genres_for_artists(artist_ids, access_token)
     image_data = generate_genre_pie_chart_from_db(genres)
     date_joined = user_data.get('date_joined', '')
+    username = session.get('username')
 
     return render_template('profile.html', user=user_data, image_data=image_data,
                            top_artists=top_artists, top_tracks=top_tracks, selected_time_range=selected_time_range,
