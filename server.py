@@ -168,6 +168,12 @@ def profile(username):
     if not user_data:
         return "User not found", 404
 
+    is_logged_in = 'username' in session
+
+    icon1_link = url_for('static', filename='images/favicon.ico')
+    icon2_link = url_for('static', filename='images/favicon2.ico')
+    icon_link = choice([icon1_link, icon2_link])
+
     selected_time_range = request.args.get('time_range', 'medium_term')
     # Map the internal representation to a user-friendly format
     time_range_display = {
@@ -196,10 +202,12 @@ def profile(username):
     genres = fetch_genres_for_artists(artist_ids, access_token)
     image_data = generate_genre_pie_chart_from_db(genres)
     date_joined = user_data.get('date_joined', '')
+    username = session.get('username')
 
     return render_template('profile.html', user=user_data, image_data=image_data,
                            top_artists=top_artists, top_tracks=top_tracks, selected_time_range=selected_time_range,
-                           time_range_display=time_range_display, date_joined=date_joined)
+                           time_range_display=time_range_display, date_joined=date_joined,
+                            is_logged_in=is_logged_in, icon_link=icon_link, username=username)
 
 
 

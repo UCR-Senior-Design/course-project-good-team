@@ -37,7 +37,10 @@
                 <label for="touch1" class = "tool"><p>Your <span class = "friend">profile</span></p></label>
                 <input type="checkbox" id="touch1">
                 <ul class="slide1">
-                    <li>Last 4 weeks</li> 
+                    <form action="/stats" method="get">
+                    <button type="submit" value="long_term">All time</button>
+                    </form>
+
                     <li>Last 6 months</li>
                     <li>All time</li>
                 </ul>
@@ -60,6 +63,27 @@
             </div>
         </div>
       
+
+
+
+        <div class = "genre-text">
+            <p>Your genre breakdown:</p>
+            <form action="/stats" method="get">
+                <label for="time_range">Select time range:</label>
+                <select name="time_range" id="time_range">
+                    <option value="short_term"><p>Last <span class = "friend"> weeks</span></p></option>
+                    <option value="medium_term">Last 6 months</option>
+                    <option value="long_term">All time</option>
+                </select>
+                <button type="submit">Show chart</button>
+            </form>
+            {% if image_data %}
+                <img src="data:image/png;base64,{{ image_data }}" alt="Your Genre Breakdown">
+            {% else %}
+                <p>No data available. Please ensure you have enough listening history.</p>
+            {% endif %}
+        </div>
+
 
 
         <script>
@@ -118,23 +142,6 @@
         <div class = "spacer"></div>
 
 
-        <div class = "genre-text">
-            <p>Your genre breakdown:</p>
-            <form action="/stats" method="get">
-                <label for="time_range">Select time range:</label>
-                <select name="time_range" id="time_range">
-                    <option value="short_term">Last 4 weeks</option>
-                    <option value="medium_term">Last 6 months</option>
-                    <option value="long_term">All time</option>
-                </select>
-                <button type="submit">Show chart</button>
-            </form>
-            {% if image_data %}
-                <img src="data:image/png;base64,{{ image_data }}" alt="Your Genre Breakdown">
-            {% else %}
-                <p>No data available. Please ensure you have enough listening history.</p>
-            {% endif %}
-        </div>
 
 
         <div class = "page-marker">
