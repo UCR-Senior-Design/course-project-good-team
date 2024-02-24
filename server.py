@@ -17,7 +17,7 @@ from PIL import Image
 import requests
 from collections import Counter
 
-from spotify_utils import fetch_user_top_artists_genres, generate_genre_pie_chart, get_random_statistic, get_random_friend_statistic, generate_genre_pie_chart_from_db, fetch_genres_for_artists
+from spotify_utils import generate_genre_pie_chart, get_random_statistic, get_random_friend_statistic, generate_genre_pie_chart_from_db
 from image_utils import get_dominant_color, get_contrasting_text_color
 from db_utils import update_user_document
 
@@ -164,50 +164,67 @@ def friends():
 
 @app.route('/profile/<username>')
 def profile(username):
+    # Fetch user data from db
     user_data = users.find_one({'username': username})
     if not user_data:
         return "User not found", 404
-
-    is_logged_in = 'username' in session
-
-    icon1_link = url_for('static', filename='images/favicon.ico')
-    icon2_link = url_for('static', filename='images/favicon2.ico')
-    icon_link = choice([icon1_link, icon2_link])
-
-    selected_time_range = request.args.get('time_range', 'medium_term')
-    # Map the internal representation to a user-friendly format
-    time_range_display = {
-        'short_term': 'Last Month',
-        'medium_term': 'Last 6 Months',
-        'long_term': 'All Time'
-    }.get(selected_time_range, 'Last 6 Months')
-
-    artist_data_key = f'{selected_time_range}_artists'
-    artist_data = user_data.get(artist_data_key, [])
-    artist_ids = [artist['id'] for artist in artist_data[:3]]  # Get IDs of top 3 artists
-
-    track_data_key = f'{selected_time_range}_tracks'
-    track_data = user_data.get(track_data_key, [])
-    track_ids = [track['id'] for track in track_data[:3]]  # Get IDs of top 3 artists
-
+    
     access_token = session.get('access_token')
+    # Check if the access token exists
     if not access_token:
-        flash("Access token is missing, please log in again.", "warning")
+        # If no access token, prompt a login
+        flash("Please log in to view this page.", "warning")
         return redirect(url_for('login'))
 
-    # Fetch top 3 artists' data if you need more details like images
-    top_artists = artist_data[:3]
-    top_tracks = track_data[:3]
+    # Setup UI
+    icon_link = choice([
+        url_for('static', filename='images/favicon.ico'),
+        url_for('static', filename='images/favicon2.ico')
+    ])
 
-    genres = fetch_genres_for_artists(artist_ids, access_token)
-    image_data = generate_genre_pie_chart_from_db(genres)
+    # Determine selected time range, default is all time
+    selected_time_range = request.args.get('time_range', 'long_term')
+    time_range_display = {'short_term': 'Last Month', 'medium_term': 'Last 6 Months', 'long_term': 'All Time'}.get(selected_time_range, 'All Time')
+
+    # Fetch top artists and tracks for display
+    top_artists = user_data.get(f'{selected_time_range}_artists', [])[:3]
+    top_tracks = user_data.get(f'{selected_time_range}_tracks', [])[:3]
+
+    # Other variables that need to be passed to profile page
     date_joined = user_data.get('date_joined', '')
-    username = session.get('username')
+    session_username = session.get('username')
 
-    return render_template('profile.html', user=user_data, image_data=image_data,
-                           top_artists=top_artists, top_tracks=top_tracks, selected_time_range=selected_time_range,
-                           time_range_display=time_range_display, date_joined=date_joined,
-                            is_logged_in=is_logged_in, icon_link=icon_link, username=username)
+    
+    
+    # Generate the genre breakdown pie chart
+    
+    artist_ids = [artist['id'] for artist in user_data.get(f'{selected_time_range}_artists', [])[:15]] # Limiting to 15 artists because doing all takes way too long
+    #artist_ids = [artist['id'] for artist in user_data.get(f'{selected_time_range}_artists', [])] #This doesn't limit to 10 artists but makes load time long
+    genre_pie_chart_base64 = generate_genre_pie_chart_from_db(artist_ids, access_token)
+
+    # Render the profile template with all data
+    return render_template('profile.html', user=user_data, top_artists=top_artists, top_tracks=top_tracks,
+                           selected_time_range=selected_time_range, time_range_display=time_range_display,
+                           date_joined=date_joined, is_logged_in='username' in session, genre_pie_chart=genre_pie_chart_base64,
+                           icon_link=icon_link, 
+                           username=session_username, #This should be profile you're viewing
+                           session_username=session_username) # This should be the logged-in user's username 
+
+@app.route('/discover')
+def discover():
+    if 'access_token' not in session:
+        # User is not logged in, redirect to Spotify login
+        return redirect('https://accounts.spotify.com/authorize?client_id={}&response_type=code&redirect_uri={}&scope={}'.format(
+            CLIENT_ID, REDIRECT_URI, "user-read-private user-top-read playlist-read-private playlist-read-collaborative"
+        ))
+
+    # User is logged in
+    username = session.get('username', 'Guest')
+    access_token = session['access_token']
+
+
+    # Render the Discover page template with fetched data
+    return render_template('discover.html', username=username, is_logged_in=True)
 
 
 

@@ -1,6 +1,7 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from collections import defaultdict
+from collections import Counter
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -9,18 +10,6 @@ from io import BytesIO
 import base64
 import requests
 from random import choice
-
-def fetch_user_top_artists_genres(access_token, time_range='medium_term'):
-    sp = spotipy.Spotify(auth=access_token)
-    top_artists = sp.current_user_top_artists(limit=50, time_range=time_range)
-    genre_count = defaultdict(int)
-
-    for index, artist in enumerate(top_artists['items'], start=1):
-        weight = 51 - index  # weights more listened to artists heavier in pie chart calculation
-        for genre in artist['genres']:
-            genre_count[genre] += weight
-
-    return genre_count
 
 
 def generate_genre_pie_chart(genres):
@@ -132,56 +121,52 @@ def get_random_friend_statistic(user_data, users):
 
     return random_statistic, special_name, image_url
 
+def fetch_genres_for_artist_ids(artist_ids, access_token):
+    # Initialize Spotify client with the provided access token
+    sp = spotipy.Spotify(auth=access_token)
 
-def generate_genre_pie_chart_from_db(genre_count):
-    print(genre_count)
-    # Sort genres and select top N
-    top_genres = dict(sorted(genre_count.items(), key=lambda item: item[1], reverse=True)[:10])
+    genres = []
+    for artist_id in artist_ids:
+        try:
+            artist_info = sp.artist(artist_id)
+            genres.extend(artist_info['genres'])
+        except Exception as e:
+            print(f"Error fetching genres for artist {artist_id}: {e}")
+    return genres
+
+def generate_genre_pie_chart_from_db(artist_ids, access_token):
+    genres = fetch_genres_for_artist_ids(artist_ids, access_token)
+    genre_count = Counter(genres)
     
-    # Create figure and axis
+    # Check if there are genres lol
+    if not genre_count:
+        return None
+    
+    labels, sizes = zip(*genre_count.most_common(10))  # Limit to top 10 genres for readability
+    
+    # Generate pie chart
+    plt.style.use('dark_background')
     fig, ax = plt.subplots()
-    # Set background color of chart
-    fig.patch.set_facecolor('#373737')
-    ax.set_facecolor('#373737')
+    wedges, texts, autotexts = ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, textprops={'fontname': 'sans-serif'})
+    ax.axis('equal') 
     
-    # Font for chart
-    font_properties = FontProperties()
-    font_properties.set_family('sans-serif')
-    font_properties.set_weight('bold')
-    
-    # Generate pie chart with customizations
-    wedges, texts, autotexts = ax.pie(top_genres.values(), labels=top_genres.keys(), autopct='%1.1f%%', startangle=90, textprops=dict(color="w", fontproperties=font_properties))
-    
-    # Make sure the pie chart is a circle
-    ax.axis('equal')
-    
-    # Change the font color of the percentages
+    # Set label color to match slice color
+    for text, wedge in zip(texts, wedges):
+        text.set_color(wedge.get_facecolor())
+        text.set_fontsize(10)  # Adjust fontsize as needed
+
+    # Percentage color
     for autotext in autotexts:
-        autotext.set_color('black')
-    
-    # Save to buffer
+        autotext.set_color('black') 
+
+    # Convert pie chart to a PNG image bytes
     buf = BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight', facecolor=fig.get_facecolor(), edgecolor='none')
+    plt.savefig(buf, format='png', transparent=True)
     plt.close(fig)
     buf.seek(0)
     
-    # Base64 encoding
-    image_base64 = base64.b64encode(buf.read()).decode('utf-8')
+    # Encode the image to base64 string
+    image_base64 = base64.b64encode(buf.getvalue()).decode('utf-8')
     buf.close()
     
     return image_base64
-
-def fetch_genres_for_artists(artist_ids, access_token):
-    genre_count = defaultdict(int)
-    sp = spotipy.Spotify(auth=access_token)  # Use the passed access token
-
-    for artist_id in artist_ids:
-        try:
-            artist = sp.artist(artist_id)
-            for genre in artist['genres']:
-                genre_count[genre] += 1
-        except spotipy.exceptions.SpotifyException as e:
-            print(f"Error fetching artist {artist_id}: {str(e)}")
-
-    return genre_count
-
