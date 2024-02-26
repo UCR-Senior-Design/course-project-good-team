@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Discover - Friendify</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/discover_styles.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/favicon.ico') }}">
+        </div>
+        <ul class="nav--list">
+            <li class="item"><button><a href="/">Home</a></button></li>
+            <li class="item"><button><a href="/about">About</a></button></li>
+            <li class="item"><button><a href="/profile/{{ session['username'] }}">Profile</a></button></li>
+            <li class="item"><button><a href="/friends">Friends</a></button></li>
+            <li class="item"><button><a href="/discover">Discover</a></button></li>
+            {% if is_logged_in %}
+            <li class="logout"><button><a href="/logout" class="out">Logout</a></button></li>
+            {% else %}
+            <li class="item"><button><a href="https://accounts.spotify.com/authorize?..." class="log">Login</a></button></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
+<div class="content">
+    <h1>Discover New Music</h1>
+</div>
+
+</body>
+</html>

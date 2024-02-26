@@ -13,8 +13,12 @@ body {
   src: url(../fonts/epkyouka.ttf);
 }
 
-.spacer {
-  height: 90px;
+.spacer50 {
+  height: 50px;
+}
+
+.spacer20 {
+  height: 20px;
 }
 
 .spacer2{
@@ -424,6 +428,7 @@ nav.navbar{
 .profile-picture{
     width: 100px;
     height: 100px;
+    border-radius: 50%; 
 
 }
 
@@ -443,6 +448,7 @@ nav.navbar{
     width: 150px;
     height: 150px;
     margin: 10px;
+    object-fit: cover;
 }
 
 .top-container{
@@ -455,11 +461,39 @@ nav.navbar{
     align-items: center;
 }
 
+.genre-chart{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .track-image{
     width: 150px;
     height: 150px;
+    margin: 10px;
+    object-fit: cover;
 }
 
 .track-p{
     display: flex;
+}
+
+
+.artist-name, .track-name {
+  width: 150px; 
+  margin-top: 10px; 
+  word-wrap: break-word;
+  text-align: center;
+}
+
+.gold .artist-name, .gold .track-name {
+  color: #FFD700; /* Gold */
+}
+
+.silver .artist-name, .silver .track-name {
+  color: #C0C0C0; /* Silver */
+}
+
+.bronze .artist-name, .bronze .track-name {
+  color: #CD7F32; /* Bronze */
 }
