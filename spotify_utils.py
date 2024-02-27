@@ -10,6 +10,8 @@ from io import BytesIO
 import base64
 import requests
 from random import choice
+from datetime import datetime, timedelta
+import time
 
 
 def generate_genre_pie_chart(genres):
@@ -121,28 +123,68 @@ def get_random_friend_statistic(user_data, users):
 
     return random_statistic, special_name, image_url
 
-def fetch_genres_for_artist_ids(artist_ids, access_token):
-    # Initialize Spotify client with the provided access token
+def fetch_genres_for_artist_ids(artist_ids, access_token, artists):
+    start_time = time.time()  # Record the start time
     sp = spotipy.Spotify(auth=access_token)
-
     genres = []
+    cache_hit_count = 0  # number of artists we already have cached
+    new_artist_count = 0  # number artists not found in our cache and will be added
+    refreshed_artists_count = 0  # artists who we refreshed data on because data is old 
+    new_artists_added = []  # new artists we are adding to cache
+    refresh_threshold = 90  # after this many days we will pull genre data again from spotify regardless of if it is cached in order to ensure data is not too obselete
+
     for artist_id in artist_ids:
+        artist_data = artists.find_one({'id': artist_id})
+        # Check if artist's genres are already in the database and not too old
+        if artist_data and 'genres' in artist_data and 'last_updated' in artist_data:
+            last_updated = artist_data['last_updated']
+            if (datetime.now() - last_updated).days < refresh_threshold:
+                genres.extend(artist_data['genres'])
+                cache_hit_count += 1
+                continue  # Skip to the next artist_id
+
+        # Fetch from Spotify and update the database if genres are missing or data is too old
         try:
             artist_info = sp.artist(artist_id)
-            genres.extend(artist_info['genres'])
+            artist_genres = artist_info['genres']
+            genres.extend(artist_genres)
+            # fetch from spotify and update artist data with genres and timestamp
+            update_data = {'$set': {'genres': artist_genres, 'last_updated': datetime.now()}}
+            # Update the database with new artist information or refreshed data
+            artists.update_one({'id': artist_id}, update_data, upsert=True)
+            if artist_data:
+                refreshed_artists_count += 1  # increment if it was a refresh
+            else:
+                new_artist_count += 1  # increment if we are adding a new artist
+                new_artists_added.append(artist_info['name']) 
         except Exception as e:
             print(f"Error fetching genres for artist {artist_id}: {e}")
+
+    # Print the summary information
+    print(f"-----PIE CHART GENERATION SUMMARY-----")
+    print(f"Retrieved {cache_hit_count} artists from cache.")
+    if refreshed_artists_count > 0:
+        print(f"Refreshed genres for {refreshed_artists_count} artists.")
+    print(f"Added {new_artist_count} new artists to cache.")
+    if new_artists_added:  # Check if there are any new artists added
+        print("New artists added to the cache: ", ", ".join(new_artists_added))
+    
+    end_time = time.time()  # Record the end time
+    execution_time = end_time - start_time  # calculate total time spent fetching artist data for pie chart
+    print(f"Total time to fetch data: {execution_time:.2f} seconds")
+    print(f"--------------------------------------")
+
     return genres
 
-def generate_genre_pie_chart_from_db(artist_ids, access_token):
-    genres = fetch_genres_for_artist_ids(artist_ids, access_token)
+def generate_genre_pie_chart_from_db(artist_ids, access_token, artists):
+    genres = fetch_genres_for_artist_ids(artist_ids, access_token, artists)
     genre_count = Counter(genres)
     
     # Check if there are genres lol
     if not genre_count:
         return None
     
-    labels, sizes = zip(*genre_count.most_common(10))  # Limit to top 10 genres for readability
+    labels, sizes = zip(*genre_count.most_common(8))  # Limit to top 10 genres for readability
     
     # Generate pie chart
     plt.style.use('dark_background')

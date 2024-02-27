@@ -46,6 +46,7 @@ except pymongo.errors.ConfigurationError:
 
 mydb = client.Friendify
 users = mydb["Users"]
+artists = mydb["Artists"]
 #PATCH FIX
 
 
@@ -90,11 +91,13 @@ def index():
                            icon_link=icon_link, special_name=special_name,
                            background_color=background_color, text_color=text_color)
 
+
 @app.route('/logout')
 def logout():
     session.clear()  # Clears the user's session
     flash("You have been logged out.", "info")
     return redirect(url_for('index'))
+
 
 @app.route('/about')
 def about():
@@ -107,25 +110,6 @@ def about():
     icon_link = choice([icon1_link, icon2_link])
     return render_template('about.html', icon_link=icon_link, username=username, is_logged_in=is_logged_in)
 
-@app.route('/stats')
-def stats():
-    is_logged_in = 'username' in session
-    if 'access_token' not in session:
-        flash("Please log in to view your stats.")
-        return redirect('https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=http://127.0.0.1:8080/callback&show_dialogue=true&scope=user-read-private user-top-read playlist-read-private playlist-read-collaborative user-follow-read')
-
-    icon1_link = url_for('static', filename='images/favicon.ico')
-    icon2_link = url_for('static', filename='images/favicon2.ico')
-    icon_link = choice([icon1_link, icon2_link])
-
-    username = session.get('username', 'Guest')
-    access_token = session['access_token']
-    # Retrieve the selected time range from the request, default to 'medium_term'
-    selected_time_range = request.args.get('time_range', 'short_term')
-    genres = fetch_user_top_artists_genres(access_token, selected_time_range)
-    image_data = generate_genre_pie_chart(genres)
-
-    return render_template('stats.html', image_data=image_data, username=username, icon_link=icon_link, is_logged_in=is_logged_in)
 
 @app.route('/friends')
 def friends():
@@ -194,13 +178,10 @@ def profile(username):
     date_joined = user_data.get('date_joined', '')
     session_username = session.get('username')
 
-    
-    
     # Generate the genre breakdown pie chart
-    
-    artist_ids = [artist['id'] for artist in user_data.get(f'{selected_time_range}_artists', [])[:15]] # Limiting to 15 artists because doing all takes way too long
-    #artist_ids = [artist['id'] for artist in user_data.get(f'{selected_time_range}_artists', [])] #This doesn't limit to 10 artists but makes load time long
-    genre_pie_chart_base64 = generate_genre_pie_chart_from_db(artist_ids, access_token)
+    artist_ids = [artist['id'] for artist in user_data.get(f'{selected_time_range}_artists', [])[:25]] # Limiting to 25 artists because doing all takes a long time
+    # artist_ids = [artist['id'] for artist in user_data.get(f'{selected_time_range}_artists', [])] #This doesn't limit to 10 artists but makes load time long
+    genre_pie_chart_base64 = generate_genre_pie_chart_from_db(artist_ids, access_token, artists)
 
     # Render the profile template with all data
     return render_template('profile.html', user=user_data, top_artists=top_artists, top_tracks=top_tracks,
@@ -210,12 +191,13 @@ def profile(username):
                            username=session_username, #This should be profile you're viewing
                            session_username=session_username) # This should be the logged-in user's username 
 
+
 @app.route('/discover')
 def discover():
     if 'access_token' not in session:
         # User is not logged in, redirect to Spotify login
         return redirect('https://accounts.spotify.com/authorize?client_id={}&response_type=code&redirect_uri={}&scope={}'.format(
-            CLIENT_ID, REDIRECT_URI, "user-read-private user-top-read playlist-read-private playlist-read-collaborative"
+            CLIENT_ID, REDIRECT_URI, "user-read-private user-top-read playlist-read-private playlist-read-collaborative&show_dialog=true"
         ))
 
     # User is logged in
@@ -225,7 +207,6 @@ def discover():
 
     # Render the Discover page template with fetched data
     return render_template('discover.html', username=username, is_logged_in=True)
-
 
 
 @app.route('/addfriend', methods=['POST'])
