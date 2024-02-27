@@ -104,6 +104,49 @@ class DataBaseTests(unittest.TestCase):
             new_document_id = self.collection.insert_one(stored_data).inserted_id
             print(f"Stored data re-uploaded as a new document with ID {new_document_id}")
         
+    def test_update_friend_list(self):
+        #INSERT USERNAME HERE WHEN TESTING
+        username = ''
+        #INSERT PASSWORD HERE WHEN TESTING
+        password = ''
+
+        login_url = "https://accounts.spotify.com/en/login?continue=https%3A%2F%2Faccounts.spotify.com%2Fauthorize%3Fshow_dialogue%3Dtrue%26scope%3Duser-read-private%2Buser-top-read%2Bplaylist-read-private%2Bplaylist-read-collaborative%2Buser-follow-read%26response_type%3Dcode%26redirect_uri%3Dhttp%253A%252F%252F127.0.0.1%253A8080%252Fcallback%26client_id%3D4f8a0448747a497e99591f5c8983f2d7"
+
+        self.driver.get(login_url) 
+
+        loginUsername = self.driver.find_element(By.ID, "login-username")
+        loginPassword = self.driver.find_element(By.ID, "login-password")
+        loginButton = self.driver.find_element(By.ID, "login-button")
+
+        loginUsername.send_keys(username)
+        loginPassword.send_keys(password)
+        loginButton.click()
+
+        time.sleep(10)
+
+        #Find the existing list of friends
+        existing_friends = self.collection.find_one({'id': username})['friends']
+
+        # Append a new username to the list
+        new_username = 'Totally_Real_Person'
+        updated_friends = existing_friends + [new_username]
+
+        update_query = {'id': username}
+        update_operation = {'$set': {'friends': updated_friends}}
+        self.collection.update_one(update_query, update_operation)
+
+        updated_document = self.collection.find_one({'id': username})      
+
+        # Assert that the user record exists in MongoDB and the friend was added
+        self.assertIsNotNone(updated_document)
+        self.assertEqual(updated_friends, updated_document['friends'])
+
+        
+
+        # Remove new friend and backup the old version
+        update_operation = {'$pull': {'friends': new_username}}
+        self.collection.update_one(updated_document, update_operation)
+
     @classmethod
     def tearDownClass(cls):
         # Close connection to db
