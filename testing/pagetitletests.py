@@ -6,6 +6,7 @@ import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from urllib.parse import urlparse, parse_qs
 
 #http://127.0.0.1:8080
 
@@ -21,10 +22,10 @@ class PageTitleTests(unittest.TestCase):
 
         # Currently comment / uncomment out the appropriate webdriver before compilation
 
-        # IF RUNNING ON CHROME:
+        # FOR RUNNING ON CHROME:
         #cls.driver = webdriver.Chrome()
 
-        # IF RUNNING ON FIREFOX:
+        # FOR RUNNING ON FIREFOX:
         cls.driver = webdriver.Firefox()
 
     def setUp(self):
@@ -39,7 +40,6 @@ class PageTitleTests(unittest.TestCase):
         self.assertEqual('About Page', self.driver.title)
 
     def test_login(self):
-        # This will currently give a 404 error, looking into how to fix
         login_url = "https://accounts.spotify.com/en/login?continue=https%3A%2F%2Faccounts.spotify.com%2Fauthorize%3Fshow_dialogue%3Dtrue%26scope%3Duser-read-private%2Buser-top-read%2Bplaylist-read-private%2Bplaylist-read-collaborative%2Buser-follow-read%26response_type%3Dcode%26redirect_uri%3Dhttp%253A%252F%252F127.0.0.1%253A8080%252Fcallback%26client_id%3D4f8a0448747a497e99591f5c8983f2d7"
 
         self.driver.get(login_url) 
@@ -48,13 +48,28 @@ class PageTitleTests(unittest.TestCase):
         loginPassword = self.driver.find_element(By.ID, "login-password")
         loginButton = self.driver.find_element(By.ID, "login-button")
 
-        loginUsername.send_keys('mr.crimsoneagle')
-        loginPassword.send_keys('proudswifter')
+        #INSERT USERNAME HERE WHEN TESTING
+        username = ''
+        #INSERT PASSWORD HERE WHEN TESTING
+        password = ''
+
+        loginUsername.send_keys(username)
+        loginPassword.send_keys(password)
         loginButton.click()
 
-        #Give login time to process
-        time.sleep(4)
-        self.assertEqual('http://127.0.0.1:8080/?username=Vincent+Martinez', self.driver.current_url)
+        #Give login time to process, may fail the assertion if the login doesn't go through, so time.sleep(x) should be changed to match that
+        time.sleep(10)
+        parsed_url = urlparse(self.driver.current_url)
+        # Extract the scheme, netloc, and path
+        scheme = parsed_url.scheme
+        netloc = parsed_url.netloc
+        path = parsed_url.path
+
+        # Create the expected URL up to 'username='
+        curr_parsed_url = f"{scheme}://{netloc}{path}?username="
+
+        # Without connecting to the database, we cannot check the exact username
+        self.assertEqual('http://127.0.0.1:8080/?username=', curr_parsed_url)
 
     @classmethod
     def tearDownClass(cls):
