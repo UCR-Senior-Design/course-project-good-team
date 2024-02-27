@@ -49,7 +49,7 @@
                 <label for="touch2" class = "tool"><p><span class = "friend">Compare</span></p></label>
                 <input type="checkbox" id="touch2">
                 <ul class="slide2">
-                    <li>Last 4 weeks</li> 
+                    <li><button class="mutual-favorites-btn">Mutual Favorites</button></li> 
                     <li>Last 6 months</li>
                     <li>All time</li>
                 </ul>
@@ -65,29 +65,21 @@
         </div>
       
         <script>
-            window.onload = function() {
-                if (new URLSearchParams(window.location.search).get('login') === 'success') {
-                    alert('You have logged in successfully!');
-                    // Redirect to remove the query parameter from URL
-                    window.history.replaceState({}, document.title, "/");
+            document.addEventListener('DOMContentLoaded', function() {
+                // onload functions can go here
+            });
+        
+            document.querySelector('.mutual-favorites-btn').addEventListener('click', function() {
+                let mainProfileContent = document.getElementById('main-profile-content');
+                let mutualFavoritesContainer = document.getElementById('mutual-favorites-container');
+                if (mainProfileContent.style.display === "none") {
+                    mainProfileContent.style.display = "block";
+                    mutualFavoritesContainer.style.display = "none";
+                } else {
+                    mainProfileContent.style.display = "none";
+                    mutualFavoritesContainer.style.display = "block";
                 }
-            };
-        </script>
-
-        <script>
-            window.onload = function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const username = urlParams.get('username') || 'Guest';
-                document.getElementById('username').textContent = username;
-                window.history.replaceState({}, document.title, "/");
-            };
-        </script>
-
-        <script>
-            window.onload = function() {
-                const username = "{{ username }}"; // Use the value from Flask session
-                document.getElementById('username').textContent = username;
-            };
+            });
         </script>
 
         <script>
@@ -132,53 +124,106 @@
                     <option value="long_term" {{ 'selected' if selected_time_range == 'long_term' else '' }}>All Time</option>
                 </select>
             </form>
-    
-            <div class="profile-artists">
-                <h2>Top Artists {{ time_range_display }}</h2>
-                <div class="top-container">
-                    {% for artist in top_artists %}
-                        <div class="artist {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
-                            <img src="{{ artist.image_url }}" alt="{{ artist.name }}" class="artist-image">
-                            <p class="artist-name">
-                                {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% endif %}
-                                {{ artist.name }}
-                            </p>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
             
-            <div class="spacer20"></div>
-            
-            <div class="profile-tracks">
-                <h2>Top Tracks {{ time_range_display }}</h2>
-                <div class="top-container">
-                    {% for track in top_tracks %}
-                        <div class="artist {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
-                            <img src="{{ track.image_url }}" alt="{{ track.name }}" class="track-image">
-                            <div class="track-p">
-                                <p class="track-name">
+            <div id ="main-profile-content">
+
+                <div class="profile-artists">
+                    <h2>Top Artists {{ time_range_display }}</h2>
+                    <div class="top-container">
+                        {% for artist in top_artists %}
+                            <div class="artist {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
+                                <img src="{{ artist.image_url }}" alt="{{ artist.name }}" class="artist-image">
+                                <p class="artist-name">
                                     {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% endif %}
-                                    {{ track.name }}
+                                    {{ artist.name }}
                                 </p>
                             </div>
-                        </div>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            
+                <div class="spacer20"></div>
+            
+            
+                <div class="profile-tracks">
+                    <h2>Top Tracks {{ time_range_display }}</h2>
+                    <div class="top-container">
+                        {% for track in top_tracks %}
+                            <div class="artist {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
+                                <img src="{{ track.image_url }}" alt="{{ track.name }}" class="track-image">
+                                <div class="track-p">
+                                    <p class="track-name">
+                                        {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% endif %}
+                                        {{ track.name }}
+                                    </p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            
+                <div class="spacer20"></div>
+
+                <div class="genre-chart">
+                    <h2>Genre Breakdown for {{ time_range_display }}</h2>
+                    {% if genre_pie_chart %}
+                        <img src="data:image/png;base64,{{ genre_pie_chart }}" alt="Genre Breakdown">
+                    {% else %}
+                        <p>No genre data available for this period.</p>
+                    {% endif %}
                 </div>
             </div>
-            
-        <div class="spacer20"></div>
 
-        <div class="genre-chart">
-            <h2>Genre Breakdown for {{ time_range_display }}</h2>
-            {% if genre_pie_chart %}
-                <img src="data:image/png;base64,{{ genre_pie_chart }}" alt="Genre Breakdown">
-            {% else %}
-                <p>No genre data available for this period.</p>
-            {% endif %}
+        <div id="mutual-favorites-container" class="testing-container" style="display: none;">
+            <!-- Dynamic content will be loaded here -->
         </div>
-
-
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const profile_username = "{{ profile_username }}";
+            
+                document.querySelector('.mutual-favorites-btn').addEventListener('click', function() {
+                    fetch(`/api/mutual_favorites?friendUsername=${profile_username}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const mainProfileContent = document.getElementById('main-profile-content');
+                        const mutualFavoritesContainer = document.getElementById('mutual-favorites-container');
+            
+                        // Hide the main profile content
+                        mainProfileContent.style.display = 'none';
+            
+                        // Clear existing content in the mutual favorites container and make it visible
+                        mutualFavoritesContainer.innerHTML = '';
+                        mutualFavoritesContainer.style.display = 'block';
+            
+                        // Assuming 'data' is an array of objects with 'name' and 'id'
+                        if (data && data.length) {
+                            // Create a header
+                            const header = document.createElement('h2');
+                            header.textContent = 'Mutual Favorites';
+                            mutualFavoritesContainer.appendChild(header);
+            
+                            // Create a list to display mutual favorites
+                            const list = document.createElement('ul');
+            
+                            data.forEach(item => {
+                                const listItem = document.createElement('li');
+                                listItem.textContent = item.name; // Adjust as needed based on your data structure
+                                list.appendChild(listItem);
+                            });
+            
+                            mutualFavoritesContainer.appendChild(list);
+                        } else {
+                            // Display a message if no mutual favorites found
+                            mutualFavoritesContainer.innerHTML = '<p>No mutual favorites found.</p>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        mutualFavoritesContainer.innerHTML = '<p>Error loading mutual favorites.</p>';
+                    });
+                });
+            });
+            </script>
 
 
         <div class = "page-marker">
