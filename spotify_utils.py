@@ -14,6 +14,30 @@ from datetime import datetime, timedelta
 import time
 
 
+def find_mutual_favorites(user1, user2, users_collection):
+    # Fetch user documents from the database
+    user1_data = users_collection.find_one({'username': user1})
+    user2_data = users_collection.find_one({'username': user2})
+
+    if not user1_data or not user2_data:
+        return None  # One or both users not found
+
+    # Function to extract unique identifiers from artists/tracks lists
+    def extract_ids(items):
+        return {item['id'] for item in items if 'id' in item}  # Replace 'id' with the actual identifier key
+
+    # Combine all unique artist and track IDs from all time ranges
+    user1_ids = extract_ids(user1_data.get('short_term_artists', []) + user1_data.get('medium_term_artists', []) + user1_data.get('long_term_artists', []) +
+                            user1_data.get('short_term_tracks', []) + user1_data.get('medium_term_tracks', []) + user1_data.get('long_term_tracks', []))
+    user2_ids = extract_ids(user2_data.get('short_term_artists', []) + user2_data.get('medium_term_artists', []) + user2_data.get('long_term_artists', []) +
+                            user2_data.get('short_term_tracks', []) + user2_data.get('medium_term_tracks', []) + user2_data.get('long_term_tracks', []))
+
+    # Find mutual favorites by intersecting the sets of IDs
+    mutual_favorites = user1_ids.intersection(user2_ids)
+
+    return list(mutual_favorites)  # Return a list of mutual favorite IDs
+
+
 def generate_genre_pie_chart(genres):
     # Sort genres and select top N
     top_genres = dict(sorted(genres.items(), key=lambda item: item[1], reverse=True)[:10])
