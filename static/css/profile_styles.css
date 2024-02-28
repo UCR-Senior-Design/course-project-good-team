@@ -75,22 +75,25 @@ body {
 /* SIDE BAR CSS */
 
 .sidebar-container{
-  height: 94.1%;
+  height: 1300px;
   width: 250px;
   position: absolute;
+  top: 80px;
   left: 0;
   background-color:#1a1a1a;
   display: flex;
   justify-content: center;
+  overflow-y: auto;
 }
 
 .sidebar{
+  /* height: 100%; */
+  position: absolute;
   display: flex;
   align-items: center;
   flex-direction: column;
   justify-content: space-between;
   flex-direction: column;
-  height: 50%;
   margin-top: 50px;
 }
 
@@ -134,6 +137,7 @@ body {
 }
 
 .container {
+  position: relative;
   justify-content: center;
   align-items: center;
 }
@@ -165,7 +169,8 @@ nav {
 }
 nav.navbar{
   display: flex;
-  justify-content: space-between
+  justify-content: space-between;
+  z-index: 1000;
 }
 
 .logo{
