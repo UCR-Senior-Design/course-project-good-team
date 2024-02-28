@@ -419,6 +419,8 @@ nav.navbar{
   text-align: center;
   transition: height .4s ease;
   list-style: none;
+  display: flex;
+  justify-content: center;
 }
 
 .slide1 li {
@@ -576,7 +578,7 @@ nav.navbar{
   max-width: 80%;
 }
 
-.discover{
+.sidebutton{
   position: relative;
   width: 100px;
   height: 35px;
