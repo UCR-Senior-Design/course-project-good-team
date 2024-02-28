@@ -220,3 +220,67 @@ nav.navbar{
 .item:nth-child(5):hover:before {
   height: 100%;
 }
+
+
+.discover{
+  position: relative;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  margin: 0 10px;
+  border: 2px solid #f2c75c;
+  overflow: hidden;
+}
+
+.discover a{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  width: 140px;
+  height: 40px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.discover button{
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+  background: none;
+  border: none;
+}
+
+.discover:hover a {
+  color: #003b49;
+}
+
+.discover:hover button {
+  color: #003b49;
+}
+
+.discover:before {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  transform: skew(30deg);
+  background: #f2c75c;
+  transition: width 400ms ease;
+}
+
+.discover:hover:before {
+  width: 120%;
+}
