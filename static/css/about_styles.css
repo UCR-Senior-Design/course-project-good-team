@@ -285,7 +285,7 @@ nav.navbar{
   overflow: hidden;
 }
 
-.item:nth-child(5){
+.item:nth-child(6){
   border: 2px solid green;
   color: green;
 }
@@ -354,7 +354,7 @@ nav.navbar{
   transform: skew(25deg);
 }
 
-.item:nth-child(5):before {
+.item:nth-child(6):before {
   width: 180px;
   height: 0%;
   bottom: 0px;
@@ -362,7 +362,7 @@ nav.navbar{
   background: #1faa50;
 }
 
-.item:nth-child(5):hover:before {
+.item:nth-child(6):hover:before {
   height: 100%;
 }
 
