@@ -1,39 +1,36 @@
-import os
-import io
 import base64
-import requests
-import pymongo
-import spotipy
-from spotipy.oauth2 import SpotifyOAuth
-from collections import defaultdict
-import certifi
-from spotipy.oauth2 import SpotifyOAuth
-from flask import Flask, request, redirect, send_from_directory, session, url_for, render_template, flash, jsonify
-from bson.objectid import ObjectId
+import io
+import os
+from collections import Counter, defaultdict
 from datetime import timedelta
-from dotenv import load_dotenv
-from pymongo import MongoClient
 from random import choice
-from PIL import Image
+
+import certifi
+import pymongo
 import requests
-from collections import Counter
+import spotipy
+from dotenv import load_dotenv
+from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
+from PIL import Image
+from pymongo import MongoClient
+from spotipy.oauth2 import SpotifyOAuth
 
-from spotify_utils import generate_genre_pie_chart, get_random_statistic, get_random_friend_statistic, generate_genre_pie_chart_from_db, find_mutual_favorites
-from image_utils import get_dominant_color, get_contrasting_text_color
 from db_utils import update_user_document
+from image_utils import get_contrasting_text_color, get_dominant_color
+from spotify_utils import (generate_genre_pie_chart, generate_genre_pie_chart_from_db, 
+                           get_random_friend_statistic, get_random_statistic, 
+                           get_top_song_from_global_playlist)
 
-
-dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
 load_dotenv()
 
 # Read environment variables from .env
 CLIENT_ID = os.environ.get('SPOTIFY_CLIENT_ID')
 CLIENT_SECRET = os.environ.get('SPOTIFY_CLIENT_SECRET')
 REDIRECT_URI = os.environ.get('SPOTIFY_REDIRECT_URI')
-
+FLASK_SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
 
 app = Flask(__name__)
-app.secret_key = 'goodgroup'
+app.secret_key = FLASK_SECRET_KEY
 app.permanent_session_lifetime = timedelta(minutes=30)  # Basically saves your login for 30 minutes
 
 try:
@@ -184,6 +181,8 @@ def profile(username):
     # artist_ids = [artist['id'] for artist in user_data.get(f'{selected_time_range}_artists', [])] #This doesn't limit to 10 artists but makes load time long
     genre_pie_chart_base64 = generate_genre_pie_chart_from_db(artist_ids, access_token, artists)
 
+    print(top_tracks)
+
     # Render the profile template with all data
     return render_template('profile.html', user=user_data, top_artists=top_artists, top_tracks=top_tracks,
                            selected_time_range=selected_time_range, time_range_display=time_range_display,
@@ -191,23 +190,6 @@ def profile(username):
                            icon_link=icon_link, 
                            profile_username=username, #This should be profile you're viewing
                            session_username=session_username) # This should be the logged-in user's username 
-
-
-@app.route('/api/mutual_favorites', methods=['GET'])
-def get_mutual_favorites():
-    friend_username = request.args.get('friendUsername')
-    current_user_username = session.get('username')
-
-    if not current_user_username:
-        return jsonify({"error": "User not logged in"}), 403
-
-    # Assuming 'users' is your MongoDB collection for user documents
-    mutual_favorites = find_mutual_favorites(current_user_username, friend_username, users)
-
-    if mutual_favorites is None:
-        return jsonify({"error": "One or both users not found"}), 404
-
-    return jsonify(mutual_favorites)
 
 
 @app.route('/discover')
@@ -222,9 +204,12 @@ def discover():
     username = session.get('username', 'Guest')
     access_token = session['access_token']
 
+    # Fetch the top song details
+    top_song_details = get_top_song_from_global_playlist(access_token)
+
 
     # Render the Discover page template with fetched data
-    return render_template('discover.html', username=username, is_logged_in=True)
+    return render_template('discover.html', username=username, is_logged_in=True, top_song_details=top_song_details)
 
 
 @app.route('/addfriend', methods=['POST'])

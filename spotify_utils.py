@@ -236,3 +236,27 @@ def generate_genre_pie_chart_from_db(artist_ids, access_token, artists):
     buf.close()
     
     return image_base64
+
+def get_top_song_from_global_playlist(access_token):
+    # Initialize Spotipy with user's access token
+    sp = spotipy.Spotify(auth=access_token)
+
+    # Spotify's Global Top 50 playlist ID
+    playlist_id = '37i9dQZEVXbNG2KDcFcKOF'
+    
+    # Fetch the first track from the playlist
+    results = sp.playlist_tracks(playlist_id, limit=1)
+    top_track = results['items'][0]['track']
+    
+    # Extract the necessary details
+    song_name = top_track['name']
+    track_id = top_track['id']
+    artist_name = top_track['artists'][0]['name']  # Assuming only one artist for simplicity
+    album_image_url = top_track['album']['images'][0]['url']  # The first image is usually the largest
+    
+    return {
+        'song_name': song_name,
+        'artist_name': artist_name,
+        'album_image_url': album_image_url,
+        'spotify_url': f"https://open.spotify.com/track/{track_id}"
+    }
