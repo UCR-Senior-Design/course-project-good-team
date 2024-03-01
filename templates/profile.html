@@ -5,6 +5,7 @@
         <Title>{{ user.username }}'s Profile</Title>
         <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/profile_styles.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
     </head>
 
     <body>
@@ -63,51 +64,6 @@
                 </ul>
             </div>
         </div>
-      
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // onload functions can go here
-            });
-        
-            document.querySelector('.mutual-favorites-btn').addEventListener('click', function() {
-                let mainProfileContent = document.getElementById('main-profile-content');
-                let mutualFavoritesContainer = document.getElementById('mutual-favorites-container');
-                if (mainProfileContent.style.display === "none") {
-                    mainProfileContent.style.display = "block";
-                    mutualFavoritesContainer.style.display = "none";
-                } else {
-                    mainProfileContent.style.display = "none";
-                    mutualFavoritesContainer.style.display = "block";
-                }
-            });
-        </script>
-
-        <script>
-            function askForFriend() {
-                // Use prompt to ask for friend's name
-                var friendName = prompt("Enter friend's name:");
-    
-                // If user provides a name, send it to the server for processing
-                if (friendName !== null) {
-                    fetch('/addfriend', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ friendName: friendName }),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Handle the response from the server if needed
-                        console.log(data);
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-                }
-            }
-        </script>
-
 
         <div class = "spacer50"></div>
 
@@ -150,7 +106,10 @@
                     <div class="top-container">
                         {% for track in top_tracks %}
                             <div class="artist {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
-                                <img src="{{ track.image_url }}" alt="{{ track.name }}" class="track-image">
+                                <a href="https://open.spotify.com/track/{{ track.id }}" target="_blank" class="track-link">
+                                    <img src="{{ track.image_url }}" alt="{{ track.name }}" class="track-image">
+                                    <div class="play-overlay"><i class="fas fa-play-circle" aria-hidden="true"></i></div>
+                                </a>
                                 <div class="track-p">
                                     <p class="track-name">
                                         {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% endif %}
@@ -173,58 +132,6 @@
                     {% endif %}
                 </div>
             </div>
-
-        <div id="mutual-favorites-container" class="testing-container" style="display: none;">
-            <!-- Dynamic content will be loaded here -->
-        </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const profile_username = "{{ profile_username }}";
-            
-                document.querySelector('.mutual-favorites-btn').addEventListener('click', function() {
-                    fetch(`/api/mutual_favorites?friendUsername=${profile_username}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const mainProfileContent = document.getElementById('main-profile-content');
-                        const mutualFavoritesContainer = document.getElementById('mutual-favorites-container');
-            
-                        // Hide the main profile content
-                        mainProfileContent.style.display = 'none';
-            
-                        // Clear existing content in the mutual favorites container and make it visible
-                        mutualFavoritesContainer.innerHTML = '';
-                        mutualFavoritesContainer.style.display = 'block';
-            
-                        // Assuming 'data' is an array of objects with 'name' and 'id'
-                        if (data && data.length) {
-                            // Create a header
-                            const header = document.createElement('h2');
-                            header.textContent = 'Mutual Favorites';
-                            mutualFavoritesContainer.appendChild(header);
-            
-                            // Create a list to display mutual favorites
-                            const list = document.createElement('ul');
-            
-                            data.forEach(item => {
-                                const listItem = document.createElement('li');
-                                listItem.textContent = item.name; // Adjust as needed based on your data structure
-                                list.appendChild(listItem);
-                            });
-            
-                            mutualFavoritesContainer.appendChild(list);
-                        } else {
-                            // Display a message if no mutual favorites found
-                            mutualFavoritesContainer.innerHTML = '<p>No mutual favorites found.</p>';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        mutualFavoritesContainer.innerHTML = '<p>Error loading mutual favorites.</p>';
-                    });
-                });
-            });
-            </script>
-
 
         <div class = "page-marker">
             <footer>PROFILE</footer>
