@@ -19,7 +19,7 @@ from db_utils import update_user_document
 from image_utils import get_contrasting_text_color, get_dominant_color
 from spotify_utils import (generate_genre_pie_chart, generate_genre_pie_chart_from_db, 
                            get_random_friend_statistic, get_random_statistic, 
-                           get_top_song_from_global_playlist)
+                           get_top_song_from_global_playlist, get_random_song)
 
 load_dotenv()
 
@@ -204,12 +204,17 @@ def discover():
     username = session.get('username', 'Guest')
     access_token = session['access_token']
 
-    # Fetch the top song details
-    top_song_details = get_top_song_from_global_playlist(access_token)
+    random_song_requested = request.args.get('random_song', 'false') == 'true'
+    access_token = session['access_token']
+    
+    if random_song_requested:
+        # Fetch a random song using a function that you will define
+        song_details = get_random_song(access_token)
+    else:
+        # Fetch the top song details as before
+        song_details = get_top_song_from_global_playlist(access_token)
 
-
-    # Render the Discover page template with fetched data
-    return render_template('discover.html', username=username, is_logged_in=True, top_song_details=top_song_details)
+    return render_template('discover.html', username = username, song_details=song_details, random_song=random_song_requested)
 
 
 @app.route('/addfriend', methods=['POST'])

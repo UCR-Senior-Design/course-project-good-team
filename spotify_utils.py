@@ -12,6 +12,8 @@ import requests
 from random import choice
 from datetime import datetime, timedelta
 import time
+import random
+import string
 
 
 def find_mutual_favorites(user1, user2, users_collection):
@@ -260,3 +262,28 @@ def get_top_song_from_global_playlist(access_token):
         'album_image_url': album_image_url,
         'spotify_url': f"https://open.spotify.com/track/{track_id}"
     }
+
+
+def get_random_song(access_token):
+    # Initialize the Spotify client
+    sp = spotipy.Spotify(auth=access_token)
+    
+    # Generate a random query string
+    query = ''.join(random.choices(string.ascii_lowercase + string.digits, k=3))
+    
+    # Make a search request to Spotify
+    results = sp.search(q=query, type='track', limit=50)
+    tracks = results['tracks']['items']
+    
+    if tracks:
+        # Select a random track from the search results
+        random_track = random.choice(tracks)
+        song_details = {
+            'song_name': random_track['name'],
+            'artist_name': random_track['artists'][0]['name'],
+            'album_image_url': random_track['album']['images'][0]['url'],
+            'spotify_url': random_track['external_urls']['spotify']
+        }
+        return song_details
+    else:
+        return None

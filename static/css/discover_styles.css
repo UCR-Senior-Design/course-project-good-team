@@ -5,12 +5,12 @@ body {
 }
 
 .content {
-  margin-left: 250px; 
+  margin-left: 250px;
+  padding: 20px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center; 
-  padding: 20px; 
+  flex-direction: column; 
+  align-items: center; 
+  text-align: center;
 }
 
 
@@ -351,12 +351,20 @@ nav.navbar{
 
 .album-cover {
   position: relative;
-  display: inline-block;
+  width: 250px;
+  margin-top: 20px;
+  margin-bottom: 20px; 
+  justify-content: center;
+  align-items: center;
 }
 
 .album-cover img {
-  width: 100%; /* Adjust as needed */
+  width: 100%; 
+  margin-top: 20px;
+  margin-bottom: 20px; 
   display: block;
+  justify-content: center;
+  align-items: center;
 }
 
 .play-overlay {
@@ -365,16 +373,14 @@ nav.navbar{
   bottom: 0;
   left: 0;
   right: 0;
-  height: 100%;
-  width: 100%;
-  opacity: 0;
-  transition: .5s ease;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
   display: flex;
   justify-content: center;
   align-items: center;
   color: white;
-  font-size: 48px; /* Adjust based on your needs */
+  font-size: 48px;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .album-cover:hover .play-overlay {
@@ -383,4 +389,14 @@ nav.navbar{
 
 .fa-play-circle:before {
   content: "\f01d"; /* This is the Font Awesome play circle icon unicode */
+}
+
+.song-details {
+  width: 100%; /* Adjust as needed */
+}
+
+.btn {
+  display: block; /* Ensure the button is a block element */
+  margin-top: 20px; /* Spacing after song details */
+  text-decoration: none; /* Remove underline from links */
 }
