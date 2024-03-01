@@ -580,7 +580,7 @@ nav.navbar{
 
 .sidebutton{
   position: relative;
-  width: 100px;
+  width: 120px;
   height: 35px;
   display: flex;
   align-items: center;
@@ -621,6 +621,9 @@ nav.navbar{
 
 
 .sidebutton:hover button {
+  color: #003b49;
+}
+.sidebutton:hover a{
   color: #003b49;
 }
 
