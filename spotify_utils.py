@@ -12,6 +12,8 @@ import requests
 from random import choice
 from datetime import datetime, timedelta
 import time
+import random
+import string
 
 
 def find_mutual_favorites(user1, user2, users_collection):
@@ -236,3 +238,52 @@ def generate_genre_pie_chart_from_db(artist_ids, access_token, artists):
     buf.close()
     
     return image_base64
+
+def get_top_song_from_global_playlist(access_token):
+    # Initialize Spotipy with user's access token
+    sp = spotipy.Spotify(auth=access_token)
+
+    # Spotify's Global Top 50 playlist ID
+    playlist_id = '37i9dQZEVXbNG2KDcFcKOF'
+    
+    # Fetch the first track from the playlist
+    results = sp.playlist_tracks(playlist_id, limit=1)
+    top_track = results['items'][0]['track']
+    
+    # Extract the necessary details
+    song_name = top_track['name']
+    track_id = top_track['id']
+    artist_name = top_track['artists'][0]['name']  # Assuming only one artist for simplicity
+    album_image_url = top_track['album']['images'][0]['url']  # The first image is usually the largest
+    
+    return {
+        'song_name': song_name,
+        'artist_name': artist_name,
+        'album_image_url': album_image_url,
+        'spotify_url': f"https://open.spotify.com/track/{track_id}"
+    }
+
+
+def get_random_song(access_token):
+    # Initialize the Spotify client
+    sp = spotipy.Spotify(auth=access_token)
+    
+    # Generate a random query string
+    query = ''.join(random.choices(string.ascii_lowercase + string.digits, k=3))
+    
+    # Make a search request to Spotify
+    results = sp.search(q=query, type='track', limit=50)
+    tracks = results['tracks']['items']
+    
+    if tracks:
+        # Select a random track from the search results
+        random_track = random.choice(tracks)
+        song_details = {
+            'song_name': random_track['name'],
+            'artist_name': random_track['artists'][0]['name'],
+            'album_image_url': random_track['album']['images'][0]['url'],
+            'spotify_url': random_track['external_urls']['spotify']
+        }
+        return song_details
+    else:
+        return None
