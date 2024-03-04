@@ -12,7 +12,10 @@
 <div class="container">
     <nav class="navbar">
         <div class="logo">
-            <img src="{{ url_for('static', filename='images/favicon.ico') }}">
+            <img src="{{ icon_link }}">
+        </div>
+        <div class="welcome">
+            <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">{{ session_username }}</span></span>
         </div>
         <ul class="nav--list">
             <li class="item"><button><a href="/">Home</a></button></li>
@@ -29,10 +32,31 @@
     </nav>
 </div>
 
-<div class="sidebar-container">
-    <div class="sidebar">
-        <button onclick="window.location.href='/discover?random_song=true'" id="random-song-btn">Random Song</button>
-        <button id="friends-favorite-song-btn">Find a Song from Your Friends</button>
+<div class = "sidebar-container" id = "side">
+    <div class = "sidebar">
+        <label for="touch1" class="tool"><p>COOL <span class="friend">MUSIC</span> STUFF</p></label>
+        <input type="checkbox" id="touch1">
+        <ul class="slide1">
+            <li class = "sidebutton"><button onclick="window.location.href='/discover?random_song=true'" id="random-song-btn"><a>Random Song</a></button></li> 
+            <li class = "sidebutton"><button><a>Friend's Songs</a></button></li>
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
+        </ul>
+        <label for="touch2" class = "tool"><p><span class = "friend">Placeholder</span></p></label>
+        <input type="checkbox" id="touch2">
+        <ul class="slide2">
+            <li class = "sidebutton"><button><a>placeholder</a></button></li> 
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
+        </ul>
+        
+        <label for="touch3" class = "tool"><p><span class = "friend">Placeholder</span></p></label>
+        <input type="checkbox" id="touch3">
+        <ul class="slide3">
+            <li class = "sidebutton"><button><a href="#">placeholder</a></button></li> 
+            <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
+            <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
+        </ul>
+        <button class="closebtn" id="closebtn" onclick="closeNav()">X Close Sidebar</button>
     </div>
 </div>
 
@@ -53,6 +77,24 @@
         {% endif %}
     </div>
 </div>
+
+
+<div id = "opens">
+    <button class="openbtn hidden" id ="openbtn"onclick="openNav()">☰ Open Sidebar</button>
+</div>
+
+<script>
+    function openNav() {
+    document.getElementById("side").style.width = "250px";
+    document.getElementById("openbtn").classList.add("hidden")
+
+    }
+
+    function closeNav() {
+    document.getElementById("side").style.width = "0px";
+    document.getElementById("openbtn").classList.remove("hidden")
+    }
+</script>
 
 
 </body>
