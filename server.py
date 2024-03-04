@@ -194,6 +194,16 @@ def profile(username):
 
 @app.route('/discover')
 def discover():
+
+    icon_link = choice([
+        url_for('static', filename='images/favicon.ico'),
+        url_for('static', filename='images/favicon2.ico')
+    ])
+    username = session.get("username")
+    session_username = session.get('username')
+    user_data = users.find_one({'username': username})
+    if not user_data:
+        return "User not found", 404
     if 'access_token' not in session:
         # User is not logged in, redirect to Spotify login
         return redirect('https://accounts.spotify.com/authorize?client_id={}&response_type=code&redirect_uri={}&scope={}'.format(
@@ -214,7 +224,7 @@ def discover():
         # Fetch the top song details as before
         song_details = get_top_song_from_global_playlist(access_token)
 
-    return render_template('discover.html', username = username, song_details=song_details, random_song=random_song_requested)
+    return render_template('discover.html', username = username, song_details=song_details, random_song=random_song_requested, user=user_data, icon_link=icon_link, session_username=session_username, is_logged_in='username' in session)
 
 
 @app.route('/addfriend', methods=['POST'])

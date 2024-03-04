@@ -33,58 +33,70 @@
             </nav>
           </div>
 
-        <div class = "sidebar-container">
+        <div class = "sidebar-container" id = "side">
             <div class = "sidebar">
                 <label for="touch1" class="tool"><p>{{ user.username }}'s <span class="friend">profile</span></p></label>
                 <input type="checkbox" id="touch1">
                 <ul class="slide1">
                     <form action="/profile/{{ user.username }}" method="get">
-                        <li class = "sidebutton"><button type="submit" name="time_range" value="short_term" class="profilerange">Last 4 weeks</button></li>
+                        <li class = "sidebutton"><button type="submit" name="time_range" value="short_term" class="profilerange"><a>Last 4 weeks</a></button></li>
                         <br>
-                        <li class = "sidebutton"><button type="submit" name="time_range" value="medium_term" class="profilerange">Last 6 months</button></li>
+                        <li class = "sidebutton"><button type="submit" name="time_range" value="medium_term" class="profilerange"><a>Last 6 months</a></button></li>
                         <br>
-                        <li class = "sidebutton"><button type="submit" name="time_range" value="long_term" class="profilerange">All time</button></li>
+                        <li class = "sidebutton"><button type="submit" name="time_range" value="long_term" class="profilerange"><a>All time</a></button></li>
                     </form>
                     
                 </ul>
                 <label for="touch2" class = "tool"><p><span class = "friend">Compare</span></p></label>
                 <input type="checkbox" id="touch2">
                 <ul class="slide2">
-                    <li><button class="mutual-favorites-btn">Mutual Favorites</button></li> 
-                    <li>Last 6 months</li>
-                    <li>All time</li>
+                    <li class = "sidebutton"><button class="mutual-favorites-btn">Mutual Favorites</button></li> 
+                    <li class = "sidebutton"><button><a>placeholder</a></button></li>
+                    <li class = "sidebutton"><button><a>placeholder</a></button></li>
                 </ul>
                 
                 <label for="touch3" class = "tool"><p><span class = "friend">playlists</span></p></label>
                 <input type="checkbox" id="touch3">
                 <ul class="slide3">
-                    <li><a href="#">All playlists</a></li> 
-                    <li><a href="#">Last 6 months</a></li>
-                    <li><a href="#">All time</a></li>
+                    <li class = "sidebutton"><button><a href="#">placeholder</a></button></li> 
+                    <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
+                    <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
                 </ul>
+                <button class="closebtn" id="closebtn" onclick="closeNav()">X Close Sidebar</button>
             </div>
         </div>
 
-        <div class = "spacer50"></div>
 
+
+        <script>
+            function openNav() {
+            document.getElementById("side").style.width = "250px";
+            document.getElementById("openbtn").classList.add("hidden")
+
+            }
+
+            function closeNav() {
+            document.getElementById("side").style.width = "0px";
+            document.getElementById("openbtn").classList.remove("hidden")
+            }
+        </script>
+
+        <div id = "opens">
+            <button class="openbtn hidden" id ="openbtn"onclick="openNav()">☰ Open Sidebar</button>
+        </div>
+        
         <div class="profilepic-container">
             <img src="{{ user.profile_pic_url }}" alt="{{ user.username }}'s profile picture" class="profile-picture">
             <h1 class="username">{{ user.username }}</h1>
-            <p class="user-since">Friendify user since {{ date_joined }}</p>
+            <p class="user-since">Friendify user since <span class = "friend">{{ date_joined }}</span></p>
         </div>
     
-            <form action="{{ url_for('profile', username=user.username) }}" method="get">
-                <select name="time_range" onchange="this.form.submit()">
-                    <option value="short_term" {{ 'selected' if selected_time_range == 'short_term' else '' }}>Last Month</option>
-                    <option value="medium_term" {{ 'selected' if selected_time_range == 'medium_term' else '' }}>Last 6 Months</option>
-                    <option value="long_term" {{ 'selected' if selected_time_range == 'long_term' else '' }}>All Time</option>
-                </select>
-            </form>
+
             
             <div id ="main-profile-content">
 
                 <div class="profile-artists">
-                    <h2>Top Artists {{ time_range_display }}</h2>
+                    <h2 class = "topprofart">Top Artists <span class = "friend">{{ time_range_display }}</span></h2>
                     <div class="top-container">
                         {% for artist in top_artists %}
                             <div class="artist {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
@@ -102,7 +114,7 @@
             
             
                 <div class="profile-tracks">
-                    <h2>Top Tracks {{ time_range_display }}</h2>
+                    <h2 class = "topprofart">Top Tracks <span class ="friend">{{ time_range_display }}</span></h2>
                     <div class="top-container">
                         {% for track in top_tracks %}
                             <div class="artist {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
@@ -124,7 +136,7 @@
                 <div class="spacer20"></div>
 
                 <div class="genre-chart">
-                    <h2>Genre Breakdown for {{ time_range_display }}</h2>
+                    <h2 class ="topprofart">Genre Breakdown for <span class="friend">{{ time_range_display }}</span></h2>
                     {% if genre_pie_chart %}
                         <img src="data:image/png;base64,{{ genre_pie_chart }}" alt="Genre Breakdown">
                     {% else %}
