@@ -31,8 +31,21 @@
 
 <div class="sidebar-container">
     <div class="sidebar">
-        <button onclick="window.location.href='/discover?random_song=true'" id="random-song-btn">Random Song</button>
-        <button id="friends-favorite-song-btn">Find a Song from Your Friends</button>
+        <button class="button-disc" onclick="window.location.href='/discover?random_song=true'" id="random-song-btn">Random Song</button>
+        <div class="spacer20"></div>
+        <p>Break the routine and find something new:</p>
+        <div class="spacer20"></div>
+        <p>Your next favorite song awaits, explore endless musical possibilities and experience
+            the thrill of discovery.
+        </p>
+        <div class="spacer40"></div>
+        <button class="button-disc" id="friends-favorite-song-btn">Find a Song from Your Friends</button>
+        <div class="spacer20"></div>
+        <p>Your friends' playlists, your new favorites:</p>
+        <div class="spacer20"></div>
+        <p>Discover a song from your friends! Delve into their musical universe and find a song
+            to jam to and bond over.
+        </p>
     </div>
 </div>
 
@@ -43,13 +56,16 @@
     <div class="song-details">
         <div class="album-cover">
             <a href="{{ song_details.spotify_url }}" target="_blank">
-                <img src="{{ song_details.album_image_url }}" alt="Song album cover">
-                <div class="play-overlay"><i class="fa fa-play-circle" aria-hidden="true"></i></div>
+                <div class="album-center">
+                    <img src="{{ song_details.album_image_url }}" alt="Song album cover">
+                    <div class="play-overlay"><i class="fa fa-play-circle" aria-hidden="true"></i></div>
+                </div>
             </a>
         </div>
         <p>{{ song_details.song_name }} by {{ song_details.artist_name }}</p>
+        <div class="spacer20"></div>
         {% if random_song %}
-        <button><a href="{{ url_for('discover', random_song='true') }}" class="btn">Generate New Random Song</a></button>
+        <button class="button-disc"><a href="{{ url_for('discover', random_song='true') }}" class="btn">Generate New Random Song</a></button>
         {% endif %}
     </div>
 </div>
