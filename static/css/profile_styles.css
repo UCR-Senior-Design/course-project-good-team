@@ -761,6 +761,11 @@ nav.navbar{
   align-items: center;
 }
 
+#mutualFavoritesContainer {
+  display: none; 
+  margin-left: 250px;
+}
+
 .coin{
   animation: animate 1.2s linear infinite;
 }
