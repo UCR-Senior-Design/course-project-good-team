@@ -287,3 +287,35 @@ def get_random_song(access_token):
         return song_details
     else:
         return None
+    
+def find_best_match(user_data, friend_data, category):
+    mutual_favorites = {}
+    for term in ['short_term', 'medium_term', 'long_term']:
+        user_list = user_data.get(f'{term}_{category}', [])
+        friend_list = friend_data.get(f'{term}_{category}', [])
+    
+        user_dict = {item['id']: {'name': item['name'], 'image_url': item.get('image_url', '')} for item in user_list}
+        friend_dict = {item['id']: index for index, item in enumerate(friend_list, start=1)}
+        
+        best_score = float('inf')
+        best_match = None
+        
+        # Find mutual favorites by looking through each user array and finding best match
+        for index, user_item in enumerate(user_list, start=1):
+            friend_index = friend_dict.get(user_item['id'])
+            if friend_index:
+                combined_score = index + friend_index
+                if combined_score < best_score:
+                    best_score = combined_score
+                    best_match = user_item['id']
+                    
+        if best_match:
+            mutual_favorites[term] = user_dict[best_match]
+            mutual_favorites[term]['term'] = term.replace('_', ' ')
+    
+    return mutual_favorites
+
+def find_mutual_favorites(user_data, friend_data):
+    artists = find_best_match(user_data, friend_data, 'artists')
+    tracks = find_best_match(user_data, friend_data, 'tracks')
+    return {'artists': artists, 'tracks': tracks}
