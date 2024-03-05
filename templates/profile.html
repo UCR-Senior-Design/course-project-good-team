@@ -49,7 +49,7 @@
             <label for="touch2" class = "tool"><p><span class = "friend">Compare</span></p></label>
             <input type="checkbox" id="touch2">
             <ul class="slide2">
-                <li class = "sidebutton"><button class="mutual-favorites-btn">Mutual Favorites</button></li> 
+                <li class = "sidebutton"><button onclick="toggleSection('mutualFavoritesContainer')">Show Mutual Favorites</button></li> 
                 <li class = "sidebutton"><button><a>placeholder</a></button></li>
                 <li class = "sidebutton"><button><a>placeholder</a></button></li>
             </ul>
@@ -57,7 +57,7 @@
             <label for="touch3" class = "tool"><p><span class = "friend">playlists</span></p></label>
             <input type="checkbox" id="touch3">
             <ul class="slide3">
-                <li class="sidebutton"><button onclick="showPlaylists()">See All</button></li> 
+                <li class="sidebutton"><button onclick="toggleSection('playlistsGrid')">See All Playlists</button></li> 
                 <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
                 <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
             </ul>
@@ -136,6 +136,43 @@
                 </div>
             {% endfor %}
         </div>
+    </div>
+
+    <!-- Mutual Favorites Section -->
+    <div id="mutualFavoritesContainer" style="display: none;">
+        {% if mutual_favorites %}
+            {% if mutual_favorites.artists %}
+                {% for term, artist in mutual_favorites.artists.items() %}
+                    <div>
+                        {% if term == 'short_term' %}
+                            <p>You two have both been loving {{ artist.name }} lately.</p>
+                        {% elif term == 'medium_term' %}
+                            <p>Over the last 6 months, {{ artist.name }} has been a favorite for both of you.</p>
+                        {% else %}
+                            <p>{{ artist.name }} is in both of your all time top artists.</p>
+                        {% endif %}
+                        <img src="{{ artist.image_url }}" alt="{{ artist.name }}">
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if mutual_favorites.tracks %}
+                {% for term, track in mutual_favorites.tracks.items() %}
+                    <div>
+                        {% if term == 'short_term' %}
+                            <p>You two have both been bumping {{ track.name }} lately.</p>
+                        {% elif term == 'medium_term' %}
+                            <p>{{ track.name }} has been in both of your rotations over the last 6 months.</p>
+                        {% else %}
+                            <p>{{ track.name }} is an all time favorite for both of you.</p>
+                        {% endif %}
+                        <img src="{{ track.image_url }}" alt="{{ track.name }}">
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            <p>You two have no mutual favorites... bummer.</p>
+        {% endif %}
+
     </div>
 
     <!-- Page Footer -->
