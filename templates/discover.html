@@ -5,14 +5,16 @@
     <title>Discover - Friendify</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/discover_styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!--need this for the play button over album covers-->
-
 </head>
 <body>
 
 <div class="container">
     <nav class="navbar">
         <div class="logo">
-            <img src="{{ url_for('static', filename='images/favicon.ico') }}">
+            <img src="{{ icon_link }}">
+        </div>
+        <div class="welcome">
+            <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">{{ session_username }}</span></span>
         </div>
         <ul class="nav--list">
             <li class="item"><button><a href="/">Home</a></button></li>
@@ -29,7 +31,9 @@
     </nav>
 </div>
 
-<div class="sidebar-container">
+<!-- CAROLINHS VERSION OF THE SIDEBAR -- THIS IS THE CODE TO REFERENCE WHEN REBUILDING THE SIDEBAR WITH HER FEATURES
+    
+    <div class="sidebar-container">
     <div class="sidebar">
         <button class="button-disc" onclick="window.location.href='/discover?random_song=true'" id="random-song-btn">Random Song</button>
         <div class="spacer20"></div>
@@ -45,7 +49,34 @@
         <div class="spacer20"></div>
         <p>Discover a song from your friends! Delve into their musical universe and find a song
             to jam to and bond over.
-        </p>
+        </p> -->
+
+        
+<div class = "sidebar-container" id = "side">
+    <div class = "sidebar">
+        <label for="touch1" class="tool"><p>COOL <span class="friend">MUSIC</span> STUFF</p></label>
+        <input type="checkbox" id="touch1">
+        <ul class="slide1">
+            <li class = "sidebutton"><button onclick="window.location.href='/discover?random_song=true'" id="random-song-btn"><a>Random Song</a></button></li> 
+            <li class = "sidebutton"><button><a>Friend's Songs</a></button></li>
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
+        </ul>
+        <label for="touch2" class = "tool"><p><span class = "friend">Placeholder</span></p></label>
+        <input type="checkbox" id="touch2">
+        <ul class="slide2">
+            <li class = "sidebutton"><button><a>placeholder</a></button></li> 
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
+        </ul>
+        
+        <label for="touch3" class = "tool"><p><span class = "friend">Placeholder</span></p></label>
+        <input type="checkbox" id="touch3">
+        <ul class="slide3">
+            <li class = "sidebutton"><button><a href="#">placeholder</a></button></li> 
+            <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
+            <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
+        </ul>
+        <button class="closebtn" id="closebtn" onclick="closeNav()">X Close Sidebar</button>
     </div>
 </div>
 
@@ -71,6 +102,14 @@
     </div>
 </div>
 
+
+<div id = "opens">
+    <button class="openbtn hidden" id ="openbtn"onclick="openNav()">☰ Open Sidebar</button>
+</div>
+
+
+<!-- JavaScript  in discover.js-->
+<script src="{{ url_for('static', filename='js/discover.js') }}"></script>
 
 </body>
 </html>
