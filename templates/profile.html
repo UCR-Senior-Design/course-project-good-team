@@ -130,7 +130,7 @@
     <div id="playlistsGrid" style="display: none;">
         <div class="grid-container">
             {% for playlist in playlists_data %}
-                <div class="grid-item">
+                <div class="grid-item" onclick="showPlaylistSongs('{{ playlist.id }}')">
                     <img src="{{ playlist.image_url }}" alt="{{ playlist.name }}" class="playlist-image">
                     <p>{{ playlist.name }}</p>
                 </div>
@@ -143,37 +143,12 @@
         <footer>PROFILE</footer>
     </div>
 
-    <!-- JavaScript for Sidebar and Playlists Grid -->
-    <script>
-        function showPlaylists() {
-            var grid = document.getElementById("playlistsGrid");
-            var mainContent = document.getElementById("main-profile-content"); // Get the main content container
-            if (grid.style.display === "none") {
-                grid.style.display = "block"; // Show the playlists grid
-                mainContent.style.display = "none"; // Hide the main content
-            } else {
-                grid.style.display = "none"; // Hide the playlists grid
-                mainContent.style.display = "block"; // Show the main content
-            }
-        }
-
-        function openNav() {
-            document.getElementById("side").style.width = "250px";
-            document.getElementById("openbtn").classList.add("hidden")
-
-        }
-
-        function closeNav() {
-            document.getElementById("side").style.width = "0px";
-            document.getElementById("openbtn").classList.remove("hidden")
-        }
-
-        
-    </script>
-
     <div id = "opens">
         <button class="openbtn hidden" id ="openbtn"onclick="openNav()">☰ Open Sidebar</button>
     </div>
+
+<!-- JavaScript  in profile.js-->
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
 
 </body>
 </html>

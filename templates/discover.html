@@ -5,7 +5,6 @@
     <title>Discover - Friendify</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/discover_styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!--need this for the play button over album covers-->
-
 </head>
 <body>
 
@@ -83,19 +82,9 @@
     <button class="openbtn hidden" id ="openbtn"onclick="openNav()">☰ Open Sidebar</button>
 </div>
 
-<script>
-    function openNav() {
-    document.getElementById("side").style.width = "250px";
-    document.getElementById("openbtn").classList.add("hidden")
 
-    }
-
-    function closeNav() {
-    document.getElementById("side").style.width = "0px";
-    document.getElementById("openbtn").classList.remove("hidden")
-    }
-</script>
-
+<!-- JavaScript  in discover.js-->
+<script src="{{ url_for('static', filename='js/discover.js') }}"></script>
 
 </body>
 </html>
