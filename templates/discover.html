@@ -31,9 +31,9 @@
     </nav>
 </div>
 
-<!-- CAROLINHS VERSION OF THE SIDEBAR -- THIS IS THE CODE TO REFERENCE WHEN REBUILDING THE SIDEBAR WITH HER FEATURES
+<!-- CAROLINHS VERSION OF THE SIDEBAR -- THIS IS THE CODE TO REFERENCE WHEN REBUILDING THE SIDEBAR WITH HER FEATURES -->
     
-    <div class="sidebar-container">
+<!--     <div class="sidebar-container">
     <div class="sidebar">
         <button class="button-disc" onclick="window.location.href='/discover?random_song=true'" id="random-song-btn">Random Song</button>
         <div class="spacer20"></div>
@@ -49,17 +49,20 @@
         <div class="spacer20"></div>
         <p>Discover a song from your friends! Delve into their musical universe and find a song
             to jam to and bond over.
-        </p> -->
+        </p>
 
-        
+        </div>
+        </div> -->
+
+
 <div class = "sidebar-container" id = "side">
     <div class = "sidebar">
-        <label for="touch1" class="tool"><p>COOL <span class="friend">MUSIC</span> STUFF</p></label>
+        <label for="touch1" class="tool"><p>Break the routine and find something <span class="friend">new:</span></p></label>
         <input type="checkbox" id="touch1">
         <ul class="slide1">
-            <li class = "sidebutton"><button onclick="window.location.href='/discover?random_song=true'" id="random-song-btn"><a>Random Song</a></button></li> 
-            <li class = "sidebutton"><button><a>Friend's Songs</a></button></li>
-            <li class = "sidebutton"><button><a>placeholder</a></button></li>
+            <button onclick="window.location.href='/discover?random_song=true'" class ="button-disc"id="random-song-btn"><a>Random Song</a></button>
+            <button class = "button-disc"><a>Friend's Songs</a></button>
+            <button class = "button-disc"><a>placeholder</a></button>
         </ul>
         <label for="touch2" class = "tool"><p><span class = "friend">Placeholder</span></p></label>
         <input type="checkbox" id="touch2">
@@ -84,6 +87,8 @@
 
 <div class="content">
     <div class="spacer40"></div>
+    <div class="spacer40"></div>
+    <div class="spacer20"></div>
     <h2>{{ "Random Song Recommendation" if random_song else "The #1 song in the world right now is:" }}</h2>
     <div class="song-details">
         <div class="album-cover">

@@ -428,7 +428,7 @@ nav.navbar{
   flex-direction: column;
   justify-content: space-between;
   flex-direction: column;
-  margin-top: 50px;
+  margin-top: 120px;
   padding: 0 20px;
 }
 
@@ -438,7 +438,6 @@ nav.navbar{
   margin-top: 2px;
   padding: 0 20px;
   text-align: center;
-  margin-top: 120px;
 }
 
 /* CHANGES ^^ */
@@ -544,6 +543,7 @@ nav.navbar{
   touch-action: manipulation;
   vertical-align: middle;
   white-space: nowrap;
+  margin: 15px;
 }
 
 .button-disc:focus {
