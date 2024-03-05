@@ -10,7 +10,7 @@ import pymongo
 import requests
 import spotipy
 from dotenv import load_dotenv
-from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
+from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 from PIL import Image
 from pymongo import MongoClient
 from spotipy.oauth2 import SpotifyOAuth
@@ -28,13 +28,14 @@ CLIENT_ID = os.environ.get('SPOTIFY_CLIENT_ID')
 CLIENT_SECRET = os.environ.get('SPOTIFY_CLIENT_SECRET')
 REDIRECT_URI = os.environ.get('SPOTIFY_REDIRECT_URI')
 FLASK_SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
+MONGO_URL = os.environ.get('MONGO_URL')
 
 app = Flask(__name__)
 app.secret_key = FLASK_SECRET_KEY
 app.permanent_session_lifetime = timedelta(minutes=30)  # Basically saves your login for 30 minutes
 
 try:
-    client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority', tlsAllowInvalidCertificates=True) # This is not a permanent solution, and is just for development. We should not allow invalid certificates during deployment.
+    client = pymongo.MongoClient(MONGO_URL, tlsAllowInvalidCertificates=True) # This is not a permanent solution, and is just for development. We should not allow invalid certificates during deployment.
     
 #URI error is thrown 
 except pymongo.errors.ConfigurationError:
@@ -93,7 +94,6 @@ def index():
 @app.route('/logout')
 def logout():
     session.clear()  # Clears the user's session
-    flash("You have been logged out.", "info")
     return redirect(url_for('index'))
 
 
@@ -137,10 +137,8 @@ def friends():
 
             return render_template('friends.html', friends=friends_list, profile_pics=profile_pics, icon_link=icon_link, username=username, is_logged_in=is_logged_in, friend_requests=friend_requests)
         else:
-            flash("User data not found.")
             return redirect(url_for('index'))
     else:
-        flash("Please log in to view your friends.")
         return redirect('https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=http://127.0.0.1:8080/callback&show_dialogue=true&scope=user-read-private user-top-read playlist-read-private playlist-read-collaborative user-follow-read')
 
 
@@ -148,6 +146,7 @@ def friends():
 def profile(username):
     # Fetch user data from db
     user_data = users.find_one({'username': username})
+    spotify_user_id = user_data.get('id')  # Extract the Spotify User ID
     if not user_data:
         return "User not found", 404
     
@@ -155,7 +154,6 @@ def profile(username):
     # Check if the access token exists
     if not access_token:
         # If no access token, prompt a login
-        flash("Please log in to view this page.", "warning")
         return redirect(url_for('login'))
 
     # Setup UI
@@ -168,9 +166,17 @@ def profile(username):
     selected_time_range = request.args.get('time_range', 'long_term')
     time_range_display = {'short_term': 'Last Month', 'medium_term': 'Last 6 Months', 'long_term': 'All Time'}.get(selected_time_range, 'All Time')
 
-    # Fetch top artists and tracks for display
+    # Fetch top artists, tracks, and playlist data for display
     top_artists = user_data.get(f'{selected_time_range}_artists', [])[:3]
     top_tracks = user_data.get(f'{selected_time_range}_tracks', [])[:3]
+    # Fetch the public playlists of the user with spotify_user_id
+    sp = spotipy.Spotify(auth=access_token)  # Initialize the Spotify client with the access token
+    playlists = sp.user_playlists(spotify_user_id, limit=50)  # Adjust limit as needed
+    playlists_data = [
+        {'name': playlist['name'], 'image_url': playlist['images'][0]['url'] if playlist['images'] else None, 'id': playlist['id']}
+        for playlist in playlists['items']
+    ]
+
 
     # Other variables that need to be passed to profile page
     date_joined = user_data.get('date_joined', '')
@@ -181,13 +187,12 @@ def profile(username):
     # artist_ids = [artist['id'] for artist in user_data.get(f'{selected_time_range}_artists', [])] #This doesn't limit to 10 artists but makes load time long
     genre_pie_chart_base64 = generate_genre_pie_chart_from_db(artist_ids, access_token, artists)
 
-    print(top_tracks)
 
     # Render the profile template with all data
     return render_template('profile.html', user=user_data, top_artists=top_artists, top_tracks=top_tracks,
                            selected_time_range=selected_time_range, time_range_display=time_range_display,
                            date_joined=date_joined, is_logged_in='username' in session, genre_pie_chart=genre_pie_chart_base64,
-                           icon_link=icon_link, 
+                           icon_link=icon_link, playlists_data=playlists_data,
                            profile_username=username, #This should be profile you're viewing
                            session_username=session_username) # This should be the logged-in user's username 
 
