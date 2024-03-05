@@ -17,6 +17,10 @@ body {
   height: 50px;
 }
 
+.spacer100 {
+  height: 100px;
+}
+
 .spacer20 {
   height: 20px;
 }
@@ -723,4 +727,36 @@ nav.navbar{
 
 .username{
   color: #ffffffaf;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust based on your preference */
+  gap: 20px;
+  padding: 20px;
+}
+
+.grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.playlist-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover; /* This will cover the area, potentially cropping the image */
+}
+
+
+#playlistsGrid {
+  display: none; 
+  margin-top: 20px;
+  margin-left: 250px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
