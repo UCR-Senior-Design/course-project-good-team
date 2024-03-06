@@ -67,20 +67,24 @@
         <label for="touch2" class = "tool"><p><span class = "friend">Placeholder</span></p></label>
         <input type="checkbox" id="touch2">
         <ul class="slide2">
-            <li class = "sidebutton"><button><a>placeholder</a></button></li> 
-            <li class = "sidebutton"><button><a>placeholder</a></button></li>
-            <li class = "sidebutton"><button><a>placeholder</a></button></li>
+            <button class = "button-disc"><a>placeholder</a></button> 
+            <button class = "button-disc"><a>placeholder</a></button>
+            <button class = "button-disc"><a>placeholder</a></button>
         </ul>
         
         <label for="touch3" class = "tool"><p><span class = "friend">Placeholder</span></p></label>
         <input type="checkbox" id="touch3">
         <ul class="slide3">
-            <li class = "sidebutton"><button><a href="#">placeholder</a></button></li> 
-            <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
-            <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
+            <button class = "button-disc"><a href="#">placeholder</a></button> 
+            <button class = "button-disc"><a href="#">placeholder</a></button>
+            <button class = "button-disc"><a href="#">placeholder</a></button>
         </ul>
         <button class="closebtn" id="closebtn" onclick="closeNav()">X Close Sidebar</button>
     </div>
+</div>
+
+<div id = "opens">
+    <button class="openbtn hidden" id ="openbtn"onclick="openNav()">☰ Open Sidebar</button>
 </div>
 
 
@@ -105,11 +109,6 @@
         <button class="button-disc"><a href="{{ url_for('discover', random_song='true') }}" class="btn">Generate New Random Song</a></button>
         {% endif %}
     </div>
-</div>
-
-
-<div id = "opens">
-    <button class="openbtn hidden" id ="openbtn"onclick="openNav()">☰ Open Sidebar</button>
 </div>
 
 
