@@ -18,9 +18,9 @@ from spotipy.oauth2 import SpotifyOAuth
 
 from db_utils import update_user_document
 from image_utils import get_contrasting_text_color, get_dominant_color
-from spotify_utils import (generate_genre_pie_chart, generate_genre_pie_chart_from_db, 
-                           get_random_friend_statistic, get_random_statistic, get_user_friends,
-                           get_top_song_from_global_playlist, get_random_song, find_mutual_favorites, )
+from spotify_utils import (generate_genre_pie_chart_from_db, get_random_friend_statistic, 
+                            get_random_statistic, get_user_friends, get_top_song_from_global_playlist,
+                            get_random_song, find_mutual_favorites)
 
 load_dotenv()
 
