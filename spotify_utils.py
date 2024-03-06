@@ -319,3 +319,16 @@ def find_mutual_favorites(user_data, friend_data):
     artists = find_best_match(user_data, friend_data, 'artists')
     tracks = find_best_match(user_data, friend_data, 'tracks')
     return {'artists': artists, 'tracks': tracks}
+
+
+def get_user_friends(users, username):
+    user = users.find_one({'username': username}, {'_id': 0, 'friends': 1})
+    if not user or 'friends' not in user:
+        return []
+
+    friend_usernames = user['friends']
+    # Fetch friend details. Adjust fields as necessary based on your needs.
+    friend_details = list(users.find({'username': {'$in': friend_usernames}},
+                                     {'_id': 0, 'username': 1, 'short_term_tracks': 1, 'medium_term_tracks': 1, 'long_term_tracks': 1}))
+
+    return friend_details
