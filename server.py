@@ -18,8 +18,8 @@ from spotipy.oauth2 import SpotifyOAuth
 from db_utils import update_user_document
 from image_utils import get_contrasting_text_color, get_dominant_color
 from spotify_utils import (generate_genre_pie_chart, generate_genre_pie_chart_from_db, 
-                           get_random_friend_statistic, get_random_statistic, 
-                           get_top_song_from_global_playlist, get_random_song, find_mutual_favorites)
+                           get_random_friend_statistic, get_random_statistic, get_user_friends,
+                           get_top_song_from_global_playlist, get_random_song, find_mutual_favorites, )
 
 load_dotenv()
 
@@ -223,6 +223,41 @@ def discover():
         song_details = get_top_song_from_global_playlist(access_token)
 
     return render_template('discover.html', username = username, song_details=song_details, random_song=random_song_requested, user=user_data, icon_link=icon_link, session_username=session_username, is_logged_in='username' in session)
+
+@app.route('/discover/friend-queue')
+def get_friend_queue():
+    access_token = session.get('access_token')
+    if not access_token:
+        return jsonify({'error': 'User not authenticated'}), 401
+
+    username = session.get('username')
+    user_friends = get_user_friends(users, username)  # Ensure this function is correctly implemented
+
+    # Aggregate tracks from all friends
+    track_popularity = {}
+    for friend in user_friends:
+        for time_range in ['short_term_tracks', 'medium_term_tracks', 'long_term_tracks']:
+            friend_tracks = friend.get(time_range, [])
+            for track in friend_tracks:
+                track_id = track['id']
+                if track_id not in track_popularity:
+                    track_popularity[track_id] = {
+                        'count': 0, 
+                        'track_name': track['name'], 
+                        'image_url': track['image_url'],
+                        'friends': set()  # Use a set to store friends' usernames
+                    }
+                track_popularity[track_id]['count'] += 1
+                track_popularity[track_id]['friends'].add(friend['username'])  # Add to set
+
+    # Before returning the sorted_tracks, convert the friends sets back to lists
+    for track_info in track_popularity.values():
+        track_info['friends'] = list(track_info['friends'])  # Convert set to list
+
+    sorted_tracks = sorted(track_popularity.values(), key=lambda x: x['count'], reverse=True)
+
+    return jsonify(sorted_tracks)
+
 
 
 @app.route('/addfriend', methods=['POST'])
