@@ -143,29 +143,40 @@
         {% if mutual_favorites %}
             {% if mutual_favorites.artists %}
                 {% for term, artist in mutual_favorites.artists.items() %}
-                    <div>
+                    <div class = "album-center">
                         {% if term == 'short_term' %}
                             <p>You two have both been loving {{ artist.name }} lately.</p>
                         {% elif term == 'medium_term' %}
+                            <div class="spacer50"></div>
                             <p>Over the last 6 months, {{ artist.name }} has been a favorite for both of you.</p>
                         {% else %}
+                            <div class="spacer50"></div>
                             <p>{{ artist.name }} is in both of your all time top artists.</p>
                         {% endif %}
-                        <img src="{{ artist.image_url }}" alt="{{ artist.name }}">
+                        <div class="spacer20"></div>
+                        <div class = "image-center">
+                            <img src="{{ artist.image_url }}" alt="{{ artist.name }}" style="width: 300px;">
+                        </div>
                     </div>
                 {% endfor %}
             {% endif %}
             {% if mutual_favorites.tracks %}
                 {% for term, track in mutual_favorites.tracks.items() %}
-                    <div>
+                    <div class = "album-center">
                         {% if term == 'short_term' %}
+                            <div class="spacer50"></div>
                             <p>You two have both been bumping {{ track.name }} lately.</p>
                         {% elif term == 'medium_term' %}
+                            <div class="spacer50"></div>
                             <p>{{ track.name }} has been in both of your rotations over the last 6 months.</p>
                         {% else %}
+                            <div class="spacer50"></div>
                             <p>{{ track.name }} is an all time favorite for both of you.</p>
                         {% endif %}
-                        <img src="{{ track.image_url }}" alt="{{ track.name }}">
+                        <div class="spacer20"></div>
+                        <div class = "image-center">
+                            <img src="{{ track.image_url }}" alt="{{ track.name }}" style="width: 300px;">
+                        </div>
                     </div>
                 {% endfor %}
             {% endif %}
