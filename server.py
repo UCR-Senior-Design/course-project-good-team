@@ -140,7 +140,7 @@ def friends():
         else:
             return redirect(url_for('index'))
     else:
-        return redirect('https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=http://127.0.0.1:8080/callback&show_dialogue=true&scope=user-read-private user-top-read playlist-read-private playlist-read-collaborative user-follow-read')
+        return redirect('https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=http://127.0.0.1:8080/callback&show_dialogue=true&scope=user-read-private user-top-read')
 
 
 @app.route('/profile/<username>')
@@ -206,7 +206,7 @@ def discover():
     if 'access_token' not in session:
         # User is not logged in, redirect to Spotify login
         return redirect('https://accounts.spotify.com/authorize?client_id={}&response_type=code&redirect_uri={}&scope={}'.format(
-            CLIENT_ID, REDIRECT_URI, "user-read-private user-top-read playlist-read-private playlist-read-collaborative&show_dialog=true"
+            CLIENT_ID, REDIRECT_URI, "user-read-private user-top-read&show_dialog=true"
         ))
 
     # User is logged in
