@@ -19,7 +19,7 @@ from db_utils import update_user_document
 from image_utils import get_contrasting_text_color, get_dominant_color
 from spotify_utils import (generate_genre_pie_chart, generate_genre_pie_chart_from_db, 
                            get_random_friend_statistic, get_random_statistic, 
-                           get_top_song_from_global_playlist, get_random_song)
+                           get_top_song_from_global_playlist, get_random_song, find_mutual_favorites)
 
 load_dotenv()
 
@@ -144,14 +144,12 @@ def friends():
 
 @app.route('/profile/<username>')
 def profile(username):
-    # Fetch user data from db
-    user_data = users.find_one({'username': username})
-    spotify_user_id = user_data.get('id')  # Extract the Spotify User ID
-    if not user_data:
+    # Fetch user data from db for the profile being visited
+    profile_data = users.find_one({'username': username})
+    if not profile_data:
         return "User not found", 404
-    
+
     access_token = session.get('access_token')
-    # Check if the access token exists
     if not access_token:
         # If no access token, prompt a login
         return redirect(url_for('login'))
@@ -162,39 +160,34 @@ def profile(username):
         url_for('static', filename='images/favicon2.ico')
     ])
 
-    # Determine selected time range, default is all time
     selected_time_range = request.args.get('time_range', 'long_term')
     time_range_display = {'short_term': 'Last Month', 'medium_term': 'Last 6 Months', 'long_term': 'All Time'}.get(selected_time_range, 'All Time')
 
-    # Fetch top artists, tracks, and playlist data for display
-    top_artists = user_data.get(f'{selected_time_range}_artists', [])[:3]
-    top_tracks = user_data.get(f'{selected_time_range}_tracks', [])[:3]
-    # Fetch the public playlists of the user with spotify_user_id
-    sp = spotipy.Spotify(auth=access_token)  # Initialize the Spotify client with the access token
-    playlists = sp.user_playlists(spotify_user_id, limit=50)  # Adjust limit as needed
-    playlists_data = [
-        {'name': playlist['name'], 'image_url': playlist['images'][0]['url'] if playlist['images'] else None, 'id': playlist['id']}
-        for playlist in playlists['items']
-    ]
+    # Fetch top artists, tracks for the visited profile
+    top_artists = profile_data.get(f'{selected_time_range}_artists', [])[:3]
+    top_tracks = profile_data.get(f'{selected_time_range}_tracks', [])[:3]
 
+    sp = spotipy.Spotify(auth=access_token)
+    playlists = sp.user_playlists(profile_data['id'], limit=50)
+    playlists_data = [{'name': playlist['name'], 'image_url': playlist['images'][0]['url'] if playlist['images'] else None, 'id': playlist['id']} for playlist in playlists['items']]
 
-    # Other variables that need to be passed to profile page
-    date_joined = user_data.get('date_joined', '')
+    date_joined = profile_data.get('date_joined', '')
     session_username = session.get('username')
 
     # Generate the genre breakdown pie chart
-    artist_ids = [artist['id'] for artist in user_data.get(f'{selected_time_range}_artists', [])[:25]] # Limiting to 25 artists because doing all takes a long time
-    # artist_ids = [artist['id'] for artist in user_data.get(f'{selected_time_range}_artists', [])] #This doesn't limit to 10 artists but makes load time long
+    artist_ids = [artist['id'] for artist in profile_data.get(f'{selected_time_range}_artists', [])[:25]]
     genre_pie_chart_base64 = generate_genre_pie_chart_from_db(artist_ids, access_token, artists)
 
+    # Compute mutual favorites between the logged-in user and the visited profile
+    logged_in_user_data = users.find_one({'username': session['username']})
+    mutual_favorites = find_mutual_favorites(logged_in_user_data, profile_data)
 
-    # Render the profile template with all data
-    return render_template('profile.html', user=user_data, top_artists=top_artists, top_tracks=top_tracks,
+    return render_template('profile.html', user=profile_data, top_artists=top_artists, top_tracks=top_tracks,
                            selected_time_range=selected_time_range, time_range_display=time_range_display,
                            date_joined=date_joined, is_logged_in='username' in session, genre_pie_chart=genre_pie_chart_base64,
-                           icon_link=icon_link, playlists_data=playlists_data,
-                           profile_username=username, #This should be profile you're viewing
-                           session_username=session_username) # This should be the logged-in user's username 
+                           icon_link=icon_link, playlists_data=playlists_data, mutual_favorites=mutual_favorites,
+                           profile_username=username, session_username=session_username)
+ 
 
 
 @app.route('/discover')
