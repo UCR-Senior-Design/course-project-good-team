@@ -692,3 +692,24 @@ nav.navbar{
   transition: all .4s;
 }
 /* END SIDEBAR TOGGLE */
+
+
+.navigation-buttons {
+  display: flex;
+  justify-content: center; /* Center the buttons container */
+  margin-top: 20px; /* Add some space above the buttons */
+}
+
+.navigation-buttons button {
+  margin: 0 10px; /* Space out the buttons */
+  /* Add more button styling as needed */
+}
+
+.queue-details {
+  text-align: center; /* Center text within the container */
+}
+
+.queue-details p {
+  margin: 0 auto; /* Center paragraphs */
+  padding: 10px; /* Add some padding for spacing */
+}
