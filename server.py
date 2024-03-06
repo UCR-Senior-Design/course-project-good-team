@@ -5,6 +5,7 @@ from collections import Counter, defaultdict
 from datetime import timedelta
 from random import choice
 
+import random
 import certifi
 import pymongo
 import requests
@@ -17,9 +18,9 @@ from spotipy.oauth2 import SpotifyOAuth
 
 from db_utils import update_user_document
 from image_utils import get_contrasting_text_color, get_dominant_color
-from spotify_utils import (generate_genre_pie_chart, generate_genre_pie_chart_from_db, 
-                           get_random_friend_statistic, get_random_statistic, get_user_friends,
-                           get_top_song_from_global_playlist, get_random_song, find_mutual_favorites, )
+from spotify_utils import (generate_genre_pie_chart_from_db, get_random_friend_statistic, 
+                            get_random_statistic, get_user_friends, get_top_song_from_global_playlist,
+                            get_random_song, find_mutual_favorites)
 
 load_dotenv()
 
@@ -231,9 +232,8 @@ def get_friend_queue():
         return jsonify({'error': 'User not authenticated'}), 401
 
     username = session.get('username')
-    user_friends = get_user_friends(users, username)  # Ensure this function is correctly implemented
+    user_friends = get_user_friends(users, username)
 
-    # Aggregate tracks from all friends
     track_popularity = {}
     for friend in user_friends:
         for time_range in ['short_term_tracks', 'medium_term_tracks', 'long_term_tracks']:
@@ -245,16 +245,18 @@ def get_friend_queue():
                         'count': 0, 
                         'track_name': track['name'], 
                         'image_url': track['image_url'],
-                        'friends': set()  # Use a set to store friends' usernames
+                        'friends': set(),
+                        'random_order': random.random()  # Assign a random number
                     }
                 track_popularity[track_id]['count'] += 1
-                track_popularity[track_id]['friends'].add(friend['username'])  # Add to set
+                track_popularity[track_id]['friends'].add(friend['username'])
 
-    # Before returning the sorted_tracks, convert the friends sets back to lists
     for track_info in track_popularity.values():
-        track_info['friends'] = list(track_info['friends'])  # Convert set to list
+        track_info['friends'] = list(track_info['friends'])
+        track_info['unique_friends'] = len(track_info['friends'])
 
-    sorted_tracks = sorted(track_popularity.values(), key=lambda x: x['count'], reverse=True)
+    # Sort by unique friends, then total count, and finally random_order
+    sorted_tracks = sorted(track_popularity.values(), key=lambda x: (-x['unique_friends'], -x['count'], x['random_order']))
 
     return jsonify(sorted_tracks)
 
