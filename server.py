@@ -255,6 +255,36 @@ def addfriend():
         return {'message': 'Friend request sent successfully.'}, 200
     else:
         return {'message': 'Failed to send friend request.'}, 500
+    
+
+@app.route('/removefriend', methods=['POST'])
+def removefriend():
+    if 'access_token' not in session:
+        return {'message': 'Please log in to manage friends.'}, 401
+
+    data = request.json
+    friend_username = data.get('friendUsername')
+    current_username = session.get('username')
+
+    if friend_username == current_username:
+        return {'message': 'You cannot remove yourself.'}, 400
+
+    # Remove each other from friends list
+    result1 = users.update_one(
+        {'username': current_username},
+        {'$pull': {'friends': friend_username}}
+    )
+
+    result2 = users.update_one(
+        {'username': friend_username},
+        {'$pull': {'friends': current_username}}
+    )
+
+    if result1.modified_count == 1 and result2.modified_count == 1:
+        return {'message': 'Friend removed successfully.'}, 200
+    else:
+        return {'message': 'Failed to remove friend.'}, 500
+
 
 
 @app.route('/acceptfriend', methods=['POST'])
