@@ -40,44 +40,6 @@ def find_mutual_favorites(user1, user2, users_collection):
     return list(mutual_favorites)  # Return a list of mutual favorite IDs
 
 
-def generate_genre_pie_chart(genres):
-    # Sort genres and select top N
-    top_genres = dict(sorted(genres.items(), key=lambda item: item[1], reverse=True)[:10])
-    
-    # Create figure and axis
-    fig, ax = plt.subplots()
-    # Set background color of chart
-    fig.patch.set_facecolor('#373737')  #just matching the background of the html page for now, probably can do something better
-    ax.set_facecolor('#373737')
-    
-    # Font for chart, can mess around with this
-    font_properties = FontProperties()
-    font_properties.set_family('sans-serif')
-    font_properties.set_weight('bold')
-    
-    # Generate pie chart with customizations
-    wedges, texts, autotexts = ax.pie(top_genres.values(), labels=top_genres.keys(), autopct='%1.1f%%', startangle=90,
-                                      textprops=dict(color="w", fontproperties=font_properties))  # Set text color to white
-    
-    # Make sure the pie chart is a circle
-    ax.axis('equal')
-    
-    # Change the font color of the percentages
-    for autotext in autotexts:
-        autotext.set_color('black')  # Change as needed
-    
-    # Save to buffer
-    buf = BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight', facecolor=fig.get_facecolor(), edgecolor='none')
-    plt.close(fig)
-    buf.seek(0)
-    
-    # Base64 encoding
-    image_base64 = base64.b64encode(buf.read()).decode('utf-8')
-    buf.close()
-    
-    return image_base64
-
 def get_random_statistic(access_token):
     random_statistic = None
     image_url = None
@@ -319,3 +281,16 @@ def find_mutual_favorites(user_data, friend_data):
     artists = find_best_match(user_data, friend_data, 'artists')
     tracks = find_best_match(user_data, friend_data, 'tracks')
     return {'artists': artists, 'tracks': tracks}
+
+
+def get_user_friends(users, username):
+    user = users.find_one({'username': username}, {'_id': 0, 'friends': 1})
+    if not user or 'friends' not in user:
+        return []
+
+    friend_usernames = user['friends']
+    # Fetch friend details. Adjust fields as necessary based on your needs.
+    friend_details = list(users.find({'username': {'$in': friend_usernames}},
+                                     {'_id': 0, 'username': 1, 'short_term_tracks': 1, 'medium_term_tracks': 1, 'long_term_tracks': 1}))
+
+    return friend_details

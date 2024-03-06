@@ -13,7 +13,7 @@
                     <img src="{{ icon_link }}">
                 </div>
                 <div class="welcome">
-                    <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">{{ username }}</span></span>
+                    <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username" data-username="{{ username }}">{{ username }}</span></span>
                 </div>
               <ul class="nav--list">
                 <li class="item"><button><a href="/">Home</a></button></li>
@@ -24,7 +24,7 @@
                 {% if is_logged_in %}
                 <li class="logout"><button><a href="/logout" class="out">Logout</a></button></li>
                 {% else %}
-                <li class="item"><button><a href="https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=http://127.0.0.1:8080/callback&show_dialogue=true&scope=user-read-private user-top-read playlist-read-private playlist-read-collaborative user-follow-read" class="log">Login</a></button></li>
+                <li class="item"><button><a href="https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=http://127.0.0.1:8080/callback&show_dialogue=true&scope=user-read-private user-top-read" class="log">Login</a></button></li>
                 {% endif %}
               </ul>
             </nav>
@@ -39,20 +39,22 @@
                         <tr>
                             <th>Profile</th>
                             <th>Friend Username</th>
+                            <th>Action</th> 
                         </tr>
                     </thead>
                     <tbody>
                         {% for friend in friends %}
                             <tr>
-                                <!-- Make profile picture clickable -->
                                 <td>
                                     <a href="{{ url_for('profile', username=friend) }}">
                                         <img src="{{ profile_pics[friend] }}" alt="Profile Pic" class="friend-profile-pic">
                                     </a>
                                 </td>
-                                <!-- Make friend username clickable -->
                                 <td>
                                     <a href="{{ url_for('profile', username=friend) }}">{{ friend }}</a>
+                                </td>
+                                <td>
+                                    <button onclick="confirmRemoveFriend('{{ friend }}')">X</button> <!-- Button to remove friend -->
                                 </td>
                             </tr>
                         {% endfor %}
@@ -72,29 +74,6 @@
                 <span>Add Friend</span>
             </button>
         </div>    
-        <script>
-        function askForFriend() {
-            var friendName = prompt("Enter friend's name:");
-            
-            if (friendName !== null) {
-                    fetch('/addfriend', {
-                        method: 'POST',
-                        headers: {
-                        'Content-Type': 'application/json',
-                        },
-                    body: JSON.stringify({ friendName: friendName }),
-                    })
-                    .then(response => response.json())
-                .then(data => {
-                    alert(data.message);
-                    location.reload();
-                })
-                .catch(error => {
-                        console.error('Error:', error);
-                });
-            }
-            }
-        </script>
 
         <div class="topspacer"></div>
 
@@ -109,46 +88,6 @@
         {% endfor %}
         </div>
 
-        <script>
-            function acceptFriendRequest(requesterUsername) {
-                fetch('/acceptfriend', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ requesterUsername: requesterUsername })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert(data.message);
-                    location.reload(); // Reload the page to update the list
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            }
-            
-            function declineFriendRequest(requesterUsername) {
-                fetch('/declinefriend', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ requesterUsername: requesterUsername })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert(data.message);
-                    location.reload(); // Reload the page to update the list
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            }
-            </script>
-
 
         <div class="topspacer"></div>
         <div class="centered-text">
@@ -162,15 +101,12 @@
             </ul>
         </footer>
 
-        <script>
-            window.onload = function() {
-                const username = "{{ username }}"; // Use the value from Flask session
-                document.getElementById('username').textContent = username;
-            };
-        </script>
 
     <div class = "page-marker">
         <footer>FRIENDS</footer>
     </div>
+
+    <!-- JavaScript  in discover.js-->
+    <script src="{{ url_for('static', filename='js/friends.js') }}"></script>
     </body>
 </html>

@@ -5,6 +5,7 @@ from collections import Counter, defaultdict
 from datetime import timedelta
 from random import choice
 
+import random
 import certifi
 import pymongo
 import requests
@@ -17,9 +18,9 @@ from spotipy.oauth2 import SpotifyOAuth
 
 from db_utils import update_user_document
 from image_utils import get_contrasting_text_color, get_dominant_color
-from spotify_utils import (generate_genre_pie_chart, generate_genre_pie_chart_from_db, 
-                           get_random_friend_statistic, get_random_statistic, 
-                           get_top_song_from_global_playlist, get_random_song, find_mutual_favorites)
+from spotify_utils import (generate_genre_pie_chart_from_db, get_random_friend_statistic, 
+                            get_random_statistic, get_user_friends, get_top_song_from_global_playlist,
+                            get_random_song, find_mutual_favorites)
 
 load_dotenv()
 
@@ -139,7 +140,7 @@ def friends():
         else:
             return redirect(url_for('index'))
     else:
-        return redirect('https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=http://127.0.0.1:8080/callback&show_dialogue=true&scope=user-read-private user-top-read playlist-read-private playlist-read-collaborative user-follow-read')
+        return redirect('https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=http://127.0.0.1:8080/callback&show_dialogue=true&scope=user-read-private user-top-read')
 
 
 @app.route('/profile/<username>')
@@ -205,7 +206,7 @@ def discover():
     if 'access_token' not in session:
         # User is not logged in, redirect to Spotify login
         return redirect('https://accounts.spotify.com/authorize?client_id={}&response_type=code&redirect_uri={}&scope={}'.format(
-            CLIENT_ID, REDIRECT_URI, "user-read-private user-top-read playlist-read-private playlist-read-collaborative&show_dialog=true"
+            CLIENT_ID, REDIRECT_URI, "user-read-private user-top-read&show_dialog=true"
         ))
 
     # User is logged in
@@ -223,6 +224,42 @@ def discover():
         song_details = get_top_song_from_global_playlist(access_token)
 
     return render_template('discover.html', username = username, song_details=song_details, random_song=random_song_requested, user=user_data, icon_link=icon_link, session_username=session_username, is_logged_in='username' in session)
+
+@app.route('/discover/friend-queue')
+def get_friend_queue():
+    access_token = session.get('access_token')
+    if not access_token:
+        return jsonify({'error': 'User not authenticated'}), 401
+
+    username = session.get('username')
+    user_friends = get_user_friends(users, username)
+
+    track_popularity = {}
+    for friend in user_friends:
+        for time_range in ['short_term_tracks', 'medium_term_tracks', 'long_term_tracks']:
+            friend_tracks = friend.get(time_range, [])
+            for track in friend_tracks:
+                track_id = track['id']
+                if track_id not in track_popularity:
+                    track_popularity[track_id] = {
+                        'count': 0, 
+                        'track_name': track['name'], 
+                        'image_url': track['image_url'],
+                        'friends': set(),
+                        'random_order': random.random()  # Assign a random number
+                    }
+                track_popularity[track_id]['count'] += 1
+                track_popularity[track_id]['friends'].add(friend['username'])
+
+    for track_info in track_popularity.values():
+        track_info['friends'] = list(track_info['friends'])
+        track_info['unique_friends'] = len(track_info['friends'])
+
+    # Sort by unique friends, then total count, and finally random_order
+    sorted_tracks = sorted(track_popularity.values(), key=lambda x: (-x['unique_friends'], -x['count'], x['random_order']))
+
+    return jsonify(sorted_tracks)
+
 
 
 @app.route('/addfriend', methods=['POST'])
@@ -255,6 +292,36 @@ def addfriend():
         return {'message': 'Friend request sent successfully.'}, 200
     else:
         return {'message': 'Failed to send friend request.'}, 500
+    
+
+@app.route('/removefriend', methods=['POST'])
+def removefriend():
+    if 'access_token' not in session:
+        return {'message': 'Please log in to manage friends.'}, 401
+
+    data = request.json
+    friend_username = data.get('friendUsername')
+    current_username = session.get('username')
+
+    if friend_username == current_username:
+        return {'message': 'You cannot remove yourself.'}, 400
+
+    # Remove each other from friends list
+    result1 = users.update_one(
+        {'username': current_username},
+        {'$pull': {'friends': friend_username}}
+    )
+
+    result2 = users.update_one(
+        {'username': friend_username},
+        {'$pull': {'friends': current_username}}
+    )
+
+    if result1.modified_count == 1 and result2.modified_count == 1:
+        return {'message': 'Friend removed successfully.'}, 200
+    else:
+        return {'message': 'Failed to remove friend.'}, 500
+
 
 
 @app.route('/acceptfriend', methods=['POST'])
