@@ -206,7 +206,8 @@ def profile(username):
                            selected_time_range=selected_time_range, time_range_display=time_range_display,
                            date_joined=date_joined, is_logged_in='username' in session, genre_pie_chart=genre_pie_chart_base64,
                            icon_link=icon_link, playlists_data=playlists_data, mutual_favorites=mutual_favorites,
-                           profile_username=username, session_username=session_username, match_score=match_score)
+                           profile_username=username, session_username=session_username, match_score=match_score,
+                           logged_in_user_profile_pic_url=logged_in_user_data['profile_pic_url'])
  
 
 

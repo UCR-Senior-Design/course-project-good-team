@@ -13,7 +13,7 @@ function closeNav() {
 function toggleSection(sectionId) { // Function to show and hide whatever section you click on 
     var section = document.getElementById(sectionId);
     var mainContent = document.getElementById("main-profile-content"); 
-    var otherSections = ["playlistsGrid", "mutualFavoritesContainer"]; 
+    var otherSections = ["playlistsGrid", "mutualFavoritesContainer", "matchScoreContainer"]; 
 
     // Hide all sections except the one you are toggling
     otherSections.forEach(function(id) {
@@ -30,4 +30,21 @@ function toggleSection(sectionId) { // Function to show and hide whatever sectio
         section.style.display = "none"; 
         mainContent.style.display = "block"; 
     }
+}
+
+function setMatchScoreMessage(score) {
+    var message = "";
+    score = parseInt(score); // Convert score to an integer
+    if (score >= 90) message = "Wow, a perfect match!";
+    else if (score >= 80) message = "You two are incredibly in tune with each other!";
+    else if (score >= 70) message = "Quite a harmonious match!";
+    else if (score >= 60) message = "You share some solid common ground!";
+    else if (score >= 50) message = "There's potential for a musical connection.";
+    else if (score >= 40) message = "You have a few hits in common.";
+    else if (score >= 30) message = "A bit of a mixed tape, but it's a start.";
+    else if (score >= 20) message = "Finding common ground might be a challenge.";
+    else if (score >= 10) message = "Your musical worlds are quite apart.";
+    else message = "You guys don't have much in common at all.";
+
+    document.getElementById("matchScoreMessage").innerText = message;
 }
