@@ -39,6 +39,7 @@
                         <tr>
                             <th>Profile</th>
                             <th>Friend Username</th>
+                            <th>Match Score</th>
                             <th>Action</th> 
                         </tr>
                     </thead>
@@ -52,6 +53,9 @@
                                 </td>
                                 <td>
                                     <a href="{{ url_for('profile', username=friend) }}">{{ friend }}</a>
+                                </td>
+                                <td>
+                                    {{ friend.match_score }} <!-- Assuming 'match_score' is passed with each friend's data -->
                                 </td>
                                 <td>
                                     <button onclick="confirmRemoveFriend('{{ friend }}')">X</button> <!-- Button to remove friend -->
