@@ -1,0 +1,1 @@
+When testing: write username then password in the next two lines in that order
