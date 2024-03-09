@@ -117,25 +117,27 @@ def friends():
     icon2_link = url_for('static', filename='images/favicon2.ico')
     icon_link = choice([icon1_link, icon2_link])
 
-    friend_requests = [] 
 
     if 'access_token' in session:
         username = session.get('username')
         user_data = users.find_one({'username': username})
         if user_data:
             friends_list = user_data.get('friends', [])
-            friend_requests = user_data.get('friendRequests', [])  # Get the list of friend requests
+            friend_requests = user_data.get('friendRequests', [])
 
-            profile_pics = {}
+            # Initialize an empty list for friends with all details
+            friends_details = []
             for friend in friends_list:
                 friend_data = users.find_one({'username': friend})
-                if friend_data and 'profile_pic_url' in friend_data:
-                    profile_pics[friend] = friend_data['profile_pic_url']
-                else:
-                    # Default or placeholder profile pic if not found
-                    profile_pics[friend] = url_for('static', filename='images/favicon.ico') #need to get a default pfp, for now just using our logo
+                match_score = user_data.get('match_scores', {}).get(friend, {}).get('score', 'N/A')
+                profile_pic_url = friend_data.get('profile_pic_url', url_for('static', filename='images/favicon.ico'))
+                friends_details.append({
+                    'username': friend,
+                    'match_score': match_score,
+                    'profile_pic_url': profile_pic_url
+                })
 
-            return render_template('friends.html', friends=friends_list, profile_pics=profile_pics, icon_link=icon_link, username=username, is_logged_in=is_logged_in, friend_requests=friend_requests)
+            return render_template('friends.html', friends_details=friends_details, is_logged_in=is_logged_in, friend_requests=friend_requests, icon_link=icon_link, username=username)
         else:
             return redirect(url_for('index'))
     else:
