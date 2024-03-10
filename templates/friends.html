@@ -30,33 +30,37 @@
             </nav>
           </div>
 
-        <div class="centered-text">
+          <div class="centered-text">
             <h1>Your Friendify Friends</h1>
             <div class="spacer"></div>
-            {% if friends %}
+            {% if friends_details %} <!-- Updated this line -->
                 <table>
                     <thead>
                         <tr>
                             <th>Profile</th>
                             <th>Friend Username</th>
+                            <th>Match Score</th>
                             <th>Action</th> 
                         </tr>
                     </thead>
                     <tbody>
-                        {% for friend in friends %}
-                            <tr>
-                                <td>
-                                    <a href="{{ url_for('profile', username=friend) }}">
-                                        <img src="{{ profile_pics[friend] }}" alt="Profile Pic" class="friend-profile-pic">
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="{{ url_for('profile', username=friend) }}">{{ friend }}</a>
-                                </td>
-                                <td>
-                                    <button onclick="confirmRemoveFriend('{{ friend }}')">X</button> <!-- Button to remove friend -->
-                                </td>
-                            </tr>
+                        {% for friend in friends_details %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('profile', username=friend.username) }}">
+                                    <img src="{{ friend.profile_pic_url }}" alt="Profile Pic" class="friend-profile-pic">
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('profile', username=friend.username) }}">{{ friend.username }}</a>
+                            </td>
+                            <td>
+                                {{ friend.match_score }}
+                            </td>
+                            <td>
+                                <button onclick="confirmRemoveFriend('{{ friend.username }}')">✕</button>
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -64,6 +68,7 @@
                 <p>You have no friends added.</p>
             {% endif %}
         </div>
+        
         </body>
         </html>
 
