@@ -60,24 +60,24 @@
         <label for="touch1" class="tool"><p><span class="friend">Discover</span></p></label>
         <input type="checkbox" id="touch1">
         <ul class="slide1">
-            <button onclick="window.location.href='/discover?random_song=true'" class ="button-disc"id="random-song-btn"><a>Random Song</a></button>
-            <button class="button-disc friend-queue-btn">Friend Queue</button>
-            <button class = "button-disc"><a>placeholder</a></button>
+            <li class ="sidebutton"><button onclick="window.location.href='/discover?random_song=true'" id="random-song-btn"><a>Random Song</a></button></li>
+            <li class="sidebutton friend-queue-btn"><button><a>Friend Queue</a></button></li>
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
         </ul>
         <label for="touch2" class = "tool"><p><span class = "friend">Placeholder</span></p></label>
         <input type="checkbox" id="touch2">
         <ul class="slide2">
-            <button class = "button-disc"><a>placeholder</a></button> 
-            <button class = "button-disc"><a>placeholder</a></button>
-            <button class = "button-disc"><a>placeholder</a></button>
+            <li class = "sidebutton"><button onclick = "toggleSection('placeholder')"><a>placeholder</button></li> 
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
         </ul>
         
         <label for="touch3" class = "tool"><p><span class = "friend">Placeholder</span></p></label>
         <input type="checkbox" id="touch3">
         <ul class="slide3">
-            <button class = "button-disc"><a href="#">placeholder</a></button> 
-            <button class = "button-disc"><a href="#">placeholder</a></button>
-            <button class = "button-disc"><a href="#">placeholder</a></button>
+            <li class = "sidebutton"><button onclick = "toggleSection('placeholder')"><a>placeholder</button></li> 
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
         </ul>
         <button class="closebtn" id="closebtn" onclick="closeNav()">X Close Sidebar</button>
     </div>
