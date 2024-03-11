@@ -2,7 +2,7 @@ import base64
 import io
 import os
 from collections import Counter, defaultdict
-from datetime import timedelta
+from datetime import timedelta, datetime
 from random import choice
 
 import random
@@ -19,8 +19,8 @@ from spotipy.oauth2 import SpotifyOAuth
 from db_utils import update_user_document
 from image_utils import get_contrasting_text_color, get_dominant_color
 from spotify_utils import (generate_genre_pie_chart_from_db, get_random_friend_statistic, 
-                            get_random_statistic, get_user_friends, get_top_song_from_global_playlist,
-                            get_random_song, find_mutual_favorites)
+                            get_random_statistic, get_user_friends, get_top_song_from_global_playlist, update_match_score,
+                            get_random_song, find_mutual_favorites, calculate_match_score, retrieve_or_update_match_score)
 
 load_dotenv()
 
@@ -113,30 +113,37 @@ def about():
 @app.route('/friends')
 def friends():
     is_logged_in = 'username' in session
-
-    icon1_link = url_for('static', filename='images/favicon.ico')
-    icon2_link = url_for('static', filename='images/favicon2.ico')
-    icon_link = choice([icon1_link, icon2_link])
-
-    friend_requests = [] 
+    icon_link = choice([url_for('static', filename='images/favicon.ico'),
+                        url_for('static', filename='images/favicon2.ico')])
 
     if 'access_token' in session:
         username = session.get('username')
         user_data = users.find_one({'username': username})
         if user_data:
             friends_list = user_data.get('friends', [])
-            friend_requests = user_data.get('friendRequests', [])  # Get the list of friend requests
+            friend_requests = user_data.get('friendRequests', [])
+            friends_details = []
 
-            profile_pics = {}
             for friend in friends_list:
                 friend_data = users.find_one({'username': friend})
-                if friend_data and 'profile_pic_url' in friend_data:
-                    profile_pics[friend] = friend_data['profile_pic_url']
-                else:
-                    # Default or placeholder profile pic if not found
-                    profile_pics[friend] = url_for('static', filename='images/favicon.ico') #need to get a default pfp, for now just using our logo
+                match_score = user_data.get('match_scores', {}).get(friend, {}).get('score')
 
-            return render_template('friends.html', friends=friends_list, profile_pics=profile_pics, icon_link=icon_link, username=username, is_logged_in=is_logged_in, friend_requests=friend_requests)
+                # If match_score is None, calculate and update it
+                if match_score is None:
+                    print(f"Calculating match score for {username} and {friend}")
+                    match_score = calculate_match_score(user_data, friend_data)
+                    # Update match score in database for both users
+                    update_match_score(users, username, friend, match_score)
+
+                profile_pic_url = friend_data.get('profile_pic_url', url_for('static', filename='images/default_profile_pic.png'))
+                friends_details.append({
+                    'username': friend,
+                    'match_score': match_score if match_score is not None else 'N/A',  # Fallback to 'N/A' if needed
+                    'profile_pic_url': profile_pic_url
+                })
+
+            return render_template('friends.html', friends_details=friends_details, is_logged_in=is_logged_in, 
+                                   friend_requests=friend_requests, icon_link=icon_link, username=username)
         else:
             return redirect(url_for('index'))
     else:
@@ -177,17 +184,36 @@ def profile(username):
 
     # Generate the genre breakdown pie chart
     artist_ids = [artist['id'] for artist in profile_data.get(f'{selected_time_range}_artists', [])[:25]]
-    genre_pie_chart_base64 = generate_genre_pie_chart_from_db(artist_ids, access_token, artists)
+    genre_pie_chart_base64 = generate_genre_pie_chart_from_db(artist_ids, access_token, artists, users, username, selected_time_range)
 
     # Compute mutual favorites between the logged-in user and the visited profile
     logged_in_user_data = users.find_one({'username': session['username']})
     mutual_favorites = find_mutual_favorites(logged_in_user_data, profile_data)
 
+
+    #MATCH SCORE GENERATION
+    print("----MATCH SCORE GENERATION SUMMARY----")
+    start_time = datetime.now()
+    if session.get('username') == username:
+        # dont need to calculate match score for own profile
+        match_score = None
+    else:
+        # Retrieve or calculate match score
+        match_score = retrieve_or_update_match_score(users, logged_in_user_data, profile_data)
+    
+    end_time = datetime.now()
+    duration = end_time - start_time
+    print(f"Friendify Match Score: {match_score}")
+    print(f"Match score calculation took {duration.total_seconds()} seconds.")
+    print("--------------------------------------")
+    print(f"\n")
+
     return render_template('profile.html', user=profile_data, top_artists=top_artists, top_tracks=top_tracks,
                            selected_time_range=selected_time_range, time_range_display=time_range_display,
                            date_joined=date_joined, is_logged_in='username' in session, genre_pie_chart=genre_pie_chart_base64,
                            icon_link=icon_link, playlists_data=playlists_data, mutual_favorites=mutual_favorites,
-                           profile_username=username, session_username=session_username)
+                           profile_username=username, session_username=session_username, match_score=match_score,
+                           logged_in_user_profile_pic_url=logged_in_user_data['profile_pic_url'])
  
 
 

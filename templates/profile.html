@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ user.username }}'s Profile</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <link rel="icon" type="image/x-icon" class = "coin" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile_styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -46,13 +46,15 @@
                 </form>
                 
             </ul>
+            {% if user.username != session_username %}
             <label for="touch2" class = "tool"><p><span class = "friend">Compare</span></p></label>
             <input type="checkbox" id="touch2">
             <ul class="slide2">
-                <li class = "sidebutton"><button onclick="toggleSection('mutualFavoritesContainer')">Show Mutual Favorites</button></li> 
-                <li class = "sidebutton"><button><a>placeholder</a></button></li>
+                <li class = "sidebutton"><button onclick="toggleSection('matchScoreContainer')">Match Score</button></li>
+                <li class = "sidebutton"><button onclick="toggleSection('mutualFavoritesContainer')">Mutual Favorites</button></li> 
                 <li class = "sidebutton"><button><a>placeholder</a></button></li>
             </ul>
+            {% endif %}
             
             <label for="touch3" class = "tool"><p><span class = "friend">playlists</span></p></label>
             <input type="checkbox" id="touch3">
@@ -65,11 +67,11 @@
         </div>
     </div>
 
-
-    <!-- Sidebar toggle -->
     <div id = "opens">
         <button class="openbtn hidden" id ="openbtn"onclick="openNav()">☰ Open Sidebar</button>
     </div>
+
+    <div class="spacer100"></div>
 
     <!-- Profile Information -->
     <div class="profile-info">
@@ -189,6 +191,28 @@
         {% endif %}
 
     </div>
+
+    <!-- Match Score Section -->
+    <div id="matchScoreContainer" style="display: none;" class="match-score-container">
+        <div class="profilepic-container">
+            <img src="{{ logged_in_user_profile_pic_url }}" alt="Your Profile Picture" class="profile-picture-large">
+            <img src="{{ user.profile_pic_url }}" alt="Friend's Profile Picture" class="profile-picture-large">
+        </div>
+        <div class="match-score-info">
+            <p class="match-score-text">{{ match_score }}%</p>
+            <p id="matchScoreMessage"></p>
+        </div>
+    </div>
+
+    <script>
+        var match_score = {{ match_score }};
+        document.addEventListener("DOMContentLoaded", function() {
+            setMatchScoreMessage(match_score); 
+        });
+    </script>
+    
+
+
 
     <!-- Page Footer -->
     <div class = "page-marker">
