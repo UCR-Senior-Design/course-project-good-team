@@ -30,8 +30,8 @@
             </nav>
           </div>
 
-          <div class="centered-text">
-            <h1>Your Friendify Friends</h1>
+          <div class="friendtable">
+            <h1 class = "tabletext">Your <span class = "friend">Friendify</span> Friends</h1>
             <div class="spacer"></div>
             {% if friends_details %} <!-- Updated this line -->
                 <table>
@@ -58,7 +58,7 @@
                                 {{ friend.match_score }}
                             </td>
                             <td>
-                                <button onclick="confirmRemoveFriend('{{ friend.username }}')">✕</button>
+                                <button onclick="confirmRemoveFriend('{{ friend.username }}')">Remove Friend ✕</button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -68,13 +68,10 @@
                 <p>You have no friends added.</p>
             {% endif %}
         </div>
-        
-        </body>
-        </html>
 
 
         <div class="spacer"></div>
-        <div class="centered-text">
+        <div class="addfriend">
             <button class="item" onclick="askForFriend()">
                 <span>Add Friend</span>
             </button>
@@ -83,7 +80,7 @@
         <div class="topspacer"></div>
 
         <div class="pending-requests">
-            <h2>You have {{ friend_requests|length }} pending friend request(s)</h2>
+            <h2 class = "tabletext">You have <span class = "friend">{{ friend_requests|length }}</span> pending friend request(s)</h2>
             {% for request in friend_requests %}
             <div class="request">
                 {{ request }}
@@ -95,16 +92,16 @@
 
 
         <div class="topspacer"></div>
-        <div class="centered-text">
+        <div class="footnote">
             <p>Login on other platforms and exchange handles!</p>
-        </div>
         <footer>
-            <ul>
+            <ul class = "bot">
                 <li class="footer"><a href="https://facebook.com">Facebook</a></li>
                 <li class="footer"><a href="https://twitter.com">Twitter</a></li>
                 <li class="footer"><a href="https://www.instagram.com">Instagram</a></li>
             </ul>
         </footer>
+    </div>
 
 
     <div class = "page-marker">
