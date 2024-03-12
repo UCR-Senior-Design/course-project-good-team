@@ -1,6 +1,10 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from collections import defaultdict
+import pandas as pd
+import numpy as np
+from sklearn.neighbors import NearestNeighbors
+from sklearn.preprocessing import StandardScaler
 from collections import Counter
 import matplotlib
 matplotlib.use('Agg')
@@ -384,3 +388,41 @@ def retrieve_or_update_match_score(users, user_data, friend_data):
     update_match_score(users, username, friend_username, match_score)
 
     return match_score
+
+def analyze_playlist(sp, playlist_url, user_data, artists_collection):
+    playlist_id = playlist_url.split('/')[-1].split('?')[0]
+
+    playlist_tracks_data = sp.playlist_tracks(playlist_id)
+    track_ids = [track['track']['id'] for track in playlist_tracks_data['items'] if track['track']]
+    artist_ids = set([track['track']['artists'][0]['id'] for track in playlist_tracks_data['items'] if track['track']['artists']])
+
+    # Initialize genres list
+    genres = []
+
+    # Check each artist ID in the local database first
+    for artist_id in artist_ids:
+        artist_data = artists_collection.find_one({'id': artist_id})
+        if artist_data:
+            genres.extend(artist_data['genres'])
+        else:
+            # If artist not found in local DB, fetch from Spotify and update local DB
+            artist_info = sp.artist(artist_id)
+            new_genres = artist_info['genres']
+            genres.extend(new_genres)
+            artists_collection.update_one({'id': artist_id}, {'$set': {'genres': new_genres, 'last_updated': pd.Timestamp.now()}}, upsert=True)
+
+    genre_count = Counter(genres)
+    most_common_genres = genre_count.most_common(5)
+
+    # Fetch and calculate audio features
+    playlist_features_list = sp.audio_features(track_ids)
+    df_playlist = pd.DataFrame([features for features in playlist_features_list if features])
+    avg_features = df_playlist[['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'loudness', 'speechiness', 'tempo', 'valence']].mean().to_dict()
+
+    analysis_result = {
+        'average_features': avg_features,
+        'most_common_genres': most_common_genres,
+        # 'recommended_songs': [Implement your recommendation logic here, if applicable]
+    }
+
+    return analysis_result
