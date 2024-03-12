@@ -113,13 +113,55 @@ document.addEventListener('DOMContentLoaded', function() {
         const playlistURL = document.getElementById('playlist-url').value;
         analyzePlaylist(playlistURL); // Implement this function to handle the analysis and display results
     });
+
+    // Automatically analyze playlist if 'analyze_playlist' parameter exists in the URL
+    const playlistId = getQueryParam('analyze_playlist');
+    if (playlistId) {
+        const playlistURL = `https://open.spotify.com/playlist/${playlistId}`;
+        document.getElementById('playlist-url').value = playlistURL;
+        analyzePlaylist(playlistURL); // Start the analysis
+        
+        // Show the Playlist Analyzer section
+        showPlaylistAnalyzerSection(); // We'll define this function next
+    }
 });
 
 
-function analyzePlaylist(playlistURL) {
+// This function will handle analyzing the playlist, either from form submission or direct calling
+function analyzePlaylist(playlistURL = null) {
+    // If no URL is passed, try to get it from the input field
+    const finalPlaylistURL = playlistURL || document.getElementById('playlist-url').value;
+
     // Show loading indicator
     document.getElementById('loading-indicator').style.display = 'block';
 
+    const data = { playlist_url: finalPlaylistURL };
+
+    fetch('/analyze_playlist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('loading-indicator').style.display = 'none';
+        displayAnalysisResults(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('loading-indicator').style.display = 'none';
+    });
+}
+
+
+function analyzePlaylistDirectly(playlistURL) {
+    // Similar logic as in the analyzePlaylist function, but directly uses the playlistURL parameter
+    // Show loading indicator
+    document.getElementById('loading-indicator').style.display = 'block';
+
+    // Build the data object as needed by your back-end
     const data = { playlist_url: playlistURL };
 
     fetch('/analyze_playlist', {
@@ -131,43 +173,15 @@ function analyzePlaylist(playlistURL) {
     })
     .then(response => response.json())
     .then(data => {
-        // Hide loading indicator
         document.getElementById('loading-indicator').style.display = 'none';
         displayAnalysisResults(data);
     })
-    .catch((error) => {
+    .catch(error => {
         console.error('Error:', error);
-        // Hide loading indicator
         document.getElementById('loading-indicator').style.display = 'none';
     });
 }
 
-
-
-function displayAnalysisResults(data) {
-    // Assuming 'data' contains keys like 'top_songs', 'average_energy', etc.
-    const resultsEl = document.querySelector('.playlist-analysis-results');
-    let content = `<h3>Analysis Results</h3>`;
-
-    // Display top 3 songs
-    content += `<p>Top 3 Songs:</p><ul>`;
-    data.top_songs.forEach(song => {
-        content += `<li>${song.name} by ${song.artist}</li>`;
-    });
-    content += `</ul>`;
-
-    // Display other metrics
-    content += `<p>Average Danceability: ${data.average_danceability}</p>`;
-    content += `<p>Average Energy: ${data.average_energy}</p>`;
-    content += `<p>Most Prevalent Genres:</p><ul>`;
-    data.most_prevalent_genres.forEach(genre => {
-        content += `<li>${genre}</li>`;
-    });
-    content += `</ul>`;
-
-    // Update the HTML
-    resultsEl.innerHTML = content;
-}
 
 function displayAnalysisResults(data) {
     const resultsEl = document.querySelector('.playlist-analysis-results');
@@ -182,7 +196,7 @@ function displayAnalysisResults(data) {
     content += '</ul></div>';
 
     // Display top 3 most common genres
-    content += '<div><h4>Most Common Genres:</h4><ul>';
+    content += '<div><h4>Genres:</h4><ul>';
     data.most_common_genres.slice(0, 3).forEach(([genre, _]) => {
         content += `<li>${genre}</li>`; // Removed the count next to each genre
     });
@@ -195,6 +209,22 @@ function displayAnalysisResults(data) {
 
 document.getElementById('playlist-analyzer-form').addEventListener('submit', function(event) {
     event.preventDefault();
-    const playlistURL = document.getElementById('playlist-url').value;
     analyzePlaylist(playlistURL);
 });
+
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+function showPlaylistAnalyzerSection() {
+    const playlistAnalyzerEl = document.querySelector('.playlist-analyzer');
+    const otherSections = [document.querySelector('.friend-queue'), document.querySelector('.content .song-details')]; // Add any other sections that should be hidden
+
+    // Display the Playlist Analyzer and hide other sections
+    playlistAnalyzerEl.style.display = 'block';
+    otherSections.forEach(section => {
+        if (section) section.style.display = 'none';
+    });
+
+}

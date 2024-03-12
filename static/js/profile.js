@@ -48,3 +48,11 @@ function setMatchScoreMessage(score) {
 
     document.getElementById("matchScoreMessage").innerText = message;
 }
+
+function confirmAndAnalyzePlaylist(playlistId, playlistName) {
+    const userConfirmation = confirm(`Do you want to analyze the playlist "${playlistName}"?`);
+    if (userConfirmation) {
+        // Redirect to the Playlist Analyzer with the playlist ID
+        window.location.href = `/discover?analyze_playlist=${playlistId}`;
+    }
+}
