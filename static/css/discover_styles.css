@@ -726,3 +726,14 @@ nav.navbar{
   margin: 0 auto; /* Center paragraphs */
   padding: 10px; /* Add some padding for spacing */
 }
+
+.playlist-analyzer {
+  margin-left: 250px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  text-align: center;
+  margin-top: -30px;
+}
+

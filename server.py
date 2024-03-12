@@ -20,7 +20,8 @@ from db_utils import update_user_document
 from image_utils import get_contrasting_text_color, get_dominant_color
 from spotify_utils import (generate_genre_pie_chart_from_db, get_random_friend_statistic, 
                             get_random_statistic, get_user_friends, get_top_song_from_global_playlist, update_match_score,
-                            get_random_song, find_mutual_favorites, calculate_match_score, retrieve_or_update_match_score)
+                            get_random_song, find_mutual_favorites, calculate_match_score, retrieve_or_update_match_score,
+                            analyze_playlist)
 
 load_dotenv()
 
@@ -285,6 +286,30 @@ def get_friend_queue():
     sorted_tracks = sorted(track_popularity.values(), key=lambda x: (-x['unique_friends'], -x['count'], x['random_order']))
 
     return jsonify(sorted_tracks)
+
+@app.route('/analyze_playlist', methods=['GET', 'POST'])
+def analyze_playlist_route():
+    if 'access_token' not in session:
+        # Redirect to login if the user is not logged in
+        return redirect(url_for('login'))
+    
+    sp = spotipy.Spotify(auth=session['access_token'])
+    username = session.get('username')  # Get the username from session
+    user_data = users.find_one({'username': username})  # Fetch user data from the database
+
+    if request.method == 'POST':
+        playlist_url = request.json.get('playlist_url')  # Access the JSON data sent by the client
+        print(f"Received playlist URL for analysis: {playlist_url}")  # Debug print
+        
+        if playlist_url:
+            # Pass the Spotify client, playlist URL, user data, and artists collection to the analyze function
+            analysis_result = analyze_playlist(sp, playlist_url, user_data, artists)
+            print(f"Analysis result: {analysis_result}")  # Debug print
+            return jsonify(analysis_result)
+    
+    # If GET request or no playlist URL provided, redirect back to the discover page
+    return redirect(url_for('discover'))
+
 
 
 

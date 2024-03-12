@@ -136,7 +136,7 @@
     <div id="playlistsGrid" style="display: none;">
         <div class="grid-container">
             {% for playlist in playlists_data %}
-                <div class="grid-item" onclick="showPlaylistSongs('{{ playlist.id }}')">
+                <div class="grid-item" onclick="confirmAndAnalyzePlaylist('{{ playlist.id }}', '{{ playlist.name }}')">
                     <img src="{{ playlist.image_url }}" alt="{{ playlist.name }}" class="playlist-image">
                     <p>{{ playlist.name }}</p>
                 </div>
