@@ -1,3 +1,5 @@
+@import url("profile_styles/css");
+
 @font-face {
   font-family: Spotify;
   src: url(../fonts/GothamMedium.ttf);
@@ -25,6 +27,17 @@ src: url(../fonts/epkyouka.ttf);
   flex-direction: column; 
   align-items: center; 
   text-align: center;
+  /* margin-top: -80px;  */
+}
+
+.queue-content {
+  margin-left: 250px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+  text-align: center;
+  margin-top: -30px;
 }
 
 
@@ -570,6 +583,11 @@ nav.navbar{
   }
 }
 
+#placeholder {
+  display: none; 
+  margin-left: 250px;
+}
+
 /* ALIGNMENTS */
 
 .spacer20 {
@@ -579,11 +597,6 @@ nav.navbar{
 .spacer40 {
   margin-top: 40px;
 }
-
-
-
-/*  THE FOLLOWING COMMENTED CODE IS TO STYLE THE SIDEBUTTONS AND MAKE THEM LOOK LIKE THE ONES ON THE PROFILE PAGE.
-
 
 .sidebutton{
   position: relative;
@@ -645,7 +658,7 @@ nav.navbar{
 
 .sidebutton:hover:before {
   width: 120%;
-} */
+}
 
 /* SIDEBAR TOGGLE ANIMATION */
 .openbtn {

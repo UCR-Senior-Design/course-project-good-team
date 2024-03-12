@@ -60,14 +60,14 @@
         <label for="touch1" class="tool"><p><span class="friend">Discover</span></p></label>
         <input type="checkbox" id="touch1">
         <ul class="slide1">
-            <button onclick="window.location.href='/discover?random_song=true'" class ="button-disc"id="random-song-btn"><a>Random Song</a></button>
-            <button class="button-disc friend-queue-btn">Friend Queue</button>
-            <button class = "button-disc"><a>placeholder</a></button>
+            <li class ="sidebutton"><button onclick="window.location.href='/discover?random_song=true'" id="random-song-btn"><a>Random Song</a></button></li>
+            <li class="sidebutton friend-queue-btn"><button><a>Friend Queue</a></button></li>
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
         </ul>
         <label for="touch2" class = "tool"><p><span class = "friend">Placeholder</span></p></label>
         <input type="checkbox" id="touch2">
         <ul class="slide2">
-            <li class = "sidebutton"><button><a>placeholder</a></button></li> 
+            <li class = "sidebutton"><button onclick = "toggleSection('placeholder')"><a>placeholder</button></li> 
             <li class = "sidebutton"><button><a>placeholder</a></button></li>
             <li class = "sidebutton"><button><a>placeholder</a></button></li>
         </ul>
@@ -75,20 +75,21 @@
         <label for="touch3" class = "tool"><p><span class = "friend">Placeholder</span></p></label>
         <input type="checkbox" id="touch3">
         <ul class="slide3">
-            <li class = "sidebutton"><button><a href="#">placeholder</a></button></li> 
-            <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
-            <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
+            <li class = "sidebutton"><button onclick = "toggleSection('placeholder')"><a>placeholder</button></li> 
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
+            <li class = "sidebutton"><button><a>placeholder</a></button></li>
         </ul>
         <button class="closebtn" id="closebtn" onclick="closeNav()">X Close Sidebar</button>
     </div>
 </div>
 
+<div id = "opens">
+    <button class="openbtn hidden" id ="openbtn"onclick="openNav()">☰ Open Sidebar</button>
+</div>
 
 
 <div class="content">
     <div class="spacer40"></div>
-    <div class="spacer40"></div>
-    <div class="spacer20"></div>
     <div class="song-details">
         <h2>{{ "Random Song Recommendation" if random_song else "The #1 song in the world right now is:" }}</h2>
         <div class="album-cover">
@@ -107,22 +108,19 @@
     </div>
 </div>
 
-<div class="friend-queue" style="display: none;">
-    <h2>Friend Queue</h2>
-    <div class="queue-details">
-        <!-- Friend queue content will be dynamically inserted here -->
-    </div>
-    <div class="navigation-buttons">
-        <button onclick="previousTrack()">Previous</button>
-        <button onclick="nextTrack()">Next</button>
+<div class="queue-content">
+    <div class="friend-queue" style="display: none;">
+        <h2>Friend Queue</h2>
+        <div class="queue-details">
+            <!-- Friend queue content will be dynamically inserted here -->
+        </div>
+        <div class="navigation-buttons">
+            <button onclick="previousTrack()" class="button-disc">Previous</button>
+            <button onclick="nextTrack()" class="button-disc">Next</button>
+        </div>
     </div>
 </div>
 
-
-
-<div id = "opens">
-    <button class="openbtn hidden" id ="openbtn"onclick="openNav()">☰ Open Sidebar</button>
-</div>
 
 
 <!-- JavaScript  in discover.js-->
