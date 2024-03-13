@@ -185,7 +185,17 @@ function analyzePlaylistDirectly(playlistURL) {
 
 function displayAnalysisResults(data) {
     const resultsEl = document.querySelector('.playlist-analysis-results');
-    resultsEl.innerHTML = '<h3>Analysis Results</h3>'; // Initialize with title
+    const titleEl = document.createElement('h2');
+    titleEl.innerHTML = `Analysis of <em>${data.playlist_name}</em> by <em>${data.playlist_creator}</em>:`;
+    resultsEl.prepend(titleEl);  // Add the title to the top of the results element
+
+    // Display the playlist image
+    const imgEl = document.createElement('img');
+    imgEl.src = data.playlist_image_url;
+    imgEl.alt = 'Playlist cover';
+    imgEl.width = 200;  // Set the image size as required
+    imgEl.height = 200;
+    //resultsEl.prepend(imgEl);  // display the image but i dont think it looks that good 
 
     // Function to normalize loudness from -60 - 0 dB to 0 - 100
     const normalizeLoudness = (value) => ((value + 60) / 60) * 100;

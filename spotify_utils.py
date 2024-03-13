@@ -393,6 +393,12 @@ def retrieve_or_update_match_score(users, user_data, friend_data):
 def analyze_playlist(sp, playlist_url, user_data, artists_collection):
     playlist_id = playlist_url.split('/')[-1].split('?')[0]
 
+    # Fetch playlist details for name, creator, and image URL
+    playlist_details = sp.playlist(playlist_id)
+    playlist_name = playlist_details['name']
+    playlist_creator = playlist_details['owner']['display_name']
+    playlist_image_url = playlist_details['images'][0]['url'] if playlist_details['images'] else None
+
     playlist_tracks_data = sp.playlist_tracks(playlist_id)
     track_ids = [track['track']['id'] for track in playlist_tracks_data['items'] if track['track']]
     artist_ids = set([track['track']['artists'][0]['id'] for track in playlist_tracks_data['items'] if track['track']['artists']])
@@ -423,7 +429,9 @@ def analyze_playlist(sp, playlist_url, user_data, artists_collection):
     analysis_result = {
         'average_features': avg_features,
         'most_common_genres': most_common_genres,
-        # 'recommended_songs': [Implement your recommendation logic here, if applicable]
+        'playlist_name': playlist_name,
+        'playlist_creator': playlist_creator,
+        'playlist_image_url': playlist_image_url,
     }
 
     # Fetch user's short_term_tracks and calculate their average features
