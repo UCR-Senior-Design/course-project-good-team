@@ -185,26 +185,49 @@ function analyzePlaylistDirectly(playlistURL) {
 
 function displayAnalysisResults(data) {
     const resultsEl = document.querySelector('.playlist-analysis-results');
-    resultsEl.innerHTML = ''; // Clear previous results
+    resultsEl.innerHTML = '<h3>Analysis Results</h3>'; // Initialize with title
 
-    // Start building the content string with analysis results
-    let content = `<h3>Analysis Results</h3>
-                   <div><h4>Average Features:</h4><ul>`;
+    // Function to normalize loudness from -60 - 0 dB to 0 - 100
+    const normalizeLoudness = (value) => ((value + 60) / 60) * 100;
+
+    // Function to normalize tempo (assuming 200 as a typical max tempo)
+    const normalizeTempo = (tempo, maxTempo = 200) => (tempo / maxTempo) * 100;
+
+    // Function to create a bar for a feature
+    const createBar = (feature, value) => {
+        const percentage = feature === 'tempo' ? normalizeTempo(value) : feature === 'loudness' ? normalizeLoudness(value) : value * 100;
+        const barFilledStyle = `width: ${Math.max(percentage, 5)}%;`; // Ensure a minimum bar length for visibility
+        const textInsideBar = percentage > 10; // Adjust this value as needed
+    
+        const text = `<span class="${textInsideBar ? 'inside-text' : 'outside-text'}">${feature.toUpperCase()}: ${value.toFixed(2)}</span>`;
+        return `
+            <div class="analysis-feature">
+                <div class="progress" style="${barFilledStyle}">
+                    ${textInsideBar ? text : ''}
+                </div>
+                ${!textInsideBar ? text : ''}
+            </div>`;
+    };
+
+    // Average Features with Progress Bars
+    let featuresContent = '<div><h4>Average Features:</h4>';
     Object.keys(data.average_features).forEach(feature => {
-        content += `<li>${feature.charAt(0).toUpperCase() + feature.slice(1)}: ${data.average_features[feature].toFixed(2)}</li>`;
+        featuresContent += createBar(feature, data.average_features[feature], ['instrumentalness', 'speechiness'].includes(feature));
     });
-    content += '</ul></div>'; // Close the Average Features div
+    featuresContent += '</div>';
+    resultsEl.innerHTML += featuresContent;
 
-    // Add the most common genres
-    content += '<div><h4>Genres:</h4><ul>';
+    // Most Common Genres
+    let genresContent = '<div><h4>Genres:</h4><ul class="genre-list">';
     data.most_common_genres.slice(0, 3).forEach(([genre, _]) => {
-        content += `<li>${genre}</li>`;
+        genresContent += `<li>${genre}</li>`;
     });
-    content += '</ul></div>'; // Close the Genres div
+    genresContent += '</ul></div>';
+    resultsEl.innerHTML += genresContent;
 
-    // Now add the placeholder for recommended songs if any
+    // Recommended Songs
     if (data.recommended_songs && data.recommended_songs.length > 0) {
-        content += `<div id="recommended-songs-section">
+        let recommendedSongsContent = `<div id="recommended-songs-section">
                         <h3>Recommendations for you from this playlist</h3>
                         <table id="recommended-songs-table">
                             <thead>
@@ -215,23 +238,23 @@ function displayAnalysisResults(data) {
                                 </tr>
                             </thead>
                             <tbody>`;
-        // Iterate over each recommended song and add it to the table
+
         data.recommended_songs.forEach(song => {
-            content += `<tr>
+            recommendedSongsContent += `<tr>
                             <td><img src="${song.album_cover}" alt="Album cover" style="width: 50px; height: 50px;"></td>
                             <td>${song.title}</td>
                             <td>${song.artists}</td>
                         </tr>`;
         });
 
-        content += `       </tbody>
+        recommendedSongsContent += `       </tbody>
                         </table>
                     </div>`; // Close the Recommended Songs section div
+        resultsEl.innerHTML += recommendedSongsContent;
     }
-
-    // Finally, set the innerHTML of the results element to the built content string
-    resultsEl.innerHTML = content;
 }
+
+
 
 
 
