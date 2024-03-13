@@ -196,7 +196,7 @@ function displayAnalysisResults(data) {
     // Function to create a bar for a feature
     const createBar = (feature, value) => {
         const percentage = feature === 'tempo' ? normalizeTempo(value) : feature === 'loudness' ? normalizeLoudness(value) : value * 100;
-        const barFilledStyle = `width: ${Math.max(percentage, 5)}%;`; // Ensure a minimum bar length for visibility
+        const barFilledStyle = `width: ${Math.max(percentage, 0)}%;`; //minimum bar length
         const textInsideBar = percentage > 10; // Adjust this value as needed
     
         const text = `<span class="${textInsideBar ? 'inside-text' : 'outside-text'}">${feature.toUpperCase()}: ${value.toFixed(2)}</span>`;

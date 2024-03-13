@@ -737,6 +737,10 @@ nav.navbar{
   margin-top: -30px;
 }
 
+.playlist-analyzer h2 {
+  margin-bottom: 20px; 
+}
+
 #recommended-songs-section h3 {
   color: #ffffffaf;
   margin-bottom: 20px;
