@@ -185,6 +185,8 @@ function analyzePlaylistDirectly(playlistURL) {
 
 function displayAnalysisResults(data) {
     const resultsEl = document.querySelector('.playlist-analysis-results');
+    // Clear the current analysis results first
+    resultsEl.innerHTML = '';
     const titleEl = document.createElement('h2');
     titleEl.innerHTML = `Analysis of <em>${data.playlist_name}</em> by <em>${data.playlist_creator}</em>:`;
     resultsEl.prepend(titleEl);  // Add the title to the top of the results element
