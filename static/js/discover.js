@@ -186,24 +186,53 @@ function analyzePlaylistDirectly(playlistURL) {
 function displayAnalysisResults(data) {
     const resultsEl = document.querySelector('.playlist-analysis-results');
     resultsEl.innerHTML = ''; // Clear previous results
-    let content = `<h3>Analysis Results</h3>`;
 
-    // Display average features
-    content += '<div><h4>Average Features:</h4><ul>';
+    // Start building the content string with analysis results
+    let content = `<h3>Analysis Results</h3>
+                   <div><h4>Average Features:</h4><ul>`;
     Object.keys(data.average_features).forEach(feature => {
         content += `<li>${feature.charAt(0).toUpperCase() + feature.slice(1)}: ${data.average_features[feature].toFixed(2)}</li>`;
     });
-    content += '</ul></div>';
+    content += '</ul></div>'; // Close the Average Features div
 
-    // Display top 3 most common genres
+    // Add the most common genres
     content += '<div><h4>Genres:</h4><ul>';
     data.most_common_genres.slice(0, 3).forEach(([genre, _]) => {
-        content += `<li>${genre}</li>`; // Removed the count next to each genre
+        content += `<li>${genre}</li>`;
     });
-    content += '</ul></div>';
+    content += '</ul></div>'; // Close the Genres div
 
+    // Now add the placeholder for recommended songs if any
+    if (data.recommended_songs && data.recommended_songs.length > 0) {
+        content += `<div id="recommended-songs-section">
+                        <h3>Recommendations for you from this playlist</h3>
+                        <table id="recommended-songs-table">
+                            <thead>
+                                <tr>
+                                    <th>Album Cover</th>
+                                    <th>Title</th>
+                                    <th>Artist(s)</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+        // Iterate over each recommended song and add it to the table
+        data.recommended_songs.forEach(song => {
+            content += `<tr>
+                            <td><img src="${song.album_cover}" alt="Album cover" style="width: 50px; height: 50px;"></td>
+                            <td>${song.title}</td>
+                            <td>${song.artists}</td>
+                        </tr>`;
+        });
+
+        content += `       </tbody>
+                        </table>
+                    </div>`; // Close the Recommended Songs section div
+    }
+
+    // Finally, set the innerHTML of the results element to the built content string
     resultsEl.innerHTML = content;
 }
+
 
 
 

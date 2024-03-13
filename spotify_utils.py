@@ -6,6 +6,7 @@ import numpy as np
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 from collections import Counter
+from scipy.spatial.distance import cdist
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -425,4 +426,30 @@ def analyze_playlist(sp, playlist_url, user_data, artists_collection):
         # 'recommended_songs': [Implement your recommendation logic here, if applicable]
     }
 
+    # Fetch user's short_term_tracks and calculate their average features
+    short_term_track_ids = [track['id'] for track in user_data.get('short_term_tracks', [])]
+    if short_term_track_ids:
+        user_features_list = sp.audio_features(short_term_track_ids)
+        df_user = pd.DataFrame([features for features in user_features_list if features])
+        avg_user_features = df_user[['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'loudness', 'speechiness', 'tempo', 'valence']].mean().to_dict()
+    else:
+        avg_user_features = {}
+
+    # Calculate distances between user's average features and playlist tracks' features
+    if avg_user_features:
+        distances = cdist([list(avg_user_features.values())], df_playlist[['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'loudness', 'speechiness', 'tempo', 'valence']], metric='euclidean')
+        closest_indices = distances.argsort()[0][:3]
+        recommended_track_ids = df_playlist.iloc[closest_indices]['id'].tolist()
+    else:
+        recommended_track_ids = []
+
+    # Fetch track details for recommendations
+    recommended_tracks = sp.tracks(recommended_track_ids)['tracks']
+    recommended_songs = [{
+        'album_cover': track['album']['images'][0]['url'] if track['album']['images'] else None,
+        'title': track['name'],
+        'artists': ', '.join(artist['name'] for artist in track['artists'])
+    } for track in recommended_tracks]
+
+    analysis_result['recommended_songs'] = recommended_songs
     return analysis_result
