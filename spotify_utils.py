@@ -400,8 +400,20 @@ def analyze_playlist(sp, playlist_url, user_data, artists_collection):
     playlist_image_url = playlist_details['images'][0]['url'] if playlist_details['images'] else None
 
     playlist_tracks_data = sp.playlist_tracks(playlist_id)
-    track_ids = [track['track']['id'] for track in playlist_tracks_data['items'] if track['track']]
-    artist_ids = set([track['track']['artists'][0]['id'] for track in playlist_tracks_data['items'] if track['track']['artists']])
+
+
+    # Ensuring track['track'] is not None and filtering tracks with valid URIs
+    track_ids = [
+        track['track']['id'] for track in playlist_tracks_data['items']
+        if track['track'] and track['track']['id'] and track['track']['uri'] and 'spotify' in track['track']['uri']
+    ]
+
+    # Ensuring artist['uri'] is not None before checking for 'spotify' in URI
+    artist_ids = set([
+        artist['id'] for track in playlist_tracks_data['items'] if track['track'] 
+        for artist in track['track']['artists'] 
+        if artist and artist.get('uri') and 'spotify' in artist['uri']
+    ])
 
     # Initialize genres list
     genres = []
