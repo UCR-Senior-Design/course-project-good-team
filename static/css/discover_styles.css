@@ -737,3 +737,93 @@ nav.navbar{
   margin-top: -30px;
 }
 
+.playlist-analyzer h2 {
+  margin-bottom: 20px; 
+}
+
+#recommended-songs-section h3 {
+  color: #ffffffaf;
+  margin-bottom: 20px;
+  margin-top: 40px;
+}
+
+#recommended-songs-table {
+  margin: 0 auto; 
+  border-collapse: collapse; 
+  width: 90%;
+  border-spacing: 0;
+}
+
+#recommended-songs-table th,
+#recommended-songs-table td {
+  padding: 20px; 
+  text-align: left;
+  border-bottom: 2px solid #000; 
+}
+
+#recommended-songs-table th {
+  background-color: #1a1a1a; 
+  color: #dadadaaf;
+}
+
+#recommended-songs-table td {
+  background-color: rgba(31, 170, 80, 0.8); 
+  color: rgb(14, 13, 13); 
+}
+
+#recommended-songs-table tr:hover {
+  background-color: #ddd; 
+}
+
+#recommended-songs-table img {
+  width: 200px; 
+  height: 200px; 
+}
+
+.analysis-feature {
+  background-color: #ddd;
+  border-radius: 20px;
+  padding: 3px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.analysis-feature .progress {
+  background-color: #1faa50;
+  border-radius: 18px;
+  height: 20px;
+  width: 0%;
+  color: white;
+  text-align: center;
+  line-height: 20px;
+  transition: width 1s;
+}
+
+.genre-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.genre-list li {
+  background-color: #444;
+  margin: 5px 0;
+  padding: 10px;
+  color: white;
+  border-radius: 5px;
+}
+
+.inside-text {
+  color: white; /* Text color inside the bar */
+  white-space: nowrap;
+}
+
+.outside-text {
+  color: black; /* Text color outside the bar */
+  margin-left: 5px; /* Spacing between bar and text */
+  white-space: nowrap;
+  margin-left: 5px; /* Spacing between bar and text */
+  align-self: center; /* Align the text vertically */
+}

@@ -185,25 +185,89 @@ function analyzePlaylistDirectly(playlistURL) {
 
 function displayAnalysisResults(data) {
     const resultsEl = document.querySelector('.playlist-analysis-results');
-    resultsEl.innerHTML = ''; // Clear previous results
-    let content = `<h3>Analysis Results</h3>`;
+    // Clear the current analysis results first
+    resultsEl.innerHTML = '';
+    const titleEl = document.createElement('h2');
+    titleEl.innerHTML = `Analysis of <em>${data.playlist_name}</em> by <em>${data.playlist_creator}</em>:`;
+    resultsEl.prepend(titleEl);  // Add the title to the top of the results element
 
-    // Display average features
-    content += '<div><h4>Average Features:</h4><ul>';
+    // Display the playlist image
+    const imgEl = document.createElement('img');
+    imgEl.src = data.playlist_image_url;
+    imgEl.alt = 'Playlist cover';
+    imgEl.width = 200;  // Set the image size as required
+    imgEl.height = 200;
+    //resultsEl.prepend(imgEl);  // display the image but i dont think it looks that good 
+
+    // Function to normalize loudness from -60 - 0 dB to 0 - 100
+    const normalizeLoudness = (value) => ((value + 60) / 60) * 100;
+
+    // Function to normalize tempo (assuming 200 as a typical max tempo)
+    const normalizeTempo = (tempo, maxTempo = 200) => (tempo / maxTempo) * 100;
+
+    // Function to create a bar for a feature
+    const createBar = (feature, value) => {
+        const percentage = feature === 'tempo' ? normalizeTempo(value) : feature === 'loudness' ? normalizeLoudness(value) : value * 100;
+        const barFilledStyle = `width: ${Math.max(percentage, 0)}%;`; //minimum bar length
+        const textInsideBar = percentage > 10; // Adjust this value as needed
+    
+        const text = `<span class="${textInsideBar ? 'inside-text' : 'outside-text'}">${feature.toUpperCase()}: ${value.toFixed(2)}</span>`;
+        return `
+            <div class="analysis-feature">
+                <div class="progress" style="${barFilledStyle}">
+                    ${textInsideBar ? text : ''}
+                </div>
+                ${!textInsideBar ? text : ''}
+            </div>`;
+    };
+
+    // Average Features with Progress Bars
+    let featuresContent = '<div><h4>Average Features:</h4>';
     Object.keys(data.average_features).forEach(feature => {
-        content += `<li>${feature.charAt(0).toUpperCase() + feature.slice(1)}: ${data.average_features[feature].toFixed(2)}</li>`;
+        featuresContent += createBar(feature, data.average_features[feature], ['instrumentalness', 'speechiness'].includes(feature));
     });
-    content += '</ul></div>';
+    featuresContent += '</div>';
+    resultsEl.innerHTML += featuresContent;
 
-    // Display top 3 most common genres
-    content += '<div><h4>Genres:</h4><ul>';
+    // Most Common Genres
+    let genresContent = '<div><h4>Genres:</h4><ul class="genre-list">';
     data.most_common_genres.slice(0, 3).forEach(([genre, _]) => {
-        content += `<li>${genre}</li>`; // Removed the count next to each genre
+        genresContent += `<li>${genre}</li>`;
     });
-    content += '</ul></div>';
+    genresContent += '</ul></div>';
+    resultsEl.innerHTML += genresContent;
 
-    resultsEl.innerHTML = content;
+    // Recommended Songs
+    if (data.recommended_songs && data.recommended_songs.length > 0) {
+        let recommendedSongsContent = `<div id="recommended-songs-section">
+                        <h3>Recommendations for you from this playlist</h3>
+                        <table id="recommended-songs-table">
+                            <thead>
+                                <tr>
+                                    <th>Album Cover</th>
+                                    <th>Title</th>
+                                    <th>Artist(s)</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+        data.recommended_songs.forEach(song => {
+            recommendedSongsContent += `<tr>
+                            <td><img src="${song.album_cover}" alt="Album cover" style="width: 50px; height: 50px;"></td>
+                            <td>${song.title}</td>
+                            <td>${song.artists}</td>
+                        </tr>`;
+        });
+
+        recommendedSongsContent += `       </tbody>
+                        </table>
+                    </div>`; // Close the Recommended Songs section div
+        resultsEl.innerHTML += recommendedSongsContent;
+    }
 }
+
+
+
 
 
 

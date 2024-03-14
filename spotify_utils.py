@@ -6,6 +6,7 @@ import numpy as np
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 from collections import Counter
+from scipy.spatial.distance import cdist
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -392,6 +393,12 @@ def retrieve_or_update_match_score(users, user_data, friend_data):
 def analyze_playlist(sp, playlist_url, user_data, artists_collection):
     playlist_id = playlist_url.split('/')[-1].split('?')[0]
 
+    # Fetch playlist details for name, creator, and image URL
+    playlist_details = sp.playlist(playlist_id)
+    playlist_name = playlist_details['name']
+    playlist_creator = playlist_details['owner']['display_name']
+    playlist_image_url = playlist_details['images'][0]['url'] if playlist_details['images'] else None
+
     playlist_tracks_data = sp.playlist_tracks(playlist_id)
     track_ids = [track['track']['id'] for track in playlist_tracks_data['items'] if track['track']]
     artist_ids = set([track['track']['artists'][0]['id'] for track in playlist_tracks_data['items'] if track['track']['artists']])
@@ -422,7 +429,35 @@ def analyze_playlist(sp, playlist_url, user_data, artists_collection):
     analysis_result = {
         'average_features': avg_features,
         'most_common_genres': most_common_genres,
-        # 'recommended_songs': [Implement your recommendation logic here, if applicable]
+        'playlist_name': playlist_name,
+        'playlist_creator': playlist_creator,
+        'playlist_image_url': playlist_image_url,
     }
 
+    # Fetch user's short_term_tracks and calculate their average features
+    short_term_track_ids = [track['id'] for track in user_data.get('short_term_tracks', [])]
+    if short_term_track_ids:
+        user_features_list = sp.audio_features(short_term_track_ids)
+        df_user = pd.DataFrame([features for features in user_features_list if features])
+        avg_user_features = df_user[['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'loudness', 'speechiness', 'tempo', 'valence']].mean().to_dict()
+    else:
+        avg_user_features = {}
+
+    # Calculate distances between user's average features and playlist tracks' features
+    if avg_user_features:
+        distances = cdist([list(avg_user_features.values())], df_playlist[['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'loudness', 'speechiness', 'tempo', 'valence']], metric='euclidean')
+        closest_indices = distances.argsort()[0][:3]
+        recommended_track_ids = df_playlist.iloc[closest_indices]['id'].tolist()
+    else:
+        recommended_track_ids = []
+
+    # Fetch track details for recommendations
+    recommended_tracks = sp.tracks(recommended_track_ids)['tracks']
+    recommended_songs = [{
+        'album_cover': track['album']['images'][0]['url'] if track['album']['images'] else None,
+        'title': track['name'],
+        'artists': ', '.join(artist['name'] for artist in track['artists'])
+    } for track in recommended_tracks]
+
+    analysis_result['recommended_songs'] = recommended_songs
     return analysis_result
