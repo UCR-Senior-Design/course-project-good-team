@@ -148,7 +148,7 @@ def friends():
         else:
             return redirect(url_for('index'))
     else:
-        return redirect('https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=http://127.0.0.1:8080/callback&show_dialogue=true&scope=user-read-private user-top-read')
+        return redirect('https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=https://friendify-uxfi.onrender.com/callback&show_dialogue=true&scope=user-read-private user-top-read')
 
 
 @app.route('/profile/<username>')
