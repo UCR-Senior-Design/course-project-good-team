@@ -1,3 +1,48 @@
+@media (max-width: 768px) {
+  body {
+    font-size: 14px; /* Adjust base font size for readability */
+  }
+
+  .bucket, .random-fact, .special, .page-marker, .look-top, .item button, .discover button {
+    font-size: 20px; /* Adjust font size for key elements */
+  }
+
+  .spacer {
+    height: 30px; /* Reduce spacing */
+  }
+
+  .spacer2 {
+    height: 300px; /* Reduce spacing */
+  }
+
+  .random-fact-container, .bucket-container {
+    flex-direction: column; /* Stack elements vertically */
+    padding: 0 15px; /* Add some padding */
+  }
+
+  .image-container {
+    justify-content: center; /* Center-align images */
+    margin-right: 0; /* Remove right margin */
+  }
+
+  .random-fact-image {
+    margin: 0 auto; /* Center-align and remove margin */
+    width: 80%; /* Adjust image size */
+    height: auto; /* Maintain aspect ratio */
+  }
+
+  .nav--list {
+    flex-direction: column; /* Stack navbar items vertically */
+    align-items: center; /* Center-align items */
+  }
+
+  .item, .logout, .discover {
+    margin: 5px 0; /* Adjust margin for nav items */
+    width: auto; /* Allow items to fit content */
+  }
+}
+
+
 body {
     color: #1faa50;
     font-family: Spotify;
