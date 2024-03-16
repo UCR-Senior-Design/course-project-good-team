@@ -28,7 +28,7 @@ load_dotenv()
 # Read environment variables from .env
 CLIENT_ID = os.environ.get('SPOTIFY_CLIENT_ID')
 CLIENT_SECRET = os.environ.get('SPOTIFY_CLIENT_SECRET')
-REDIRECT_URI = os.environ.get('SPOTIFY_REDIRECT_URI')
+REDIRECT_URL = os.environ.get('SPOTIFY_REDIRECT_URL_RENDER') #CHANGE BETWEEN LOCAL AND RENDER FOR DEPLOYMENT AND DEVELOPMENT
 FLASK_SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
 MONGO_URL = os.environ.get('MONGO_URL')
 
@@ -90,7 +90,7 @@ def index():
     return render_template('index.html', username=username, is_logged_in=is_logged_in,
                            random_statistic=random_statistic, image_url=image_url,
                            icon_link=icon_link, special_name=special_name,
-                           background_color=background_color, text_color=text_color)
+                           background_color=background_color, text_color=text_color, REDIRECT_URL=REDIRECT_URL)
 
 
 @app.route('/logout')
@@ -108,7 +108,7 @@ def about():
     icon2_link = url_for('static', filename='images/favicon2.ico')
 
     icon_link = choice([icon1_link, icon2_link])
-    return render_template('about.html', icon_link=icon_link, username=username, is_logged_in=is_logged_in)
+    return render_template('about.html', icon_link=icon_link, username=username, is_logged_in=is_logged_in, REDIRECT_URL=REDIRECT_URL)
 
 
 @app.route('/friends')
@@ -144,11 +144,11 @@ def friends():
                 })
 
             return render_template('friends.html', friends_details=friends_details, is_logged_in=is_logged_in, 
-                                   friend_requests=friend_requests, icon_link=icon_link, username=username)
+                                   friend_requests=friend_requests, icon_link=icon_link, username=username, REDIRECT_URL=REDIRECT_URL)
         else:
             return redirect(url_for('index'))
     else:
-        return redirect('https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=https://friendify-uxfi.onrender.com/callback&show_dialogue=true&scope=user-read-private user-top-read')
+        return redirect('https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=' + REDIRECT_URL + '&show_dialogue=true&scope=user-read-private user-top-read')
 
 
 @app.route('/profile/<username>')
@@ -214,7 +214,7 @@ def profile(username):
                            date_joined=date_joined, is_logged_in='username' in session, genre_pie_chart=genre_pie_chart_base64,
                            icon_link=icon_link, playlists_data=playlists_data, mutual_favorites=mutual_favorites,
                            profile_username=username, session_username=session_username, match_score=match_score,
-                           logged_in_user_profile_pic_url=logged_in_user_data['profile_pic_url'])
+                           logged_in_user_profile_pic_url=logged_in_user_data['profile_pic_url'], REDIRECT_URL=REDIRECT_URL)
  
 
 
