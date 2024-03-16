@@ -461,7 +461,7 @@ def callback():
     body = {
         'grant_type': 'authorization_code',
         'code': code,
-        'redirect_uri': REDIRECT_URI
+        'redirect_uri': REDIRECT_URL
     }
 
     response = requests.post('https://accounts.spotify.com/api/token', data=body, headers=headers)
