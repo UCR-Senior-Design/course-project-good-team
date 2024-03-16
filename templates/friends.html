@@ -52,13 +52,13 @@
                                 </a>
                             </td>
                             <td>
-                                <a href="{{ url_for('profile', username=friend.username) }}">{{ friend.username }}</a>
+                                <a href="{{ url_for('profile', username=friend.username) }}" class = "friendname">{{ friend.username }}</a>
                             </td>
                             <td>
                                 {{ friend.match_score }}
                             </td>
                             <td>
-                                <button onclick="confirmRemoveFriend('{{ friend.username }}')">Remove Friend ✕</button>
+                                <button onclick="confirmRemoveFriend('{{ friend.username }}')" class = "button-disc">Remove Friend ✕</button>
                             </td>
                         </tr>
                         {% endfor %}
