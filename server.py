@@ -28,7 +28,7 @@ load_dotenv()
 # Read environment variables from .env
 CLIENT_ID = os.environ.get('SPOTIFY_CLIENT_ID')
 CLIENT_SECRET = os.environ.get('SPOTIFY_CLIENT_SECRET')
-REDIRECT_URL = os.environ.get('SPOTIFY_REDIRECT_URL_RENDER') #CHANGE BETWEEN LOCAL AND RENDER FOR DEPLOYMENT AND DEVELOPMENT
+REDIRECT_URL = os.environ.get('SPOTIFY_REDIRECT_URL_LOCAL') #CHANGE BETWEEN LOCAL AND RENDER FOR DEPLOYMENT AND DEVELOPMENT
 FLASK_SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
 MONGO_URL = os.environ.get('MONGO_URL')
 
@@ -461,7 +461,7 @@ def callback():
     body = {
         'grant_type': 'authorization_code',
         'code': code,
-        'redirect_uri': REDIRECT_URI
+        'redirect_uri': REDIRECT_URL
     }
 
     response = requests.post('https://accounts.spotify.com/api/token', data=body, headers=headers)
