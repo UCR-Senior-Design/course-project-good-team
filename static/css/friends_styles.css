@@ -66,6 +66,10 @@ body {
 
 }
 
+.friendname{
+  color: black;
+}
+
 table {
   margin: 0 auto; /* Center the table horizontally */
 }
