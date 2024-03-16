@@ -469,6 +469,7 @@ nav.navbar{
   outline: none;
   background-color: transparent;
   overflow: hidden;
+  margin-top: 15px;
 }
 
 .tool:hover{
