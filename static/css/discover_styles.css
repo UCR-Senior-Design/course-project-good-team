@@ -493,11 +493,20 @@ nav.navbar{
   margin: 20px auto;
 }
 
+.album-center{
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
 .album-cover img {
   max-width: 100%;
   max-height: 100%;
   display: block;
   margin: 0 auto;
+}
+
+.albimg{
+  border-radius: 5px;
 }
 
 .play-overlay {
@@ -827,4 +836,36 @@ nav.navbar{
   white-space: nowrap;
   margin-left: 5px; /* Spacing between bar and text */
   align-self: center; /* Align the text vertically */
+}
+
+.topsongww{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  left: 50%;
+  background-color: #2c2f33;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  z-index: 2; /* Ensure it's above other content */
+  width: auto;
+  max-width: 600px; /* Adjust based on your needs */
+}
+
+.text{
+  color: #ffffffaf;
+}
+
+.page-marker{
+  display: flex;
+  color: #ffffffaf;
+  font-family: Winter;
+  font-size: 40px;
+  margin-left: 30px;
+  margin-bottom: 20px;
+  font-style: italic;
+  position: fixed;
+  bottom: 0;
 }
