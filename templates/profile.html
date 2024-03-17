@@ -135,7 +135,7 @@
             {% for playlist in playlists_data %}
                 <div class="grid-item" onclick="confirmAndAnalyzePlaylist('{{ playlist.id }}', '{{ playlist.name }}')">
                     <img src="{{ playlist.image_url }}" alt="{{ playlist.name }}" class="playlist-image">
-                    <p>{{ playlist.name }}</p>
+                    <p class = "text">{{ playlist.name }}</p>
                 </div>
             {% endfor %}
         </div>
