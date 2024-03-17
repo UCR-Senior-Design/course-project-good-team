@@ -56,7 +56,7 @@ function previousTrack() {
 function toggleFriendQueueDisplay() {
     const friendQueueEl = document.querySelector('.friend-queue');
     const playlistAnalyzerEl = document.querySelector('.playlist-analyzer');
-    const songDetailsEl = document.querySelector('.content .song-details');
+    const songDetailsEl = document.querySelector('.content .topsongww');
 
     if (friendQueueEl.style.display === "block") {
         friendQueueEl.style.display = "none";
@@ -75,16 +75,16 @@ function toggleFriendQueueDisplay() {
 function togglePlaylistAnalyzerDisplay() {
     const playlistAnalyzerEl = document.querySelector('.playlist-analyzer');
     const friendQueueEl = document.querySelector('.friend-queue');
-    const songDetailsEl = document.querySelector('.content .song-details');
+    const songDetailsEl = document.querySelector('.content .topsongww');
 
-    if (playlistAnalyzerEl.style.display === "block") {
+    if (playlistAnalyzerEl.style.display === "flex") {
         playlistAnalyzerEl.style.display = "none";
         // Ensure that when hiding the playlist analyzer, the song details are visible if the friend queue is not open
         if (friendQueueEl.style.display !== "block") {
             songDetailsEl.style.display = "block";
         }
     } else {
-        playlistAnalyzerEl.style.display = "block";
+        playlistAnalyzerEl.style.display = "flex";
         friendQueueEl.style.display = "none"; // Ensure friend queue is hidden when showing playlist analyzer
         songDetailsEl.style.display = "none"; // Hide song details when showing playlist analyzer
     }
@@ -285,6 +285,7 @@ function showPlaylistAnalyzerSection() {
     const playlistAnalyzerEl = document.querySelector('.playlist-analyzer');
     const otherSections = [document.querySelector('.friend-queue'), document.querySelector('.content .song-details')]; // Add any other sections that should be hidden
 
+    document.getElementById("qq").classList.add("loaded")
     // Display the Playlist Analyzer and hide other sections
     playlistAnalyzerEl.style.display = 'block';
     otherSections.forEach(section => {
