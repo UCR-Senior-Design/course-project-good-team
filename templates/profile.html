@@ -148,15 +148,14 @@
                 {% for term, artist in mutual_favorites.artists.items() %}
                     <div class = "album-center">
                         {% if term == 'short_term' %}
-                            <p>You two have both been loving {{ artist.name }} lately.</p>
+                            <p class = "text">You two have both been loving <span class = "friend">{{ artist.name }}</span> lately.</p>
                         {% elif term == 'medium_term' %}
-                            <div class="spacer50"></div>
-                            <p>Over the last 6 months, {{ artist.name }} has been a favorite for both of you.</p>
+
+                            <p class = "text">Over the last 6 months, <span class = "friend">{{ artist.name }}</span> has been a favorite for both of you.</p>
                         {% else %}
-                            <div class="spacer50"></div>
-                            <p>{{ artist.name }} is in both of your all time top artists.</p>
+
+                            <p class = "text"><span class = "friend">{{ artist.name }}</span> is in both of your all time top artists.</p>
                         {% endif %}
-                        <div class="spacer20"></div>
                         <div class = "image-center">
                             <img src="{{ artist.image_url }}" alt="{{ artist.name }}" style="width: 300px;">
                         </div>
@@ -167,16 +166,15 @@
                 {% for term, track in mutual_favorites.tracks.items() %}
                     <div class = "album-center">
                         {% if term == 'short_term' %}
-                            <div class="spacer50"></div>
-                            <p>You two have both been bumping {{ track.name }} lately.</p>
+
+                            <p class = "text">You two have both been bumping <span class = "friend">{{ track.name }} </span>lately.</p>
                         {% elif term == 'medium_term' %}
-                            <div class="spacer50"></div>
-                            <p>{{ track.name }} has been in both of your rotations over the last 6 months.</p>
+
+                            <p class = "text"><span class = "friend">{{ track.name }} </span>has been in both of your rotations over the last 6 months.</p>
                         {% else %}
-                            <div class="spacer50"></div>
-                            <p>{{ track.name }} is an all time favorite for both of you.</p>
+
+                            <p class = "text"><span class = "friend">{{ track.name }} </span>is an all time favorite for both of you.</p>
                         {% endif %}
-                        <div class="spacer20"></div>
                         <div class = "image-center">
                             <img src="{{ track.image_url }}" alt="{{ track.name }}" style="width: 300px;">
                         </div>
