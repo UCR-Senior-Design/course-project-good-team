@@ -75,18 +75,18 @@ function toggleFriendQueueDisplay() {
 function togglePlaylistAnalyzerDisplay() {
     const playlistAnalyzerEl = document.querySelector('.playlist-analyzer');
     const friendQueueEl = document.querySelector('.friend-queue');
-    const songDetailsEl = document.querySelector('.content .topsongww');
+    const songDetailsEl = document.querySelector('.content .topsongww'); // Ensure this selector accurately targets the top song details section
 
     if (playlistAnalyzerEl.style.display === "flex") {
         playlistAnalyzerEl.style.display = "none";
-        // Ensure that when hiding the playlist analyzer, the song details are visible if the friend queue is not open
+        // If the playlist analyzer is hidden, and the friend queue is also hidden, then show the top song details
         if (friendQueueEl.style.display !== "block") {
             songDetailsEl.style.display = "block";
         }
     } else {
         playlistAnalyzerEl.style.display = "flex";
-        friendQueueEl.style.display = "none"; // Ensure friend queue is hidden when showing playlist analyzer
-        songDetailsEl.style.display = "none"; // Hide song details when showing playlist analyzer
+        friendQueueEl.style.display = "none"; // Hide the friend queue when showing the playlist analyzer
+        songDetailsEl.style.display = "none"; // Hide the top song details when showing the playlist analyzer
     }
 }
 
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
         analyzePlaylist(playlistURL); // Start the analysis
         
         // Show the Playlist Analyzer section
-        showPlaylistAnalyzerSection(); // We'll define this function next
+        showPlaylistAnalyzerSection(); 
     }
 });
 
@@ -283,13 +283,11 @@ function getQueryParam(param) {
 
 function showPlaylistAnalyzerSection() {
     const playlistAnalyzerEl = document.querySelector('.playlist-analyzer');
-    const otherSections = [document.querySelector('.friend-queue'), document.querySelector('.content .song-details')]; // Add any other sections that should be hidden
+    const songDetailsEl = document.querySelector('.content .topsongww'); // Selector for the top song section
 
-    document.getElementById("qq").classList.add("loaded")
-    // Display the Playlist Analyzer and hide other sections
+    // Ensure the Playlist Analyzer is shown
     playlistAnalyzerEl.style.display = 'block';
-    otherSections.forEach(section => {
-        if (section) section.style.display = 'none';
-    });
 
+    // Ensure the top song section is hidden
+    songDetailsEl.style.display = 'none';
 }
