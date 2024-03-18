@@ -21,8 +21,8 @@ class PageTitleTests(unittest.TestCase):
         cls.server_process = subprocess.Popen(['python', 'server.py'])
 
         # Allow some time for the server to start
-        time.sleep(1)
-
+        time.sleep(2)
+        
         # Currently comment / uncomment out the appropriate webdriver before compilation
 
         # FOR RUNNING ON CHROME:
@@ -43,8 +43,8 @@ class PageTitleTests(unittest.TestCase):
         self.assertEqual('About Page', self.driver.title)
 
     def test_login(self):
-        login_url = "https://accounts.spotify.com/en/login?continue=https%3A%2F%2Faccounts.spotify.com%2Fauthorize%3Fshow_dialogue%3Dtrue%26scope%3Duser-read-private%2Buser-top-read%2Bplaylist-read-private%2Bplaylist-read-collaborative%2Buser-follow-read%26response_type%3Dcode%26redirect_uri%3Dhttp%253A%252F%252F127.0.0.1%253A8080%252Fcallback%26client_id%3D4f8a0448747a497e99591f5c8983f2d7"
-
+        login_url = "https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=https%3A//friendify-uxfi.onrender.com/callback&show_dialogue=true&scope=user-read-private%20user-top-read"
+        
         self.driver.get(login_url) 
 
         loginUsername = self.driver.find_element(By.ID, "login-username")
@@ -67,7 +67,7 @@ class PageTitleTests(unittest.TestCase):
         curr_parsed_url = f"{scheme}://{netloc}{path}?username="
 
         # Without connecting to the database, we cannot check the exact username
-        self.assertEqual('http://127.0.0.1:8080/?username=', curr_parsed_url)   
+        self.assertEqual('https://friendify-uxfi.onrender.com/?username=', curr_parsed_url)   
 
     @classmethod
     def tearDownClass(cls):
