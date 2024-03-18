@@ -782,25 +782,36 @@ nav.navbar{
   border-radius: 10px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   width: 60%;
+  max-width: 1000px; /* Optional: Set maximum width */
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 .album-center {
   /* position: center; */
-  width: 50%;
+/*   width: 50%;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  margin: auto;
+  margin-bottom: 20px; */
+  /* margin-left: auto; */
+  /* margin-right: auto; */
+  width: 100%; /* Set to the width of the container */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .image-center {
-  position: center;
+  /* position: center; */
   width: 75%;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 25px;
+  /* display: block; */
+  /* margin: auto; */
+  /* margin-left: auto; */
+  /* margin-right: auto; */
+  margin-top: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .match-score-container {
