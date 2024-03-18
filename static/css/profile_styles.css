@@ -788,13 +788,6 @@ nav.navbar{
   justify-content: center;
 }
 .album-center {
-  /* position: center; */
-/*   width: 50%;
-  display: block;
-  margin: auto;
-  margin-bottom: 20px; */
-  /* margin-left: auto; */
-  /* margin-right: auto; */
   width: 100%; /* Set to the width of the container */
   display: flex;
   flex-direction: column;
@@ -802,12 +795,7 @@ nav.navbar{
 }
 
 .image-center {
-  /* position: center; */
   width: 75%;
-  /* display: block; */
-  /* margin: auto; */
-  /* margin-left: auto; */
-  /* margin-right: auto; */
   margin-top: 15px;
   margin-bottom: 20px;
   display: flex;
