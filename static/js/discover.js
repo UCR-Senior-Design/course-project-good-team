@@ -209,7 +209,7 @@ function displayAnalysisResults(data) {
     const createBar = (feature, value) => {
         const percentage = feature === 'tempo' ? normalizeTempo(value) : feature === 'loudness' ? normalizeLoudness(value) : value * 100;
         const barFilledStyle = `width: ${Math.max(percentage, 0)}%;`; //minimum bar length
-        const textInsideBar = percentage > 10; // Adjust this value as needed
+        const textInsideBar = percentage > 5; // Adjust this value as needed
     
         const text = `<span class="${textInsideBar ? 'inside-text' : 'outside-text'}">${feature.toUpperCase()}: ${value.toFixed(2)}</span>`;
         return `
