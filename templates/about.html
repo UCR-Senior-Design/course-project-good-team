@@ -21,9 +21,9 @@
               <ul class="nav--list">
                 <li class="item"><button><a href="/">Home</a></button></li>
                 <li class="item"><button><a href="/about">About</a></button></li>
-                <li class="item"><button><a href="/profile/{{ username }}">Profile</a></button></li>
-                <li class="item"><button><a href="/friends">Friends</a></button></li>
-                <li class="discover"><button><a href="/discover" class="disc">Discover</a></button></li>
+                <li class="item"><button id="profileButton"><a href="/profile/{{ username }}">Profile</a></button></li>
+                <li class="item"><button id="friendsButton"><a href="/friends">Friends</a></button></li>
+                <li class="discover"><button id="discoverButton"><a href="/discover" class="disc">Discover</a></button></li>
                 {% if is_logged_in %}
                 <li class="logout"><button><a href="/logout" class="out">Logout</a></button></li>
                 {% else %}
@@ -114,6 +114,44 @@
                 const username = "{{ username }}"; // Use the value from Flask session
                 document.getElementById('username').textContent = username;
             };
+        </script>
+        <script>
+            // Assume is_logged_in is passed to the template as a JavaScript variable
+            var isLoggedIn = {{ is_logged_in|tojson }};
+    
+            // Find the Discover button by its ID or class
+            document.getElementById('profileButton').addEventListener('click', function(e) {
+                if (!isLoggedIn) {
+                    // Prevent the default link behavior
+                    e.preventDefault();
+                    // Show an alert to the user
+                    alert('You must be logged in to use this feature.');
+                }
+            
+                // If the user is logged in, the link works as intended
+            });
+
+            document.getElementById('discoverButton').addEventListener('click', function(e) {
+                if (!isLoggedIn) {
+                    // Prevent the default link behavior
+                    e.preventDefault();
+                    // Show an alert to the user
+                    alert('You must be logged in to use this feature.');
+                }
+            
+                // If the user is logged in, the link works as intended
+            });
+
+            document.getElementById('friendsButton').addEventListener('click', function(e) {
+                if (!isLoggedIn) {
+                    // Prevent the default link behavior
+                    e.preventDefault();
+                    // Show an alert to the user
+                    alert('You must be logged in to use this feature.');
+                }
+            
+                // If the user is logged in, the link works as intended
+            });
         </script>
 
     </body>

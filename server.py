@@ -233,12 +233,13 @@ def discover():
     if 'access_token' not in session:
         # User is not logged in, redirect to Spotify login
         return redirect('https://accounts.spotify.com/authorize?client_id={}&response_type=code&redirect_uri={}&scope={}'.format(
-            CLIENT_ID, REDIRECT_URI, "user-read-private user-top-read&show_dialog=true"
+            CLIENT_ID, REDIRECT_URL, "user-read-private user-top-read&show_dialog=true"
         ))
 
     # User is logged in
     username = session.get('username', 'Guest')
     access_token = session['access_token']
+    is_logged_in = 'access_token' in session
 
     random_song_requested = request.args.get('random_song', 'false') == 'true'
     access_token = session['access_token']
@@ -250,7 +251,7 @@ def discover():
         # Fetch the top song details as before
         song_details = get_top_song_from_global_playlist(access_token)
 
-    return render_template('discover.html', username = username, song_details=song_details, random_song=random_song_requested, user=user_data, icon_link=icon_link, session_username=session_username, is_logged_in='username' in session)
+    return render_template('discover.html', username = username, song_details=song_details, random_song=random_song_requested, user=user_data, icon_link=icon_link, session_username=session_username, is_logged_in=is_logged_in)
 
 @app.route('/discover/friend-queue')
 def get_friend_queue():
