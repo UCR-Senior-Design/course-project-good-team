@@ -30,6 +30,11 @@ function toggleSection(sectionId) { // Function to show and hide whatever sectio
         section.style.display = "none"; 
         mainContent.style.display = "block"; 
     }
+
+    if (section === document.getElementById("mutualFavoritesContainer")) {
+            section.style.display = "flex";
+            mainContent.style.display = "none";
+    }
 }
 
 function setMatchScoreMessage(score) {
