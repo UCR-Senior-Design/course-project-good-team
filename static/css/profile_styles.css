@@ -775,7 +775,8 @@ nav.navbar{
   display: flex;
   position: relative;
   bottom: 2%;
-  left: 20%;
+  left: 50%; /* Change to center horizontally */
+  transform: translateX(-50%); /* Center horizontally */
   background-color: #2c2f33;
   padding: 20px;
   border-radius: 10px;
@@ -784,7 +785,6 @@ nav.navbar{
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: -1;
 }
 .album-center {
   /* position: center; */
@@ -810,8 +810,8 @@ nav.navbar{
   justify-content: center;
   position: relative;
   top: 70%;
-  left: 32%;
-  /* transform: translate(-50%, -50%); */
+  left: 50%;
+  transform: translateX(-50%);
   background-color: #2c2f33;
   padding: 20px;
   border-radius: 10px;
