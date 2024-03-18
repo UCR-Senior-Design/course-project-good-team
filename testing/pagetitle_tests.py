@@ -7,10 +7,13 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from urllib.parse import urlparse, parse_qs
+from login_info import grab_login
 
 #http://127.0.0.1:8080
 
 class PageTitleTests(unittest.TestCase):
+
+    username, password = grab_login("testing/testlogininfo.txt")
 
     @classmethod
     def setUpClass(cls):
@@ -48,13 +51,8 @@ class PageTitleTests(unittest.TestCase):
         loginPassword = self.driver.find_element(By.ID, "login-password")
         loginButton = self.driver.find_element(By.ID, "login-button")
 
-        #INSERT USERNAME HERE WHEN TESTING
-        username = ''
-        #INSERT PASSWORD HERE WHEN TESTING
-        password = ''
-
-        loginUsername.send_keys(username)
-        loginPassword.send_keys(password)
+        loginUsername.send_keys(self.username)
+        loginPassword.send_keys(self.password)
         loginButton.click()
 
         #Give login time to process, may fail the assertion if the login doesn't go through, so time.sleep(x) should be changed to match that
@@ -69,7 +67,7 @@ class PageTitleTests(unittest.TestCase):
         curr_parsed_url = f"{scheme}://{netloc}{path}?username="
 
         # Without connecting to the database, we cannot check the exact username
-        self.assertEqual('http://127.0.0.1:8080/?username=', curr_parsed_url)
+        self.assertEqual('http://127.0.0.1:8080/?username=', curr_parsed_url)   
 
     @classmethod
     def tearDownClass(cls):

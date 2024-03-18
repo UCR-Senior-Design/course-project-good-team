@@ -1,3 +1,5 @@
+@import url("discover_styles/css");
+
 body {
     color: #1faa50;
     font-family: Spotify;
@@ -43,17 +45,29 @@ body {
   bottom: 0;
 }
 
-.centered-text {
-  display: inline-block; /* Allow centering */
-  text-align: left; /* Reset text alignment for inner content */
-  margin-top: 50px; /* Adjust as needed */
+.friendtable {
+  display: flex;
+  flex-direction: column;
+  margin-top: 60px; /* Adjust as needed */
 }
 
-.centered-text p {
-  display: inline; /* Make the paragraph display inline */
-  font-size: 12px; /* Adjust font size as needed */
-  color: rgb(118, 227, 106); /* Adjust text color as needed */
-  font-family: Spotify; /* Specify font family as needed */
+.addfriend{
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.footnote{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #ffffffaf;
+
+}
+
+.friendname{
+  color: black;
 }
 
 table {
@@ -61,7 +75,7 @@ table {
 }
 
 table th, table td {
-  padding: 10px; /* Add padding for better appearance */
+  padding: 16px; /* Add padding for better appearance */
 }
 
 /* Change the color of the table */
@@ -71,18 +85,25 @@ table {
   color: black; /* Set text color to black */
 }
 
+.tabletext {
+  color: #ffffffaf;
+
+}
+
 /* Change the color of the table header cells */
 table th {
-  background-color: rgb(133, 233, 122); /* Set background color for header cells */
-  color: black; /* Set text color for header cells */
+  background-color: #1a1a1a; /* Set background color for header cells */
+  color: #dadadaaf;
+  border: 2px solid black;
+  /* Set text color for header cells */
 }
 
 /* Change the color of the table data cells */
 table td {
-  background-color: rgb(118, 227, 106); /* Set background color for data cells */
+  background-color: rgba(31, 170, 80, 0.8); /* Set background color for data cells */
   color: rgb(14, 13, 13); /* Set text color for data cells */
-  border: 3px solid black; /* Add border for data cells */
-  padding: 8px; /* Add padding for data cells */
+  border: 2px solid black; /* Add border for data cells */
+  padding: 14px; /* Add padding for data cells */
 }
 
 /* footer style setup */
@@ -119,6 +140,19 @@ table td {
 
 .friend{
   color: #1faa50
+}
+
+.bot {
+  padding: 0; /* Remove default padding */
+  list-style: none; /* Remove default list style */
+}
+
+.bot li {
+  display: inline; /* Display list items inline */
+}
+
+.bot li:not(:last-child) {
+  margin-right: 10px; /* Add spacing between list items */
 }
 
 
@@ -309,7 +343,6 @@ nav.navbar{
 /* NAV BAR END */
 
 .pending-requests h2 {
-  color: #f2c75c;
   margin-bottom: 20px;
 }
 
@@ -396,4 +429,60 @@ nav.navbar{
 
 .discover:hover:before {
   width: 120%;
+}
+
+/* black button */
+
+.button-disc {
+  appearance: button;
+  background-color: #000;
+  background-image: none;
+  border: 1px solid #000;
+  border-radius: 4px;
+  box-shadow: #fff 4px 4px 0 0,#000 4px 4px 0 1px;
+  box-sizing: border-box;
+  color: #1faa50;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Spotify;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  margin: 0 5px 10px 0;
+  overflow: visible;
+  padding: 12px 40px;
+  text-align: center;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+  margin: 15px;
+}
+
+.button-disc:focus {
+  text-decoration: none;
+}
+
+.button-disc:hover {
+  text-decoration: none;
+}
+
+.button-disc:active {
+  box-shadow: rgba(0, 0, 0, .125) 0 3px 5px inset;
+  outline: 0;
+}
+
+.button-disc:not([disabled]):active {
+  box-shadow: #fff 2px 2px 0 0, #000 2px 2px 0 1px;
+  transform: translate(2px, 2px);
+}
+
+@media (min-width: 768px) {
+  .button-disc {
+    padding: 10px 20px;
+  }
+}
+
+#placeholder {
+  display: none; 
+  margin-left: 250px;
 }

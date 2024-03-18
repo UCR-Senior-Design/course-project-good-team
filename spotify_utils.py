@@ -1,7 +1,12 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from collections import defaultdict
+import pandas as pd
+import numpy as np
+from sklearn.neighbors import NearestNeighbors
+from sklearn.preprocessing import StandardScaler
 from collections import Counter
+from scipy.spatial.distance import cdist
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -149,6 +154,7 @@ def fetch_genres_for_artist_ids(artist_ids, access_token, artists):
             print(f"Error fetching genres for artist {artist_id}: {e}")
 
     # Print the summary information
+    print(f"\n")
     print(f"-----PIE CHART GENERATION SUMMARY-----")
     print(f"Retrieved {cache_hit_count} artists from cache.")
     if refreshed_artists_count > 0:
@@ -161,10 +167,11 @@ def fetch_genres_for_artist_ids(artist_ids, access_token, artists):
     execution_time = end_time - start_time  # calculate total time spent fetching artist data for pie chart
     print(f"Total time to fetch data: {execution_time:.2f} seconds")
     print(f"--------------------------------------")
+    print(f"\n")
 
     return genres
 
-def generate_genre_pie_chart_from_db(artist_ids, access_token, artists):
+def generate_genre_pie_chart_from_db(artist_ids, access_token, artists, users, username, time_range):
     genres = fetch_genres_for_artist_ids(artist_ids, access_token, artists)
     genre_count = Counter(genres)
     
@@ -172,6 +179,12 @@ def generate_genre_pie_chart_from_db(artist_ids, access_token, artists):
     if not genre_count:
         return None
     
+    # Prepare the field name based on the time range
+    genre_field = f"{time_range}_genres"  # e.g., "short_term_genres"
+
+    # Update user's document with genre data for the specified time range
+    users.update_one({'username': username}, {'$set': {genre_field: dict(genre_count)}})
+
     labels, sizes = zip(*genre_count.most_common(8))  # Limit to top 10 genres for readability
     
     # Generate pie chart
@@ -294,3 +307,169 @@ def get_user_friends(users, username):
                                      {'_id': 0, 'username': 1, 'short_term_tracks': 1, 'medium_term_tracks': 1, 'long_term_tracks': 1}))
 
     return friend_details
+
+
+def calculate_match_score(user_data, friend_data):
+    # Initialize scores
+    artist_score, track_score, genre_score = 0, 0, 0
+
+    # Calculate overlap in artists and tracks for each time range
+    for time_range in ['short_term', 'medium_term', 'long_term']:
+        user_artists = {artist['id'] for artist in user_data.get(f'{time_range}_artists', [])}
+        friend_artists = {artist['id'] for artist in friend_data.get(f'{time_range}_artists', [])}
+        artist_overlap = len(user_artists.intersection(friend_artists))
+        artist_score += (artist_overlap ** 1.75) / max(len(user_artists), 1) #ampify score
+
+        user_tracks = {track['id'] for track in user_data.get(f'{time_range}_tracks', [])}
+        friend_tracks = {track['id'] for track in friend_data.get(f'{time_range}_tracks', [])}
+        track_overlap = len(user_tracks.intersection(friend_tracks))
+        track_score += (track_overlap ** 1.75) / max(len(user_tracks), 1) #ampify score
+        
+    # Calculate genre overlap
+    for time_range in ['short_term', 'medium_term', 'long_term']:
+        user_genres = Counter(user_data.get(f'{time_range}_genres', {}))
+        friend_genres = Counter(friend_data.get(f'{time_range}_genres', {}))
+        
+        # Calculate Jaccard similarity for genres
+        intersection = sum((user_genres & friend_genres).values())
+        union = sum((user_genres | friend_genres).values())
+        genre_score += intersection / max(union, 1)
+
+    # Normalize scores
+    artist_score = (artist_score / 3) * 100  # Divide by 3 to get average, then multiply by 100 for percentage
+    track_score = (track_score / 3) * 100
+    genre_score = (genre_score / 3) * 100
+    
+    # Combine scores with custom weights
+    combined_score = (artist_score * 0.35 + track_score * 0.35 + genre_score * 0.3)
+
+    # Normalize combined score to be between 0 and 100
+    match_score = min(max(combined_score, 0), 100)
+
+    return int(match_score)
+
+
+def update_match_score(users, username, friend_username, match_score):
+    now = datetime.utcnow()
+    # Update for the user viewing the profile
+    users.update_one(
+        {'username': username},
+        {'$set': {
+            f'match_scores.{friend_username}.score': match_score,
+            f'match_scores.{friend_username}.last_updated': now
+        }}
+    )
+    # Update for the friend whose profile is being viewed
+    users.update_one(
+        {'username': friend_username},
+        {'$set': {
+            f'match_scores.{username}.score': match_score,
+            f'match_scores.{username}.last_updated': now
+        }}
+    )
+
+
+
+
+def retrieve_or_update_match_score(users, user_data, friend_data):
+    username = user_data['username']
+    friend_username = friend_data['username']
+
+    # Check if a recent match score already exists
+    match_info = user_data.get('match_scores', {}).get(friend_username, {})
+    if match_info and 'last_updated' in match_info and (datetime.utcnow() - match_info['last_updated']).days < 7:
+        print ("Recent match score found")
+        return match_info['score']
+
+    # Calculate new match score
+    print ("Calculating new match score")
+    match_score = calculate_match_score(user_data, friend_data)
+
+    # Update match scores in both users' documents
+    update_match_score(users, username, friend_username, match_score)
+
+    return match_score
+
+def analyze_playlist(sp, playlist_url, user_data, artists_collection):
+    playlist_id = playlist_url.split('/')[-1].split('?')[0]
+
+    # Fetch playlist details for name, creator, and image URL
+    playlist_details = sp.playlist(playlist_id)
+    playlist_name = playlist_details['name']
+    playlist_creator = playlist_details['owner']['display_name']
+    playlist_image_url = playlist_details['images'][0]['url'] if playlist_details['images'] else None
+
+    playlist_tracks_data = sp.playlist_tracks(playlist_id)
+
+
+    # Ensuring track['track'] is not None and filtering tracks with valid URIs
+    track_ids = [
+        track['track']['id'] for track in playlist_tracks_data['items']
+        if track['track'] and track['track']['id'] and track['track']['uri'] and 'spotify' in track['track']['uri']
+    ]
+
+    # Ensuring artist['uri'] is not None before checking for 'spotify' in URI
+    artist_ids = set([
+        artist['id'] for track in playlist_tracks_data['items'] if track['track'] 
+        for artist in track['track']['artists'] 
+        if artist and artist.get('uri') and 'spotify' in artist['uri']
+    ])
+
+    # Initialize genres list
+    genres = []
+
+    # Check each artist ID in the local database first
+    for artist_id in artist_ids:
+        artist_data = artists_collection.find_one({'id': artist_id})
+        if artist_data:
+            genres.extend(artist_data['genres'])
+        else:
+            # If artist not found in local DB, fetch from Spotify and update local DB
+            artist_info = sp.artist(artist_id)
+            new_genres = artist_info['genres']
+            genres.extend(new_genres)
+            artists_collection.update_one({'id': artist_id}, {'$set': {'genres': new_genres, 'last_updated': pd.Timestamp.now()}}, upsert=True)
+
+    genre_count = Counter(genres)
+    most_common_genres = genre_count.most_common(5)
+
+    # Fetch and calculate audio features
+    playlist_features_list = sp.audio_features(track_ids)
+    df_playlist = pd.DataFrame([features for features in playlist_features_list if features])
+    avg_features = df_playlist[['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'loudness', 'speechiness', 'tempo', 'valence']].mean().to_dict()
+
+    analysis_result = {
+        'average_features': avg_features,
+        'most_common_genres': most_common_genres,
+        'playlist_name': playlist_name,
+        'playlist_creator': playlist_creator,
+        'playlist_image_url': playlist_image_url,
+    }
+
+    # Fetch user's short_term_tracks and calculate their average features
+    short_term_track_ids = [track['id'] for track in user_data.get('short_term_tracks', [])]
+    if short_term_track_ids:
+        user_features_list = sp.audio_features(short_term_track_ids)
+        df_user = pd.DataFrame([features for features in user_features_list if features])
+        avg_user_features = df_user[['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'loudness', 'speechiness', 'tempo', 'valence']].mean().to_dict()
+    else:
+        avg_user_features = {}
+
+    # Calculate distances between user's average features and playlist tracks' features
+    if avg_user_features:
+        distances = cdist([list(avg_user_features.values())], df_playlist[['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'loudness', 'speechiness', 'tempo', 'valence']], metric='euclidean')
+        closest_indices = distances.argsort()[0][:3]
+        recommended_track_ids = df_playlist.iloc[closest_indices]['id'].tolist()
+    else:
+        recommended_track_ids = []
+
+    # Fetch track details for recommendations
+    recommended_tracks = sp.tracks(recommended_track_ids)['tracks']
+    recommended_songs = [{
+        'album_cover': track['album']['images'][0]['url'] if track['album']['images'] else None,
+        'title': track['name'],
+        'artists': ', '.join(artist['name'] for artist in track['artists'])
+    } for track in recommended_tracks]
+
+    analysis_result['recommended_songs'] = recommended_songs
+    return analysis_result

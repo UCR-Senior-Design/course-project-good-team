@@ -9,11 +9,13 @@ from selenium.webdriver.common.keys import Keys
 import pymongo
 from pymongo import MongoClient
 from bson import ObjectId
+from login_info import grab_login
 
 #http://127.0.0.1:8080
 
 class DataBaseTests(unittest.TestCase):
 
+    username, password = grab_login("testing/testlogininfo.txt")
     mongo_client = pymongo.MongoClient('mongodb+srv://test:b11094@friendify.plioijt.mongodb.net/?retryWrites=true&w=majority', tlsAllowInvalidCertificates=True) # This is not a permanent solution, and is just for development. We should not allow invalid certificates during deployment.
 
     @classmethod
@@ -48,16 +50,11 @@ class DataBaseTests(unittest.TestCase):
         #Note: the object id is dependent on an entry we plan to delete in advance, since it also depends on login
         #Currently there is no safeguard against accidentally deleting user data with same username, so don't test
         # with a username that has a duplicate in the database
-        
-        #INSERT USERNAME HERE WHEN TESTING
-        username = ''
-        #INSERT PASSWORD HERE WHEN TESTING
-        password = ''
 
         #In the event we test with a user that is not already in the database set this to False (we do not need to backup the data)
         userExists = True
         if(userExists):
-            query = {'id': username}
+            query = {'id': self.username}
 
             document_to_store = self.collection.find_one(query)
 
@@ -83,33 +80,28 @@ class DataBaseTests(unittest.TestCase):
         loginPassword = self.driver.find_element(By.ID, "login-password")
         loginButton = self.driver.find_element(By.ID, "login-button")
 
-        loginUsername.send_keys(username)
-        loginPassword.send_keys(password)
+        loginUsername.send_keys(self.username)
+        loginPassword.send_keys(self.password)
         loginButton.click()
 
         time.sleep(10)
 
         # Find the newly created document (Note: This doesn't guarantee uniqueness in username
         # so if there are two users with the same username, data may be deleted that shouldn't be)
-        document = self.collection.find_one({'id': username})
+        document = self.collection.find_one({'id': self.username})
 
         # Assert that the user record exists in MongoDB
         self.assertIsNotNone(document)
-        self.assertEqual(document['id'], username)
+        self.assertEqual(document['id'], self.username)
 
         # Delete this newly created document and backup the old version
         if(userExists):
-            self.collection.delete_one({'id': username})
+            self.collection.delete_one({'id': self.username})
 
             new_document_id = self.collection.insert_one(stored_data).inserted_id
             print(f"Stored data re-uploaded as a new document with ID {new_document_id}")
         
     def test_update_friend_list(self):
-        #INSERT USERNAME HERE WHEN TESTING
-        username = ''
-        #INSERT PASSWORD HERE WHEN TESTING
-        password = ''
-
         login_url = "https://accounts.spotify.com/en/login?continue=https%3A%2F%2Faccounts.spotify.com%2Fauthorize%3Fshow_dialogue%3Dtrue%26scope%3Duser-read-private%2Buser-top-read%2Bplaylist-read-private%2Bplaylist-read-collaborative%2Buser-follow-read%26response_type%3Dcode%26redirect_uri%3Dhttp%253A%252F%252F127.0.0.1%253A8080%252Fcallback%26client_id%3D4f8a0448747a497e99591f5c8983f2d7"
 
         self.driver.get(login_url) 
@@ -118,30 +110,28 @@ class DataBaseTests(unittest.TestCase):
         loginPassword = self.driver.find_element(By.ID, "login-password")
         loginButton = self.driver.find_element(By.ID, "login-button")
 
-        loginUsername.send_keys(username)
-        loginPassword.send_keys(password)
+        loginUsername.send_keys(self.username)
+        loginPassword.send_keys(self.password)
         loginButton.click()
 
         time.sleep(10)
 
         #Find the existing list of friends
-        existing_friends = self.collection.find_one({'id': username})['friends']
+        existing_friends = self.collection.find_one({'id': self.username})['friends']
 
         # Append a new username to the list
         new_username = 'Totally_Real_Person'
         updated_friends = existing_friends + [new_username]
 
-        update_query = {'id': username}
+        update_query = {'id': self.username}
         update_operation = {'$set': {'friends': updated_friends}}
         self.collection.update_one(update_query, update_operation)
 
-        updated_document = self.collection.find_one({'id': username})      
+        updated_document = self.collection.find_one({'id': self.username})      
 
         # Assert that the user record exists in MongoDB and the friend was added
         self.assertIsNotNone(updated_document)
         self.assertEqual(updated_friends, updated_document['friends'])
-
-        
 
         # Remove new friend and backup the old version
         update_operation = {'$pull': {'friends': new_username}}
