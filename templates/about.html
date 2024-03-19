@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>About Page</title>
+        <!-- adding ../styles correctly accessed setup -->
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/about_styles.css') }}">
+    </head>
+
+    <body>
+
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <img src="{{ icon_link }}">
+                </div>
+                <div class="welcome">
+                    <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">{{ username }}</span></span>
+                </div>
+              <ul class="nav--list">
+                <li class="item"><button><a href="/">Home</a></button></li>
+                <li class="item"><button><a href="/about">About</a></button></li>
+                <li class="item"><button id="profileButton"><a href="/profile/{{ username }}">Profile</a></button></li>
+                <li class="item"><button id="friendsButton"><a href="/friends">Friends</a></button></li>
+                <li class="discover"><button id="discoverButton"><a href="/discover" class="disc">Discover</a></button></li>
+                {% if is_logged_in %}
+                <li class="logout"><button><a href="/logout" class="out">Logout</a></button></li>
+                {% else %}
+                <li class="item"><button><a href="https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri={{ REDIRECT_URL | urlencode }}&show_dialogue=true&scope=user-read-private user-top-read" class="log">Login</a></button></li>
+                {% endif %}
+              </ul>
+            </nav>
+        </div>
+
+        <div class= "topspacer"></div>
+
+        <div class = "centered-text">
+            <slogan>
+                "Your Playlist, Their Playlist, Our Connection."
+            </slogan>
+        </div>
+
+        <div class="topspacer"></div>
+
+        <div class = "about-flexbox">
+            <img src="/static/images/aboutpage3.jpg" alt="Lofi Background Image">
+                <div class = "top-text">
+                    <top>
+                        Friendify is a feature that will enhance your Spotify experience. This feature
+                        expands social interactions between users by adding attributes that will give you interaction between friends.
+                    </top>
+                    <div class="spacer"></div>
+                        <ul>View your top tracks and top artists</ul>
+                        <div class="spacer5"></div>
+                        <ul>Discover your musical compatiblity friends with a Match Score</ul>
+                        <div class="spacer5"></div>
+                        <ul>Explore the Friend Queue and discover their favorite songs</ul>
+                        <div class="spacer5"></div>
+                        <ul>Get personal recommendations based on friends' playlists</ul>
+                        <div class="spacer5"></div>
+                        <ul>Access your listening statistics</ul>
+                        <div class="spacer5"></div>
+                        <ul>Request random song recommendations based on your listening habits</ul>
+                </div>
+        </div>
+
+        <!-- <div class="topspacer"></div>
+
+        <body>
+            <img src="/static/images/aboutpage3.jpg" alt="Lofi Background Image">
+        </body>
+
+        <div class="spacer"></div>
+
+        <div class = "centered-text">
+            <top>
+                Friendify is a feature that will add to your Spotify experience. This feature aims to 
+                expand social interactions between users by adding attributes that will give you interaction between friends.
+            </top>
+        </div>
+
+        <div class="spacer"></div>
+
+        <div class = "centered-text">
+                <ul>
+                    <li>View your top tracks and top artists</li>
+                    <li>Access your listening statistics</li>
+                    <li>Request random recommendations</li>
+                    <li>Get personal recommendations based on friends' playlists</li>
+                </ul>
+        </div> -->
+
+        <div class="spacer"></div>
+
+        <div class = "centered-text">
+            <bot>
+                Spotify users will use our webpage to log into their respective accounts. 
+            </bot>
+        </div>
+        <div class = "centered-text">
+            <bot>
+                Through user log in authentication and validation we then use Spotify users'
+                statistics to personalize their experience.
+            </bot>
+        </div>
+
+        <div class = "page-marker">
+            <footer>ABOUT</footer>
+        </div>
+
+        <script>
+            window.onload = function() {
+                const username = "{{ username }}"; // Use the value from Flask session
+                document.getElementById('username').textContent = username;
+            };
+        </script>
+        <script>
+            // Assume is_logged_in is passed to the template as a JavaScript variable
+            var isLoggedIn = {{ is_logged_in|tojson }};
+    
+            // Find the Discover button by its ID or class
+            document.getElementById('profileButton').addEventListener('click', function(e) {
+                if (!isLoggedIn) {
+                    // Prevent the default link behavior
+                    e.preventDefault();
+                    // Show an alert to the user
+                    alert('You must be logged in to use this feature.');
+                }
+            
+                // If the user is logged in, the link works as intended
+            });
+
+            document.getElementById('discoverButton').addEventListener('click', function(e) {
+                if (!isLoggedIn) {
+                    // Prevent the default link behavior
+                    e.preventDefault();
+                    // Show an alert to the user
+                    alert('You must be logged in to use this feature.');
+                }
+            
+                // If the user is logged in, the link works as intended
+            });
+
+            document.getElementById('friendsButton').addEventListener('click', function(e) {
+                if (!isLoggedIn) {
+                    // Prevent the default link behavior
+                    e.preventDefault();
+                    // Show an alert to the user
+                    alert('You must be logged in to use this feature.');
+                }
+            
+                // If the user is logged in, the link works as intended
+            });
+        </script>
+
+    </body>
+</html>

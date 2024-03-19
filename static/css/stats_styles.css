@@ -1,0 +1,423 @@
+body {
+    color: #1faa50;
+    font-family: Spotify;
+    background-color: #373737;
+}
+
+@font-face {
+    font-family: Spotify;
+    src: url(../fonts/GothamMedium.ttf);
+}
+@font-face {
+  font-family: Winter;
+  src: url(../fonts/epkyouka.ttf);
+}
+
+.spacer {
+  height: 90px;
+}
+
+.spacer2{
+  height: 700px;
+}
+
+.bucket-container{
+  display: flex;
+}
+
+.bucket{
+  color: white;
+  font-size: 40px;
+  margin-left: 20px;
+}
+
+
+.special{
+  color: #1faa50;
+  font-size: 40px;
+}
+
+.page-marker{
+  display: flex;
+  color: #ffffffaf;
+  font-family: Winter;
+  font-size: 40px;
+  margin-left: 30px;
+  margin-bottom: 20px;
+  font-style: italic;
+  position: fixed;
+  bottom: 0;
+}
+
+.look-top{
+  color: #ffffffaf;
+  font-family: Spotify;
+  font-size: 26px;
+  margin-left: 1050px;
+  margin-bottom: 20px;
+  font-style: italic;
+  position: fixed;
+  bottom: 0;
+
+}
+
+/* PIE CHART CSS */
+
+.genre-text{
+  display: flex;
+  justify-content: center;
+}
+
+/* SIDE BAR CSS */
+
+.sidebar-container{
+  height: 94.1%;
+  width: 250px;
+  position: absolute;
+  left: 0;
+  background-color:#1a1a1a;
+  display: flex;
+  justify-content: center;
+}
+
+.sidebar{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-direction: column;
+  height: 50%;
+  margin-top: 50px;
+}
+
+.tool{
+  color: #ffffffaf;
+  position: relative;
+  width: 100%;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  border-bottom: #373737 2px solid;
+  outline: none;
+  background-color: transparent;
+  overflow: hidden;
+}
+
+.tool:hover{
+  box-shadow: rgba(31, 170, 80, 0.8) 0px 3px 2px -.9px;
+}
+
+.tool button{
+  background: transparent;
+  border: none;
+}
+
+.tool a{
+  color: #ffffffaf;
+  font-size: 18px;
+}
+/* NAV BAR CSS */
+
+*,
+::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 80px;
+}
+
+.weltext{
+  font-size: 24px;
+  color: #ffffffaf;
+}
+
+.friend{
+  color: #1faa50
+}
+
+
+nav {
+  z-index: 1;
+  display: flex;
+  align-content: center;
+  background: #1a1a1a;
+  box-shadow: rgba(31, 170, 80, 0.8) 0px 15px 20px -5px;
+  border-bottom:rgba(30, 112, 64, 0.493) 3px solid;
+}
+nav.navbar{
+  display: flex;
+  justify-content: space-between
+}
+
+.logo{
+  display: flex;
+  height: 75px;
+  width: 75px;
+}
+
+
+.nav--list {
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.item {
+  position: relative;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  margin: 0 10px;
+  border: 2px solid #f2c75c;
+  overflow: hidden;
+}
+
+.logout{
+  position: relative;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  margin: 0 10px;
+  border: 2px solid rgb(50 159 160);
+  overflow: hidden;
+}
+
+.logout a{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  width: 140px;
+  height: 40px;
+  text-transform: uppercase;
+  color: rgb(50 159 160);
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.logout button{
+  font-size: 16px;
+  text-transform: uppercase;
+  color: rgb(50 159 160);
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+  background: none;
+  border: none;
+}
+
+.logout:hover a {
+  color: #003b49;
+}
+
+.logout:hover button {
+  color: #003b49;
+}
+
+.logout:before {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  transform: skew(30deg);
+  background: rgb(50 159 160);
+  transition: width 400ms ease;
+}
+
+.logout:hover:before {
+  width: 120%;
+}
+
+.item:nth-child(5){
+  border: 2px solid green;
+  color: green;
+}
+
+.item a.log{
+  color: rgb(16, 189, 16);
+}
+
+.item a.logout{
+  color: rgb(183, 16, 16);
+}
+
+.item a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  width: 140px;
+  height: 40px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.item button {
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+  background: none;
+  border: none;
+}
+
+.item:hover a {
+  color: #003b49;
+}
+
+.item:hover button {
+  color: #003b49;
+}
+
+.item:before {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  transform: skew(30deg);
+  background: #f2c75c;
+  transition: width 400ms ease;
+}
+
+.item:hover:before {
+  width: 120%;
+}
+
+.item:nth-child(2):before {
+  transform: skew(-20deg);
+}
+
+.item:nth-child(3):before {
+  transform: skew(0deg);
+}
+
+.item:nth-child(4):before {
+  transform: skew(25deg);
+}
+
+.item:nth-child(5):before {
+  width: 180px;
+  height: 0%;
+  bottom: 0px;
+  transition: height 400ms ease;
+  background: #1faa50;
+}
+
+.item:nth-child(5):hover:before {
+  height: 100%;
+}
+
+/* DROPDOWN ANIMATION */
+
+.slide1 {
+  clear: both;
+  width: 100%;
+  height: 0px;
+  overflow: hidden;
+  text-align: center;
+  transition: height .4s ease;
+  list-style: none;
+}
+
+.slide1 li {
+  border: 2px #f2c75c solid;
+  margin: 16px;
+  padding: 8px;
+  color: #ffffffaf; 
+}
+
+#touch1 {
+  position: absolute; 
+  opacity: 0; 
+  height: 0px;
+}    
+
+#touch1:checked + .slide1 {
+  height: 300px;
+} 
+
+.slide2 {
+  clear: both;
+  width: 100%;
+  height: 0px;
+  overflow: hidden;
+  text-align: center;
+  transition: height .4s ease;
+}
+
+.slide2 li {
+  border: 1px red solid;
+  margin: 20px;
+  padding: 8px;
+
+}
+
+#touch2 {
+  position: absolute; 
+  opacity: 0; 
+  height: 0px;
+}    
+
+#touch2:checked + .slide2 {
+  height: 300px;
+} 
+
+.slide3 {
+  clear: both;
+  width: 100%;
+  height: 0px;
+  overflow: hidden;
+  text-align: center;
+  transition: height .4s ease;
+}
+
+.slide3 li {
+  border: 1px red solid;
+}
+
+#touch3 {
+  position: absolute; 
+  opacity: 0; 
+  height: 0px;
+}    
+
+#touch3:checked + .slide3 {
+  height: 300px;
+} 
+
+
+

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user.username }}'s Profile</title>
+    <link rel="icon" type="image/x-icon" class = "coin" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile_styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{{ icon_link }}">
+        </div>
+        <div class="welcome">
+            <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">{{ session_username }}</span></span>
+        </div>
+        <ul class="nav--list">
+            <li class="item"><a href="/">Home</a></li>
+            <li class="item"><a href="/about">About</a></li>
+            <li class="item"><a href="/profile/{{ session['username'] }}">Profile</a></li>
+            <li class="item"><a href="/friends">Friends</a></li>
+            <li class="discover"><a href="/discover" class="disc">Discover</a></li>
+            {% if is_logged_in %}
+            <li class="logout"><a href="/logout" class="out">Logout</a></li>
+            {% else %}
+            <li class="item"><a href="https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri={{ REDIRECT_URL | urlencode }}&show_dialogue=true&scope=user-read-private user-top-read" class="log">Login</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class = "sidebar-container" id = "side">
+        <div class = "sidebar">
+            <label for="touch1" class="tool"><p>{{ user.username }}'s <span class="friend">Profile</span></p></label>
+            <input type="checkbox" id="touch1">
+            <ul class="slide1">
+                <form action="/profile/{{ user.username }}" method="get">
+                    <li class = "sidebutton"><button type="submit" name="time_range" value="short_term" class="profilerange"><a>Last 4 weeks</a></button></li>
+                    <br>
+                    <li class = "sidebutton"><button type="submit" name="time_range" value="medium_term" class="profilerange"><a>Last 6 months</a></button></li>
+                    <br>
+                    <li class = "sidebutton"><button type="submit" name="time_range" value="long_term" class="profilerange"><a>All time</a></button></li>
+                </form>
+                
+            </ul>
+            {% if user.username != session_username %}
+            <label for="touch2" class = "tool"><p><span class = "friend">Compare</span></p></label>
+            <input type="checkbox" id="touch2">
+            <ul class="slide2">
+                <li class = "sidebutton"><button onclick="toggleSection('matchScoreContainer')">Match Score</button></li>
+                <li class = "sidebutton"><button onclick="toggleSection('mutualFavoritesContainer')">Mutual Favorites</button></li> 
+            </ul>
+            {% endif %}
+            
+            <label for="touch3" class = "tool"><p><span class = "friend">Playlists</span></p></label>
+            <input type="checkbox" id="touch3">
+            <ul class="slide3">
+                <li class="sidebutton"><button onclick="toggleSection('playlistsGrid')">See All Playlists</button></li> 
+            </ul>
+            <button class="closebtn" id="closebtn" onclick="closeNav()">X Close Sidebar</button>
+        </div>
+    </div>
+
+    <div id = "opens">
+        <button class="openbtn hidden" id ="openbtn"onclick="openNav()">☰ Open Sidebar</button>
+    </div>
+
+    <div class="spacer50"></div>
+
+    <!-- Profile Information -->
+    <div class="profile-info">
+        <img src="{{ user.profile_pic_url }}" alt="{{ user.username }}'s profile picture" class="profile-picture">
+        <h1 class="username">{{ user.username }}</h1>
+        <p class="user-since">Friendify user since <span class="friend">{{ date_joined }}</span></p>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-profile-content">
+        <div class="profile-artists">
+            <h2 class = "topprofart">Top Artists <span class = "friend">{{ time_range_display }}</span></h2>
+            <div class="top-container">
+                {% for artist in top_artists %}
+                    <div class="artist {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
+                        <img src="{{ artist.image_url }}" alt="{{ artist.name }}" class="artist-image">
+                        <p class="artist-name">
+                            {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% endif %}
+                            {{ artist.name }}
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    
+        <div class="spacer50"></div>
+    
+    
+        <div class="profile-tracks">
+            <h2 class = "topprofart">Top Tracks <span class ="friend">{{ time_range_display }}</span></h2>
+            <div class="top-container">
+                {% for track in top_tracks %}
+                    <div class="artist {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
+                        <a href="https://open.spotify.com/track/{{ track.id }}" target="_blank" class="track-link">
+                            <img src="{{ track.image_url }}" alt="{{ track.name }}" class="track-image">
+                            <div class="play-overlay"><i class="fas fa-play-circle" aria-hidden="true"></i></div>
+                        </a>
+                        <div class="track-p">
+                            <p class="track-name">
+                                {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% endif %}
+                                {{ track.name }}
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    
+        <div class="spacer50"></div>
+
+        <div class="genre-chart">
+            <h2 class ="topprofart">Genre Breakdown for <span class="friend">{{ time_range_display }}</span></h2>
+            {% if genre_pie_chart %}
+                <img src="data:image/png;base64,{{ genre_pie_chart }}" alt="Genre Breakdown">
+            {% else %}
+                <p>No genre data available for this period.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Playlist Grid -->
+    <div id="playlistsGrid" style="display: none;">
+        <div class="grid-container">
+            {% for playlist in playlists_data %}
+                <div class="grid-item" onclick="confirmAndAnalyzePlaylist('{{ playlist.id }}', '{{ playlist.name }}')">
+                    <img src="{{ playlist.image_url }}" alt="{{ playlist.name }}" class="playlist-image">
+                    <p class = "text">{{ playlist.name }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Mutual Favorites Section -->
+    <div id="mutualFavoritesContainer" style="display: none;">
+        {% if mutual_favorites %}
+            {% if mutual_favorites.artists %}
+                {% for term, artist in mutual_favorites.artists.items() %}
+                    <div class = "album-center">
+                        {% if term == 'short_term' %}
+                            <p class = "text">You two have both been loving <span class = "friend">{{ artist.name }}</span> lately.</p>
+                        {% elif term == 'medium_term' %}
+
+                            <p class = "text">Over the last 6 months, <span class = "friend">{{ artist.name }}</span> has been a favorite for both of you.</p>
+                        {% else %}
+
+                            <p class = "text"><span class = "friend">{{ artist.name }}</span> is in both of your all time top artists.</p>
+                        {% endif %}
+                        <div class = "image-center">
+                            <img src="{{ artist.image_url }}" alt="{{ artist.name }}" style="width: 300px;">
+                        </div>
+                        <div class="spacer30"></div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if mutual_favorites.tracks %}
+                {% for term, track in mutual_favorites.tracks.items() %}
+                    <div class = "album-center">
+                        {% if term == 'short_term' %}
+
+                            <p class = "text">You two have both been bumping <span class = "friend">{{ track.name }} </span>lately.</p>
+                        {% elif term == 'medium_term' %}
+
+                            <p class = "text"><span class = "friend">{{ track.name }} </span>has been in both of your rotations over the last 6 months.</p>
+                        {% else %}
+
+                            <p class = "text"><span class = "friend">{{ track.name }} </span>is an all time favorite for both of you.</p>
+                        {% endif %}
+                        <div class = "image-center">
+                            <img src="{{ track.image_url }}" alt="{{ track.name }}" style="width: 300px;">
+                        </div>
+                        <div class="spacer30"></div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            <p>You two have no mutual favorites... bummer.</p>
+        {% endif %}
+
+    </div>
+
+    <!-- Match Score Section -->
+    <div id="matchScoreContainer" style="display: none;" class="match-score-container">
+        <div class="profilepic-container">
+            <img src="{{ logged_in_user_profile_pic_url }}" alt="Your Profile Picture" class="profile-picture-large">
+            <img src="{{ user.profile_pic_url }}" alt="Friend's Profile Picture" class="profile-picture-large">
+        </div>
+        <div class="match-score-info">
+            <p class="match-score-text">{{ match_score }}%</p>
+            <p id="matchScoreMessage"></p>
+        </div>
+    </div>
+
+    <script>
+        var match_score = {{ match_score }};
+        document.addEventListener("DOMContentLoaded", function() {
+            setMatchScoreMessage(match_score); 
+        });
+    </script>
+    
+
+
+
+    <!-- Page Footer -->
+    <div class = "page-marker">
+        <footer>PROFILE</footer>
+    </div>
+
+<!-- JavaScript  in profile.js-->
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+
+</body>
+</html>

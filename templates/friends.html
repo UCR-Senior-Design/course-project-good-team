@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Friends</title>
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/friends_styles.css') }}">
+    </head>
+    <body>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <img src="{{ icon_link }}">
+                </div>
+                <div class="welcome">
+                    <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username" data-username="{{ username }}">{{ username }}</span></span>
+                </div>
+              <ul class="nav--list">
+                <li class="item"><button><a href="/">Home</a></button></li>
+                <li class="item"><button><a href="/about">About</a></button></li>
+                <li class="item"><button><a href="/profile/{{ username }}">Profile</a></button></li>
+                <li class="item"><button><a href="/friends">Friends</a></button></li>
+                <li class="discover"><button><a href="/discover" class="disc">Discover</a></button></li>
+                {% if is_logged_in %}
+                <li class="logout"><button><a href="/logout" class="out">Logout</a></button></li>
+                {% else %}
+                <li class="item"><button><a href="https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri={{ REDIRECT_URL | urlencode }}&show_dialogue=true&scope=user-read-private user-top-read" class="log">Login</a></button></li>
+                {% endif %}
+              </ul>
+            </nav>
+          </div>
+
+          <div class="friendtable">
+            <h1 class = "tabletext">Your <span class = "friend">Friendify</span> Friends</h1>
+            <div class="spacer"></div>
+            {% if friends_details %} <!-- Updated this line -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Profile</th>
+                            <th>Friend Username</th>
+                            <th>Match Score</th>
+                            <th>Action</th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for friend in friends_details %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('profile', username=friend.username) }}">
+                                    <img src="{{ friend.profile_pic_url }}" alt="Profile Pic" class="friend-profile-pic">
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('profile', username=friend.username) }}" class = "friendname">{{ friend.username }}</a>
+                            </td>
+                            <td>
+                                {{ friend.match_score }}
+                            </td>
+                            <td>
+                                <button onclick="confirmRemoveFriend('{{ friend.username }}')" class = "button-disc">Remove Friend ✕</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>You have no friends added.</p>
+            {% endif %}
+        </div>
+
+
+        <div class="spacer"></div>
+        <div class="addfriend">
+            <button class="button-disc" onclick="askForFriend()">
+                <span>Add Friend</span>
+            </button>
+        </div>    
+
+        <div class="topspacer"></div>
+
+        <div class="pending-requests">
+            <h2 class = "tabletext">You have <span class = "friend">{{ friend_requests|length }}</span> pending friend request(s)</h2>
+            {% for request in friend_requests %}
+            <div class="request">
+                {{ request }}
+                <button onclick="acceptFriendRequest('{{ request }}')">✓</button>
+                <button onclick="declineFriendRequest('{{ request }}')">✕</button>
+        </div>
+        {% endfor %}
+        </div>
+
+
+        <div class="topspacer"></div>
+        <div class="footnote">
+            <p>View your friends profile and listening stats by clicking on their <span class = "friend">username</span></p>
+            <div class = "spacer"></div>
+            <p>Login on other platforms and exchange handles!</p>
+            <div class="spacer"></div>
+        <footer>
+            <ul class = "bot">
+                <li class="footer"><a href="https://facebook.com">Facebook</a></li>
+                <li class="footer"><a href="https://twitter.com">Twitter</a></li>
+                <li class="footer"><a href="https://www.instagram.com">Instagram</a></li>
+            </ul>
+        </footer>
+    </div>
+    <div class="spacer"></div>
+
+    <div class = "page-marker">
+        <footer>FRIENDS</footer>
+    </div>
+
+    <!-- JavaScript  in discover.js-->
+    <script src="{{ url_for('static', filename='js/friends.js') }}"></script>
+    </body>
+</html>

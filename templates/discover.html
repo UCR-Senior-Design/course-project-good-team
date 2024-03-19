@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Discover - Friendify</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/discover_styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!--need this for the play button over album covers-->
+</head>
+<body>
+
+<div class="container">
+    <nav class="navbar">
+        <div class="logo">
+            <img src="{{ icon_link }}">
+        </div>
+        <div class="welcome">
+            <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">{{ session_username }}</span></span>
+        </div>
+        <ul class="nav--list">
+            <li class="item"><button><a href="/">Home</a></button></li>
+            <li class="item"><button><a href="/about">About</a></button></li>
+            <li class="item"><button><a href="/profile/{{ session['username'] }}">Profile</a></button></li>
+            <li class="item"><button><a href="/friends">Friends</a></button></li>
+            <li class="discover"><button><a href="/discover" class="disc">Discover</a></button></li>
+            {% if is_logged_in %}
+            <li class="logout"><button><a href="/logout" class="out">Logout</a></button></li>
+            {% else %}
+            <li class="item"><button><a href="https://accounts.spotify.com/authorize?..." class="log">Login</a></button></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
+<!-- CAROLINHS VERSION OF THE SIDEBAR -- THIS IS THE CODE TO REFERENCE WHEN REBUILDING THE SIDEBAR WITH HER FEATURES -->
+    
+<!--     <div class="sidebar-container">
+    <div class="sidebar">
+        <button class="button-disc" onclick="window.location.href='/discover?random_song=true'" id="random-song-btn">Random Song</button>
+        <div class="spacer20"></div>
+        <p>Break the routine and find something new:</p>
+        <div class="spacer20"></div>
+        <p>Your next favorite song awaits, explore endless musical possibilities and experience
+            the thrill of discovery.
+        </p>
+        <div class="spacer40"></div>
+        <button class="button-disc" id="friends-favorite-song-btn">Find a Song from Your Friends</button>
+        <div class="spacer20"></div>
+        <p>Your friends' playlists, your new favorites:</p>
+        <div class="spacer20"></div>
+        <p>Discover a song from your friends! Delve into their musical universe and find a song
+            to jam to and bond over.
+        </p>
+
+        </div>
+        </div> -->
+
+
+<div class = "sidebar-container" id = "side">
+    <div class = "sidebar">
+        <label for="touch1" class="tool"><p><span class="friend">Discover</span></p></label>
+        <input type="checkbox" id="touch1">
+        <ul class="slide1">
+            <li class ="sidebutton"><button onclick="window.location.href='/discover?random_song=true'" id="random-song-btn"><a>Random Song</a></button></li>
+            <li class="sidebutton friend-queue-btn"><button><a>Friend Queue</a></button></li>
+            <li class = "sidebutton"><button><a>Playlist Analyzer</a></button></li>
+        </ul>
+        <button class="closebtn" id="closebtn" onclick="closeNav()">X Close Sidebar</button>
+    </div>
+</div>
+
+<div id = "opens">
+    <button class="openbtn hidden" id ="openbtn"onclick="openNav()">☰ Open Sidebar</button>
+</div>
+
+
+<div class="content">
+    <div class="spacer40"></div>
+    <div class="topsongww">
+        <h2 class = "text">{{ "Random Song Recommendation" if random_song else "The #1 song in the world right now is:" }}</h2>
+        <div class="album-cover">
+            <a href="{{ song_details.spotify_url }}" target="_blank" class = "albimg" >
+                <div class="album-center">
+                    <img src="{{ song_details.album_image_url }}" alt="Song album cover">
+                    <div class="play-overlay"><i class="fa fa-play-circle" aria-hidden="true"></i></div>
+                </div>
+            </a>
+        </div>
+        <p class = "text">{{ song_details.song_name }} by <span class = "friend">{{ song_details.artist_name }}</span></p>
+        <div class="spacer20"></div>
+        {% if random_song %}
+        <button class="button-disc"><a href="{{ url_for('discover', random_song='true') }}" class="btn">Generate New Random Song</a></button>
+        {% endif %}
+    </div>
+</div>
+
+<div class="friend-queue" style="display: none;">
+    <div class="queue-content">
+        <h2>Friend Queue</h2>
+        <div class="queue-details">
+            <!-- Friend queue content will be dynamically inserted here -->
+        </div>
+        <div class="navigation-buttons">
+            <button onclick="previousTrack()" class="button-disc">Previous</button>
+            <button onclick="nextTrack()" class="button-disc">Next</button>
+        </div>
+    </div>
+</div>
+
+<div class="playlist-analyzer" style="display: none;" id = "qq">
+    <h2>Playlist Analyzer</h2>
+    <div id="loading-indicator" style="display: none;">Analyzing...</div>
+    <form id="playlist-analyzer-form">
+        <input type="text" id="playlist-url" placeholder="Enter Spotify playlist URL" required>
+        <button type="submit" class="button-disc">Analyze</button>
+        <div class="spacer20"></div>
+    </form>
+    <div class="playlist-analysis-results">
+        <!-- Analysis results will be inserted here -->
+        <!-- Recommended Songs Section -->
+        <div id="recommended-songs-section" style="display: none;">
+            <h3>Recommendations for you from this playlist</h3>
+            <table id="recommended-songs-table">
+                <thead>
+                    <tr>
+                        <th>Album Cover</th>
+                        <th>Title</th>
+                        <th>Artists</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be added by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- Page Footer -->
+<div class = "page-marker">
+    <footer>DISCOVER</footer>
+</div>
+
+
+<!-- JavaScript  in discover.js-->
+<script src="{{ url_for('static', filename='js/discover.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,488 @@
+@import url("discover_styles/css");
+
+body {
+    color: #1faa50;
+    font-family: Spotify;
+    background-color: #373737;
+}
+
+@font-face {
+    font-family: Spotify;
+    src: url(../fonts/GothamMedium.ttf);
+}
+
+.topspacer {
+  height: 50px;
+}
+
+.spacer {
+  height: 20px;
+}
+
+.centered-text {
+  text-align: center;
+}
+
+/* Center the text in table cells */
+table th.centered-text,
+table td.centered-text {
+    text-align: center;
+}
+
+body {
+  text-align: center; /* Center the content horizontally */
+}
+
+.page-marker{
+  display: flex;
+  color: #ffffffaf;
+  font-family: Winter;
+  font-size: 40px;
+  margin-left: 30px;
+  margin-bottom: 20px;
+  font-style: italic;
+  position: fixed;
+  bottom: 0;
+}
+
+.friendtable {
+  display: flex;
+  flex-direction: column;
+  margin-top: 60px; /* Adjust as needed */
+}
+
+.addfriend{
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.footnote{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #ffffffaf;
+
+}
+
+.friendname{
+  color: black;
+}
+
+table {
+  margin: 0 auto; /* Center the table horizontally */
+}
+
+table th, table td {
+  padding: 16px; /* Add padding for better appearance */
+}
+
+/* Change the color of the table */
+table {
+  margin: 0 auto; /* Center the table horizontally */
+  border-collapse: collapse; /* Collapse table borders */
+  color: black; /* Set text color to black */
+}
+
+.tabletext {
+  color: #ffffffaf;
+
+}
+
+/* Change the color of the table header cells */
+table th {
+  background-color: #1a1a1a; /* Set background color for header cells */
+  color: #dadadaaf;
+  border: 2px solid black;
+  /* Set text color for header cells */
+}
+
+/* Change the color of the table data cells */
+table td {
+  background-color: rgba(31, 170, 80, 0.8); /* Set background color for data cells */
+  color: rgb(14, 13, 13); /* Set text color for data cells */
+  border: 2px solid black; /* Add border for data cells */
+  padding: 14px; /* Add padding for data cells */
+}
+
+/* footer style setup */
+.footer a {
+  font-family: Spotify;
+  color:rgb(14, 13, 13)
+}
+
+/* NAV BAR START */
+*,
+::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 80px;
+}
+
+.weltext{
+  font-size: 24px;
+  color: #ffffffaf;
+}
+
+.friend{
+  color: #1faa50
+}
+
+.bot {
+  padding: 0; /* Remove default padding */
+  list-style: none; /* Remove default list style */
+}
+
+.bot li {
+  display: inline; /* Display list items inline */
+}
+
+.bot li:not(:last-child) {
+  margin-right: 10px; /* Add spacing between list items */
+}
+
+
+nav {
+  display: flex;
+  align-content: center;
+  background: #1a1a1a;
+  box-shadow: rgba(31, 170, 80, 0.8) 0px 15px 20px -5px;
+  border-bottom:rgba(30, 112, 64, 0.493) 3px solid;
+}
+nav.navbar{
+  display: flex;
+  justify-content: space-between
+}
+
+.logo{
+  display: flex;
+  height: 75px;
+  width: 75px;
+}
+
+.logout{
+  position: relative;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  margin: 0 10px;
+  border: 2px solid rgb(50 159 160);
+  overflow: hidden;
+}
+
+.logout a{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  width: 140px;
+  height: 40px;
+  text-transform: uppercase;
+  color: rgb(50 159 160);
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.logout button{
+  font-size: 16px;
+  text-transform: uppercase;
+  color: rgb(50 159 160);
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+  background: none;
+  border: none;
+}
+
+.logout:hover a {
+  color: #003b49;
+}
+
+.logout:hover button {
+  color: #003b49;
+}
+
+.logout:before {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  transform: skew(30deg);
+  background: rgb(50 159 160);
+  transition: width 400ms ease;
+}
+
+.logout:hover:before {
+  width: 120%;
+}
+
+
+.nav--list {
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.item {
+  position: relative;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  margin: 0 10px;
+  border: 2px solid #f2c75c;
+  overflow: hidden;
+}
+
+.item:nth-child(6){
+  border: 2px solid green;
+  color: green;
+}
+
+.item a.log{
+  color: rgb(16, 189, 16);
+}
+
+.item a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  width: 140px;
+  height: 40px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.item button {
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+  background: none;
+  border: none;
+}
+
+.item:hover a {
+  color: #003b49;
+}
+
+.item:hover button {
+  color: #003b49;
+}
+
+.item:before {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  transform: skew(30deg);
+  background: #f2c75c;
+  transition: width 400ms ease;
+}
+
+.item:hover:before {
+  width: 120%;
+}
+
+.item:nth-child(2):before {
+  transform: skew(-20deg);
+}
+
+.item:nth-child(3):before {
+  transform: skew(0deg);
+}
+
+.item:nth-child(4):before {
+  transform: skew(25deg);
+}
+
+.item:nth-child(6):before {
+  width: 180px;
+  height: 0%;
+  bottom: 0px;
+  transition: height 400ms ease;
+  background: #1faa50;
+}
+
+.item:nth-child(6):hover:before {
+  height: 100%;
+}
+/* NAV BAR END */
+
+.pending-requests h2 {
+  margin-bottom: 20px;
+}
+
+.request {
+  margin-bottom: 10px;
+  color: #f2c75c;
+}
+
+.request button {
+  margin-left: 10px;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  color: #f2c75c;
+  font-size: 20px;
+}
+
+.friend-profile-pic {
+  width: 50px; 
+  height: 50px; 
+  object-fit: cover; /* Ensure the images cover the space nicely */
+  border-radius: 50%; /* Make the images circular */
+}
+
+
+.discover{
+  position: relative;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  margin: 0 10px;
+  border: 2px solid #f2c75c;
+  overflow: hidden;
+}
+
+.discover a{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  width: 140px;
+  height: 40px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.discover button{
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+  background: none;
+  border: none;
+}
+
+.discover:hover a {
+  color: #003b49;
+}
+
+.discover:hover button {
+  color: #003b49;
+}
+
+.discover:before {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  transform: skew(30deg);
+  background: #f2c75c;
+  transition: width 400ms ease;
+}
+
+.discover:hover:before {
+  width: 120%;
+}
+
+/* black button */
+
+.button-disc {
+  appearance: button;
+  background-color: #000;
+  background-image: none;
+  border: 1px solid #000;
+  border-radius: 4px;
+  box-shadow: #fff 4px 4px 0 0,#000 4px 4px 0 1px;
+  box-sizing: border-box;
+  color: #1faa50;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Spotify;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  margin: 0 5px 10px 0;
+  overflow: visible;
+  padding: 12px 40px;
+  text-align: center;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+  margin: 15px;
+}
+
+.button-disc:focus {
+  text-decoration: none;
+}
+
+.button-disc:hover {
+  text-decoration: none;
+}
+
+.button-disc:active {
+  box-shadow: rgba(0, 0, 0, .125) 0 3px 5px inset;
+  outline: 0;
+}
+
+.button-disc:not([disabled]):active {
+  box-shadow: #fff 2px 2px 0 0, #000 2px 2px 0 1px;
+  transform: translate(2px, 2px);
+}
+
+@media (min-width: 768px) {
+  .button-disc {
+    padding: 10px 20px;
+  }
+}
+
+#placeholder {
+  display: none; 
+  margin-left: 250px;
+}

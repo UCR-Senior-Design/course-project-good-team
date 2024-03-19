@@ -1,0 +1,439 @@
+body {
+    color: #1faa50;
+    font-family: Spotify;
+    background-color: #373737;
+}
+
+@font-face {
+    font-family: Spotify;
+    src: url(../fonts/GothamMedium.ttf);
+}
+
+h1 {
+    color: #1faa50;
+    font-family: Spotify;
+    background-color: #222222;
+}
+
+.flex-spotify {
+    display: flex;
+}
+
+.flex-page-top {
+    display: flex;
+    border: 3px solid black;
+    border-radius: 8px;
+    justify-content: space-between;
+    font-family: Spotify;
+    background: #222222;
+    padding: 5px;
+}
+
+.button{
+    background-color: #1faa50; /* Green */
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.back-button,
+.about-button,
+.spotify-button {
+    background-color: #1faa50; /* Green */
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.flex-body {
+    margin: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    border: 3px solid black;
+    border-radius: 8px;
+    background: #222222;
+}
+
+.about-body {
+    margin: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    border: 3px solid black;
+    border-radius: 8px;
+    background: #222222;
+}
+
+.page-marker{
+  display: flex;
+  color: #ffffffaf;
+  font-family: Winter;
+  font-size: 40px;
+  margin-left: 30px;
+  margin-bottom: 20px;
+  font-style: italic;
+  position: fixed;
+  bottom: 0;
+}
+
+/* FLEX BOXES SETUP */
+.about-flexbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-flexbox img {
+  max-width: 50%; 
+  margin-right: 40px;
+}
+
+.top-text {
+  flex: 1;
+  /* margin-left: 20px; */
+  color: rgb(118, 227, 106);
+  padding-right: 20px;
+  text-align: center;
+}
+
+.top-text top {
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+.about-flexbox .text ul {
+  font-size: 20px;
+  list-style: none;
+  padding-left: 0;
+  text-align: center;
+  /* list-style-type: none; */
+}
+
+/* FONT SETUPS */
+.centered-text slogan {
+  display: inline; 
+  font-size: 30px; 
+  color: rgb(118, 227, 106); 
+  font-family: Spotify; 
+}
+
+.centered-text top {
+  display: inline; 
+  font-size: 18px; 
+  color: rgb(118, 227, 106); 
+  font-family: Spotify; 
+}
+
+.centered-text bot {
+  display: inline;
+  font-size: 12px;
+  color: rgb(88, 182, 78);
+  font-family: Spotify;
+}
+
+/* SPACES */
+.topspacer {
+  height: 50px;
+}
+
+.spacer {
+  height: 20px;
+}
+
+.spacer5 {
+  height: 5px;
+}
+
+/* ALIGNMENTS */
+
+.centered-text {
+  text-align: center;
+}
+
+/* NAV BAR CSS */
+
+*,
+::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 80px;
+}
+
+.weltext{
+  font-size: 24px;
+  color: #ffffffaf;
+}
+
+.friend{
+  color: #1faa50
+}
+
+
+nav {
+  display: flex;
+  align-content: center;
+  background: #1a1a1a;
+  box-shadow: rgba(31, 170, 80, 0.8) 0px 15px 20px -5px;
+  border-bottom:rgba(30, 112, 64, 0.493) 3px solid;
+}
+nav.navbar{
+  display: flex;
+  justify-content: space-between
+}
+
+.logo{
+  display: flex;
+  height: 75px;
+  width: 75px;
+}
+
+
+.logout{
+  position: relative;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  margin: 0 10px;
+  border: 2px solid rgb(50 159 160);
+  overflow: hidden;
+}
+
+.logout a{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  width: 140px;
+  height: 40px;
+  text-transform: uppercase;
+  color: rgb(50 159 160);
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.logout button{
+  font-size: 16px;
+  text-transform: uppercase;
+  color: rgb(50 159 160);
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+  background: none;
+  border: none;
+}
+
+.logout:hover a {
+  color: #003b49;
+}
+
+.logout:hover button {
+  color: #003b49;
+}
+
+.logout:before {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  transform: skew(30deg);
+  background: rgb(50 159 160);
+  transition: width 400ms ease;
+}
+
+.logout:hover:before {
+  width: 120%;
+}
+
+.nav--list {
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.item {
+  position: relative;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  margin: 0 10px;
+  border: 2px solid #f2c75c;
+  overflow: hidden;
+}
+
+.item:nth-child(6){
+  border: 2px solid green;
+  color: green;
+}
+
+.item a.log{
+  color: rgb(16, 189, 16);
+}
+
+.item a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  width: 140px;
+  height: 40px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.item button {
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+  background: none;
+  border: none;
+}
+
+.item:hover a {
+  color: #003b49;
+}
+
+.item:hover button {
+  color: #003b49;
+}
+
+.item:before {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  transform: skew(30deg);
+  background: #f2c75c;
+  transition: width 400ms ease;
+}
+
+.item:hover:before {
+  width: 120%;
+}
+
+.item:nth-child(2):before {
+  transform: skew(-20deg);
+}
+
+.item:nth-child(3):before {
+  transform: skew(0deg);
+}
+
+.item:nth-child(4):before {
+  transform: skew(25deg);
+}
+
+.item:nth-child(6):before {
+  width: 180px;
+  height: 0%;
+  bottom: 0px;
+  transition: height 400ms ease;
+  background: #1faa50;
+}
+
+.item:nth-child(6):hover:before {
+  height: 100%;
+}
+
+
+.discover{
+  position: relative;
+  width: 100px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  margin: 0 10px;
+  border: 2px solid #f2c75c;
+  overflow: hidden;
+}
+
+.discover a{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  width: 140px;
+  height: 40px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.discover button{
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #f2c75c;
+  z-index: 10;
+  text-decoration: none;
+  transition: color 200ms ease;
+  background: none;
+  border: none;
+}
+
+.discover:hover a {
+  color: #003b49;
+}
+
+.discover:hover button {
+  color: #003b49;
+}
+
+.discover:before {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  transform: skew(30deg);
+  background: #f2c75c;
+  transition: width 400ms ease;
+}
+
+.discover:hover:before {
+  width: 120%;
+}

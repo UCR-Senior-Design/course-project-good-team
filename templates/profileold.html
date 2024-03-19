@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset = "UTF-8">
+        <Title>{{ user.username }}'s Profile</Title>
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/profile_styles.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+    </head>
+
+    <body>
+
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <img src="{{ icon_link }}">
+                </div>
+                <div class="welcome">
+                    <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">{{ session_username }}</span></span>
+                </div>
+              <ul class="nav--list">
+                <li class="item"><button><a href="/">Home</a></button></li>
+                <li class="item"><button><a href="/about">About</a></button></li>
+                <li class="item"><button><a href="/profile/{{ session['username'] }}">Profile</a></button></li>
+                <li class="item"><button><a href="/friends">Friends</a></button></li>
+                <li class="discover"><button><a href="/discover" class="disc">Discover</a></button></li>
+                {% if is_logged_in %}
+                <li class="logout"><button><a href="/logout" class="out">Logout</a></button></li>
+                {% else %}
+                <li class="item"><button><a href="https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=https://friendify-uxfi.onrender.com/callback&show_dialogue=true&scope=user-read-private user-top-read" class="log">Login</a></button></li>
+                {% endif %}
+              </ul>
+            </nav>
+          </div>
+
+        <div class = "sidebar-container" id = "side">
+            <div class = "sidebar">
+                <label for="touch1" class="tool"><p>{{ user.username }}'s <span class="friend">profile</span></p></label>
+                <input type="checkbox" id="touch1">
+                <ul class="slide1">
+                    <form action="/profile/{{ user.username }}" method="get">
+                        <li class = "sidebutton"><button type="submit" name="time_range" value="short_term" class="profilerange"><a>Last 4 weeks</a></button></li>
+                        <br>
+                        <li class = "sidebutton"><button type="submit" name="time_range" value="medium_term" class="profilerange"><a>Last 6 months</a></button></li>
+                        <br>
+                        <li class = "sidebutton"><button type="submit" name="time_range" value="long_term" class="profilerange"><a>All time</a></button></li>
+                    </form>
+                    
+                </ul>
+                <label for="touch2" class = "tool"><p><span class = "friend">Compare</span></p></label>
+                <input type="checkbox" id="touch2">
+                <ul class="slide2">
+                    <li class = "sidebutton"><button class="mutual-favorites-btn">Mutual Favorites</button></li> 
+                    <li class = "sidebutton"><button><a>placeholder</a></button></li>
+                    <li class = "sidebutton"><button><a>placeholder</a></button></li>
+                </ul>
+                
+                <label for="touch3" class = "tool"><p><span class = "friend">playlists</span></p></label>
+                <input type="checkbox" id="touch3">
+                <ul class="slide3">
+                    <li class="sidebutton"><button onclick="showPlaylists()">See All</button></li> 
+                    <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
+                    <li class = "sidebutton"><button><a href="#">placeholder</a></button></li>
+                </ul>
+                <button class="closebtn" id="closebtn" onclick="closeNav()">X Close Sidebar</button>
+            </div>
+        </div>
+
+        <div id="playlistsGrid" style="display: none;">
+            <div class="grid-container">
+                {% for playlist in playlists_data %}
+                    <div class="grid-item">
+                        <img src="{{ playlist.image_url }}" alt="{{ playlist.name }}" class="playlist-image">
+                        <p>{{ playlist.name }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <script>
+            function showPlaylists() {
+                var grid = document.getElementById("playlistsGrid");
+                var mainContent = document.getElementById("main-profile-content"); // Get the main content container
+                if (grid.style.display === "none") {
+                    grid.style.display = "block"; // Show the playlists grid
+                    mainContent.style.display = "none"; // Hide the main content
+                } else {
+                    grid.style.display = "none"; // Hide the playlists grid
+                    mainContent.style.display = "block"; // Show the main content
+                }
+            }
+        </script>
+
+
+
+        <script>
+            function openNav() {
+            document.getElementById("side").style.width = "250px";
+            document.getElementById("openbtn").classList.add("hidden")
+
+            }
+
+            function closeNav() {
+            document.getElementById("side").style.width = "0px";
+            document.getElementById("openbtn").classList.remove("hidden")
+            }
+        </script>
+
+        <div id = "opens">
+            <button class="openbtn hidden" id ="openbtn"onclick="openNav()">☰ Open Sidebar</button>
+        </div>
+        
+        <div class="profile-info">
+            <div class="profilepic-container">
+                <img src="{{ user.profile_pic_url }}" alt="{{ user.username }}'s profile picture" class="profile-picture">
+                <h1 class="username">{{ user.username }}</h1>
+                <p class="user-since">Friendify user since <span class="friend">{{ date_joined }}</span></p>
+            </div>
+        </div>
+
+            
+            <div id ="main-profile-content">
+
+                <div class="profile-artists">
+                    <h2 class = "topprofart">Top Artists <span class = "friend">{{ time_range_display }}</span></h2>
+                    <div class="top-container">
+                        {% for artist in top_artists %}
+                            <div class="artist {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
+                                <img src="{{ artist.image_url }}" alt="{{ artist.name }}" class="artist-image">
+                                <p class="artist-name">
+                                    {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% endif %}
+                                    {{ artist.name }}
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            
+                <div class="spacer20"></div>
+            
+            
+                <div class="profile-tracks">
+                    <h2 class = "topprofart">Top Tracks <span class ="friend">{{ time_range_display }}</span></h2>
+                    <div class="top-container">
+                        {% for track in top_tracks %}
+                            <div class="artist {% if loop.index == 1 %}gold{% elif loop.index == 2 %}silver{% elif loop.index == 3 %}bronze{% endif %}">
+                                <a href="https://open.spotify.com/track/{{ track.id }}" target="_blank" class="track-link">
+                                    <img src="{{ track.image_url }}" alt="{{ track.name }}" class="track-image">
+                                    <div class="play-overlay"><i class="fas fa-play-circle" aria-hidden="true"></i></div>
+                                </a>
+                                <div class="track-p">
+                                    <p class="track-name">
+                                        {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% endif %}
+                                        {{ track.name }}
+                                    </p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            
+                <div class="spacer20"></div>
+
+                <div class="genre-chart">
+                    <h2 class ="topprofart">Genre Breakdown for <span class="friend">{{ time_range_display }}</span></h2>
+                    {% if genre_pie_chart %}
+                        <img src="data:image/png;base64,{{ genre_pie_chart }}" alt="Genre Breakdown">
+                    {% else %}
+                        <p>No genre data available for this period.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        <div class = "page-marker">
+            <footer>PROFILE</footer>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset = "UTF-8">
+        <Title>Friendify</Title>
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/stats_styles.css') }}">
+    </head>
+
+    <body>
+
+
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <img src="{{ icon_link }}">
+                </div>
+                <div class="welcome">
+                    <span class="weltext">Welcome to <span class="friend">Friendify</span>, <span id="username">{{ username }}</span></span>
+                </div>
+              <ul class="nav--list">
+                <li class="item"><button><a href="/">Home</a></button></li>
+                <li class="item"><button><a href="/about">About</a></button></li>
+                <li class="item"><button><a href="/stats">Profile</a></button></li>
+                <li class="item"><button><a href="/friends">Friends</a></button></li>
+                {% if is_logged_in %}
+                <li class="logout"><button><a href="/logout" class="out">Logout</a></button></li>
+                {% else %}
+                <li class="item"><button><a href="https://accounts.spotify.com/authorize?client_id=4f8a0448747a497e99591f5c8983f2d7&response_type=code&redirect_uri=https://friendify-uxfi.onrender.com/callback&show_dialogue=true&scope=user-read-private user-top-read" class="log">Login</a></button></li>
+                {% endif %}
+              </ul>
+            </nav>
+          </div>
+
+        <div class = "sidebar-container">
+            <div class = "sidebar">
+                <label for="touch1" class = "tool"><p>Your <span class = "friend">profile</span></p></label>
+                <input type="checkbox" id="touch1">
+                <ul class="slide1">
+                    <form action="/stats" method="get">
+                    <button type="submit" value="long_term">All time</button>
+                    </form>
+
+                    <li>Last 6 months</li>
+                    <li>All time</li>
+                </ul>
+
+                <label for="touch2" class = "tool"><p>Your <span class = "friend">genre</span> breakdown</p></label>
+                <input type="checkbox" id="touch2">
+                <ul class="slide2">
+                    <li>Last 4 weeks</li> 
+                    <li>Last 6 months</li>
+                    <li>All time</li>
+                </ul>
+                
+                <label for="touch3" class = "tool"><p>stat <span class = "friend">3</span> placeholder</p></label>
+                <input type="checkbox" id="touch3">
+                <ul class="slide3">
+                    <li><a href="#">Last 4 weeks</a></li> 
+                    <li><a href="#">Last 6 months</a></li>
+                    <li><a href="#">All time</a></li>
+                </ul>
+            </div>
+        </div>
+      
+
+
+
+        <div class = "genre-text">
+            <p>Your genre breakdown:</p>
+            <form action="/stats" method="get">
+                <label for="time_range">Select time range:</label>
+                <select name="time_range" id="time_range">
+                    <option value="short_term"><p>Last <span class = "friend"> weeks</span></p></option>
+                    <option value="medium_term">Last 6 months</option>
+                    <option value="long_term">All time</option>
+                </select>
+                <button type="submit">Show chart</button>
+            </form>
+            {% if image_data %}
+                <img src="data:image/png;base64,{{ image_data }}" alt="Your Genre Breakdown">
+            {% else %}
+                <p>No data available. Please ensure you have enough listening history.</p>
+            {% endif %}
+        </div>
+
+
+
+        <script>
+            window.onload = function() {
+                if (new URLSearchParams(window.location.search).get('login') === 'success') {
+                    alert('You have logged in successfully!');
+                    // Redirect to remove the query parameter from URL
+                    window.history.replaceState({}, document.title, "/");
+                }
+            };
+        </script>
+
+        <script>
+            window.onload = function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const username = urlParams.get('username') || 'Guest';
+                document.getElementById('username').textContent = username;
+                window.history.replaceState({}, document.title, "/");
+            };
+        </script>
+
+        <script>
+            window.onload = function() {
+                const username = "{{ username }}"; // Use the value from Flask session
+                document.getElementById('username').textContent = username;
+            };
+        </script>
+
+        <script>
+            function askForFriend() {
+                // Use prompt to ask for friend's name
+                var friendName = prompt("Enter friend's name:");
+    
+                // If user provides a name, send it to the server for processing
+                if (friendName !== null) {
+                    fetch('/addfriend', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ friendName: friendName }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle the response from the server if needed
+                        console.log(data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
+            }
+        </script>
+
+
+        <div class = "spacer"></div>
+
+
+
+
+        <div class = "page-marker">
+            <footer>STATS</footer>
+        </div>
+    </body>
+</html>

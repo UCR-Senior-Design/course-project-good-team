@@ -1,0 +1,10 @@
+scripts/.cache
+package-lock.json
+package.json
+__pycache__/spotify_utils.cpython-311.pyc
+__pycache__/image_utils.cpython-311.pyc
+__pycache__/db_utils.cpython-311.pyc
+__pycache__/spotify_utils.cpython-312.pyc
+__pycache__/image_utils.cpython-312.pyc
+__pycache__/db_utils.cpython-312.pyc
+
