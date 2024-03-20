@@ -1,23 +1,10 @@
 # Friendify 
 
 ## Overview:
-Friendify is a web application aimed to expand aspects of Spotify. Currently, there is no streamlined method to share and find new music between friends on Spotify.
-This application will help users in this regard by allowing them a community to share and visualize music.
+Friendify is a web application aimed to expand the social side of Spotify. Currently, there are no streamlined methods to share and find new music between friends on Spotify.
+Our application helps users share music with their friends. They can see their friends listening habits as well as their own. They can get music suggestions directly from our friend queue system, our random queue system, or find new songs from
+analyzing any spotify playlist.
 
-Our project board outlines our current tasks and goals we have set to make the best product we can.
+Our site is hosted through render and can be accessed via this url: https://friendify-uxfi.onrender.com
 
-## Dependencies to download:
-- Flask
-- Python
-- Request
-- Spotipy
-- Sklearn
-
-## Running locally:
-Currently to run locally, Friendify can only be run on a localhost server.
-
-### Guide:
-First, make sure Git for Windows is installed. Then, clone the repository into a local device via GitHub. Now, install the required dependencies via "pip install [dependency]".
-Finally, navigate to the "backend" directory in the repository and open a terminal. In the terminal, run "python server.py" and the localhost server will begin.
-Now navigate to a web browser and in the search tab, type "127.0.0.1:8080". 
-This will open our project as a website in your web browser on a local server.
+Currently only users added to our dashboard are able to login to the site, we have sent a request to Spotify to remove this limitation and are awaiting their response. 
