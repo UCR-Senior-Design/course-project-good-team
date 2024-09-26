@@ -517,23 +517,27 @@ nav.navbar{
 }
 
 .play-overlay {
+  display: none; /* Prevent the play button from being displayed */
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  display: flex;
   justify-content: center;
   align-items: center;
   color: white;
   font-size: 48px;
-  opacity: 0;
-  transition: .5s ease;
+  opacity: 0; /* Ensure the overlay stays hidden */
+  transition: none; /* Disable transitions */
   background-color: rgba(0, 0, 0, 0.5);
 }
 
 .album-cover:hover .play-overlay {
-  opacity: 1;
+  opacity: 0; /* Keep the play button hidden */
+}
+
+.album-cover:hover img {
+  opacity: 1; /* Ensure the image opacity remains unchanged on hover */
 }
 
 .fa-play-circle:before {
