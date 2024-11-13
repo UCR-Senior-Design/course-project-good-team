@@ -28,7 +28,7 @@ load_dotenv()
 # Read environment variables from .env
 CLIENT_ID = os.environ.get('SPOTIFY_CLIENT_ID')
 CLIENT_SECRET = os.environ.get('SPOTIFY_CLIENT_SECRET')
-REDIRECT_URL = os.environ.get('SPOTIFY_REDIRECT_URL_RENDER') #CHANGE BETWEEN LOCAL AND RENDER FOR DEPLOYMENT AND DEVELOPMENT
+REDIRECT_URL = os.environ.get('SPOTIFY_REDIRECT_URL_LOCAL') #CHANGE BETWEEN LOCAL AND RENDER FOR DEPLOYMENT AND DEVELOPMENT
 FLASK_SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
 MONGO_URL = os.environ.get('MONGO_URL')
 
@@ -91,6 +91,11 @@ def index():
                            random_statistic=random_statistic, image_url=image_url,
                            icon_link=icon_link, special_name=special_name,
                            background_color=background_color, text_color=text_color, REDIRECT_URL=REDIRECT_URL)
+
+@app.route('/login')
+def login():
+    auth_url = f"https://accounts.spotify.com/authorize?client_id={CLIENT_ID}&response_type=code&redirect_uri={REDIRECT_URL}&show_dialog=true&scope=user-read-private user-top-read"
+    return redirect(auth_url)
 
 
 @app.route('/logout')
